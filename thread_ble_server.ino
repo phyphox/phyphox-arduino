@@ -21,15 +21,15 @@ Gap::ConnectionParams_t par;
 #ifndef NDEBUG
 Gap::ConnectionParams_t par2;
 #endif
-//const uint8_t customServiceUUID[16] = {0xcd, 0xdf, 0x00, 0x01, 0x30, 0xf7, 0x46, 0x71, 0x8b, 0x43, 0x5e, 0x40, 0xba, 0x53,
-                                                      //  0x51, 0x4a};
-//next try
-const uint8_t customServiceUUID[UUID::LENGTH_OF_LONG_UUID] = {0x4a, 0x51, 0x53, 0xba, 0x40, 0x5e, 0x43, 0x8b, 0x71, 0x46, 0xf7, 0x30, 0x01, 0x00, 0xdf, 0xcd};                                                  
-//uint16_t customServiceUUID  = 0xA000;
+const uint8_t customServiceUUID[UUID::LENGTH_OF_LONG_UUID]= {0xcd, 0xdf, 0x00, 0x01, 0x30, 0xf7, 0x46, 0x71, 0x8b, 0x43, 0x5e, 0x40, 0xba, 0x53, 0x51, 0x4a};
+//uint8_t customServiceUUID[UUID::LENGTH_OF_LONG_UUID] = {0x4a, 0x51, 0x53, 0xba, 0x40, 0x5e, 0x43, 0x8b, 0x71, 0x46, 0xf7, 0x30, 0x01, 0x00, 0xdf, 0xcd};                                                  
+//const UUID customServiceUUID = UUID(ServiceUUID, UUID::MSB);
 const uint16_t readCharUUID       = 0xA001;
 const uint16_t writeCharUUID      = 0xA002;
-const uint8_t phyphoxUUID[UUID::LENGTH_OF_LONG_UUID] = {0x4a, 0x51, 0x53, 0xba, 0x40, 0x5e, 0x43, 0x8b, 0x71, 0x46, 0xf7, 0x30, 0x02, 0x00, 0xdf, 0xcd};
-//const uint8_t phyphoxUUID[UUID::LENGTH_OF_LONG_UUID] = {0xcd, 0xdf, 0x00, 0x02, 0x30, 0xf7, 0x46, 0x71, 0x8b, 0x43, 0x5e, 0x40, 0xba, 0x53, 0x51, 0x4a};
+//const uint8_t phyphoxUUID[UUID::LENGTH_OF_LONG_UUID] = {0x4a, 0x51, 0x53, 0xba, 0x40, 0x5e, 0x43, 0x8b, 0x71, 0x46, 0xf7, 0x30, 0x02, 0x00, 0xdf, 0xcd};
+const uint8_t phyphoxUUID[UUID::LENGTH_OF_LONG_UUID] = {0xcd, 0xdf, 0x00, 0x02, 0x30, 0xf7, 0x46, 0x71, 0x8b, 0x43, 0x5e, 0x40, 0xba, 0x53, 0x51, 0x4a};
+//const UUID phyphoxUUID = UUID("cddf000230f746718b435e40ba53514a");
+//const UUID phyphoxUUID = UUID("4a5153ba405e438b7146f7300200dfcd");
 const static char DEVICE_NAME[]= "BLETest";
 static uint8_t readValue[1] = {0};
 static uint8_t writeValue[1] = {0};
@@ -56,6 +56,14 @@ void connectionCallback(const Gap::ConnectionCallbackParams_t *)
   par.slaveLatency = 0;
   BLE::Instance(BLE::DEFAULT_INSTANCE).gap().setPreferredConnectionParams(&par);   
   Serial.println("Connection succes!");
+  /*
+  uint8_t aux[16];
+  for(int i = 0; i < 16; ++i)
+    aux[16 - 1 -i] = customServiceUUID[i];
+
+  for(int i = 0; i < 16; ++i)
+    customServiceUUID[i] = aux[i];
+    */
 }
 
 void when_subscription_received(GattAttribute::Handle_t handle)
@@ -67,9 +75,14 @@ void when_subscription_received(GattAttribute::Handle_t handle)
         #endif
         Serial.println("Someone subscribed to characteristic updates");
         //send experiment 
-        //queue.event(&transferExp); 
-        //queue.call(&transferExp); 
+        queue.event(&transferExp); 
+        queue.call(&transferExp); 
         
+}
+
+void when_conf_received(GattAttribute::Handle_t handle)
+{
+  Serial.println("In confirmation");
 }
 
 void failTransfer()
@@ -174,16 +187,20 @@ void bleInitComplete(BLE::InitializationCompleteCallbackContext *params)
     ble.gap().onDisconnection(disconnectionCallback);
     ble.gattServer().onDataWritten(writeCharCallback);
     ble.gattServer().onUpdatesEnabled(when_subscription_received);
+    ble.gattServer().onConfirmationReceived(when_conf_received);
  
     /* Setup advertising */
     ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE); // BLE only, no classic BT
     ble.gap().setAdvertisingType(GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED); // advertising type
     ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LOCAL_NAME, (uint8_t *)DEVICE_NAME, sizeof(DEVICE_NAME)); // add name
-    ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_128BIT_SERVICE_IDS, (uint8_t *)customServiceUUID, sizeof(customServiceUUID));
+    uint8_t customServiceUUIDreversed[16];
+    for(int i = 0; i < 16; ++i)
+      customServiceUUIDreversed[16 - 1 -i] = customServiceUUID[i]; //this has to be done...little endian in advertising
+    ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_128BIT_SERVICE_IDS, (uint8_t *)customServiceUUIDreversed, sizeof(customServiceUUID));
     ble.gap().setAdvertisingInterval(100); // 100ms.
  
     /* Add our custom service */
-    ble.gattServer().addService();
+    ble.gattServer().addService(customService);
  
     /* Start advertising */
     ble.gap().startAdvertising(); //deprecated use of startAdvertising -> to be fixed
