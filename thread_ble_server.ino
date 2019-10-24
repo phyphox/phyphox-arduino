@@ -21,24 +21,30 @@ Gap::ConnectionParams_t par;
 #ifndef NDEBUG
 Gap::ConnectionParams_t par2;
 #endif
-const uint8_t customServiceUUID[UUID::LENGTH_OF_LONG_UUID]= {0xcd, 0xdf, 0x00, 0x01, 0x30, 0xf7, 0x46, 0x71, 0x8b, 0x43, 0x5e, 0x40, 0xba, 0x53, 0x51, 0x4a};
-//uint8_t customServiceUUID[UUID::LENGTH_OF_LONG_UUID] = {0x4a, 0x51, 0x53, 0xba, 0x40, 0x5e, 0x43, 0x8b, 0x71, 0x46, 0xf7, 0x30, 0x01, 0x00, 0xdf, 0xcd};                                                  
-//const UUID customServiceUUID = UUID(ServiceUUID, UUID::MSB);
+
+volatile bool sent = false;
+const uint8_t customServiceUUID[UUID::LENGTH_OF_LONG_UUID]= {0xcd, 0xdf, 0x00, 0x01, 0x30, 0xf7, 0x46, 0x71, 0x8b, 0x43, 0x5e, 0x40, 0xba, 0x53, 0x51, 0x4a};                                                
+//const UUID customServiceUUID = UUID("cddf0001-30f7-4671-8b43-5e40ba53514a");
 const uint16_t readCharUUID       = 0xA001;
 const uint16_t writeCharUUID      = 0xA002;
-//const uint8_t phyphoxUUID[UUID::LENGTH_OF_LONG_UUID] = {0x4a, 0x51, 0x53, 0xba, 0x40, 0x5e, 0x43, 0x8b, 0x71, 0x46, 0xf7, 0x30, 0x02, 0x00, 0xdf, 0xcd};
-const uint8_t phyphoxUUID[UUID::LENGTH_OF_LONG_UUID] = {0xcd, 0xdf, 0x00, 0x02, 0x30, 0xf7, 0x46, 0x71, 0x8b, 0x43, 0x5e, 0x40, 0xba, 0x53, 0x51, 0x4a};
-//const UUID phyphoxUUID = UUID("cddf000230f746718b435e40ba53514a");
-//const UUID phyphoxUUID = UUID("4a5153ba405e438b7146f7300200dfcd");
-const static char DEVICE_NAME[]= "BLETest";
+const UUID phyphoxUUID = UUID("cddf0002-30f7-4671-8b43-5e40ba53514a");
+const UUID dataOneUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ac");
+const UUID dataTwoUUID = UUID("1338ec0b-8ee0-49e3-be61-537dc0632b13");
+const UUID dataThreeUUID = UUID("a59da017-8600-48d7-8e76-6778dcdbd118");
+const UUID dataFourUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ae");
+
+const static char DEVICE_NAME[]= "Arduino";
 static uint8_t readValue[1] = {0};
 static uint8_t writeValue[1] = {0};
 static uint8_t data_package[20] = {0};
 ReadWriteArrayGattCharacteristic<uint8_t, sizeof(data_package)> dataChar(phyphoxUUID, data_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY);
-//ReadWriteGattCharacteristic<uint8_t> dataChar(phyphoxUUID, writeValue, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY);
 WriteOnlyArrayGattCharacteristic<uint8_t, sizeof(writeValue)> writeChar(writeCharUUID, writeValue);
-ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readChar(readCharUUID, readValue, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_INDICATE /*GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY*/);
-GattCharacteristic *characteristics[] = {&dataChar};
+ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readCharOne(dataOneUUID, readValue,GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY);
+ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readCharTwo(dataTwoUUID, readValue,GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY);
+ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readCharThree(dataThreeUUID, readValue,GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY);
+ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readCharFour(dataFourUUID, readValue,GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY);
+
+GattCharacteristic *characteristics[] = {&readCharOne, &readCharTwo, &readCharThree, &readCharFour, &dataChar};
 GattService customService(customServiceUUID, characteristics, sizeof(characteristics) / sizeof(GattCharacteristic *));
 
 
@@ -56,14 +62,6 @@ void connectionCallback(const Gap::ConnectionCallbackParams_t *)
   par.slaveLatency = 0;
   BLE::Instance(BLE::DEFAULT_INSTANCE).gap().setPreferredConnectionParams(&par);   
   Serial.println("Connection succes!");
-  /*
-  uint8_t aux[16];
-  for(int i = 0; i < 16; ++i)
-    aux[16 - 1 -i] = customServiceUUID[i];
-
-  for(int i = 0; i < 16; ++i)
-    customServiceUUID[i] = aux[i];
-    */
 }
 
 void when_subscription_received(GattAttribute::Handle_t handle)
@@ -76,40 +74,8 @@ void when_subscription_received(GattAttribute::Handle_t handle)
         Serial.println("Someone subscribed to characteristic updates");
         //send experiment 
         queue.event(&transferExp); 
-        queue.call(&transferExp); 
-        
+        queue.call(&transferExp);         
 }
-
-void when_conf_received(GattAttribute::Handle_t handle)
-{
-  Serial.println("In confirmation");
-}
-
-void failTransfer()
-{
-  //This function fails because it does not run in a thread. It does not fail if run in eventqueue context. nice.
-  uint8_t test_data = 0;
-  Serial.println("In transfer data");
-  for(int j = 0; j < 12; ++j)
-  {
-    Serial.println("Sending: "); Serial.print(test_data); 
-    BLE::Instance(BLE::DEFAULT_INSTANCE).gattServer().write(readChar.getValueHandle(), &test_data, sizeof(test_data));
-    ++test_data;
-    delay(500);
-  }
-}
-void transferData()
-{
-    uint8_t test_data = 0;
-    Serial.println("In transfer data");
-    for(int j = 0; j < 20; ++j)
-    {
-      Serial.println("Sending: "); Serial.print(test_data); 
-      BLE::Instance(BLE::DEFAULT_INSTANCE).gattServer().write(readChar.getValueHandle(), &test_data, sizeof(test_data));
-      ++test_data;
-      delay(500);
-    }
-} 
 
 void transferExp()
 {
@@ -155,6 +121,7 @@ void transferExp()
     BLE::Instance(BLE::DEFAULT_INSTANCE).gattServer().write(dataChar.getValueHandle(), slice, sizeof(slice));
     delay(100);
   }
+  sent = true;
 }
 
 void writeCharCallback(const GattWriteCallbackParams *params)
@@ -167,8 +134,6 @@ void writeCharCallback(const GattWriteCallbackParams *params)
           switch(params -> data[0])
           {
             case 0: queue.event(&transferExp); queue.call(&transferExp); break;
-            case 1: queue.event(&failTransfer); queue.call(&failTransfer); break;
-            case 2: queue.event(&transferData); queue.call(&transferData); break;
             default: break;
           }
         }
@@ -187,7 +152,6 @@ void bleInitComplete(BLE::InitializationCompleteCallbackContext *params)
     ble.gap().onDisconnection(disconnectionCallback);
     ble.gattServer().onDataWritten(writeCharCallback);
     ble.gattServer().onUpdatesEnabled(when_subscription_received);
-    ble.gattServer().onConfirmationReceived(when_conf_received);
  
     /* Setup advertising */
     ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE); // BLE only, no classic BT
@@ -216,6 +180,7 @@ void waitForEvent(BLE* ble)
 void setup() 
 {
   Serial.begin(9600); 
+  randomSeed(analogRead(0));
 }
 
 void loop() 
@@ -224,7 +189,15 @@ void loop()
   ble.init(bleInitComplete);
   ble_server.start(mbed::callback(waitForEvent, &ble));
   transfer.start(mbed::callback(&queue, &EventQueue::dispatch_forever)); //it doesn't work with a simple functioin call. figure out later why seems strange
+  uint8_t rng;
   while(1)
   {
+    if(sent)
+    {
+      rng = random(10);
+      Serial.println(rng);
+      BLE::Instance(BLE::DEFAULT_INSTANCE).gattServer().write(readCharTwo.getValueHandle(), &rng, sizeof(rng));
+      delay(500); //necessary? check out later...
+    }
   }   
 }
