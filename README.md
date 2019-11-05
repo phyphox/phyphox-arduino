@@ -1,10 +1,9 @@
 # Mbed-ArduinoNano33BLE
 Mbed-OS Features on Arduino Nano33 BLE to use with phyphox
 
+What it does:
+The file sends data read from Analog Pin 1 to a charavtetristic. 
 
-The file sets up a BLE server and advertises its service. The purpose of the file is to send an experiment 
-made for phyphox (www.phyphox.org) from the Arduino Nano33 BLE to the phyphox app. 
+The measured data (I used a simple variable voltage divider aka potentiometer) are then visualized in the app phyphox which you can download from www.phyphox.org. 
 
-Thread and eventQueue are used from mbed library.
-
-You can also use this file as a template to set up a BLE Server with data transfer without phyphox. 
+You do not need any further knowledge in phyphox it's simply used as a plotter for the data (although it can do a lot more). 
