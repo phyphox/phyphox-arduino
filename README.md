@@ -1,5 +1,5 @@
 # Mbed-ArduinoNano33BLE
-Mbed-OS Features on Arduino Nano33 BLE to use with phyphox
+Use phyphox to plot acquired data from Arduino (easy peasy)
 
 What it does:
 The file writes data read from Analog Pin 1 to a characteristic and these values are then sent to phyphox app.
