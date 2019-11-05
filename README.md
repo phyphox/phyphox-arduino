@@ -14,3 +14,7 @@ In your Arduino IDE install:
 1. CRC32 library
 2. ARM mbed library for Nano33 BLE
 3. Add c++11 compiler flag for the compiler. I used several c++11 things...
+
+
+
+In phyphox type the '+' and then the Bluetooth symbol. A device with name 'Arduino' will appear in the list. Click on it here you go. 
