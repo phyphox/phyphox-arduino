@@ -17,3 +17,6 @@ In your Arduino IDE install:
 
 
 In phyphox type the '+' and then the Bluetooth symbol. A device with name 'Arduino' will appear in the list. Click on it here you go. 
+
+
+Take note: At the moment this won't work because I need to implement my own CRC32 function. The official CRC32 library produces a compiler error because it defines 'PinModes' and overwrites the existing 'PinModes' from mbed library. IF you still want to compile it you need to delete the '#include <Arduino.h>' in the CRC32 library then it will work. Nasty stuff. 
