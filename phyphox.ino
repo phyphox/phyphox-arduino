@@ -8,5 +8,8 @@ void setup()
 
 void loop()
 {
-	
+	int val = analogRead(A1);
+	float voltage = 3.3*val/1023.;
+	server.write(voltage);
+	delay(500);
 }
