@@ -1,9 +1,9 @@
 #include <phyphoxBle.h> 
-BleServer server; //Server anlegen
+BleServer server("BLE-Name"); //Server anlegen
 
 void setup()
 {
-  server.start("BLE-Name"); //server starten
+  server.start(); //server starten
 }
 
 void loop()
