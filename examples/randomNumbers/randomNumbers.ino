@@ -3,7 +3,7 @@ BleServer server; //Server anlegen
 
 void setup()
 {
-  server.start(); //server starten
+  server.start("BLE-Name"); //server starten
 }
 
 void loop()
