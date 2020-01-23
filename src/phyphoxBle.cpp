@@ -226,3 +226,17 @@ void BleServer::write(float& f1, float& f2, float& f3)
 	data = reinterpret_cast<uint8_t*>(array);
 	ble.gattServer().write(readCharOne.getValueHandle(), data, 12);
 }
+
+float BleServer::read()
+{	
+	float value = 0;
+	uint16_t configSize = 4;
+	uint8_t myConfig[4];
+
+	ble.gattServer().read(configChar.getValueHandle(), myConfig, &configSize);
+
+	memcpy(&value,&myConfig[0], 4);
+	return value;
+
+}
+

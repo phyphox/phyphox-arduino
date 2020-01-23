@@ -34,13 +34,17 @@ class BleServer : public ble::Gap::EventHandler
 	const UUID customServiceUUID = UUID("cddf0001-30f7-4671-8b43-5e40ba53514a");
 	const UUID phyphoxUUID = UUID("cddf0002-30f7-4671-8b43-5e40ba53514a");
 	uint8_t data_package[20] = {0};
+	uint8_t config_package[4] = {0};
+
 	char DEVICE_NAME[20] = "Ble";
 	const UUID dataOneUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ac");
+	const UUID configUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ad");
 	
 	/*BLE stuff*/
 	BLE& ble = BLE::Instance(BLE::DEFAULT_INSTANCE);
     ReadWriteArrayGattCharacteristic<uint8_t, sizeof(data_package)> dataChar{phyphoxUUID, data_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY}; //Note: Use { } instead of () google most vexing parse
 	uint8_t readValue[12] = {0};
+	ReadWriteArrayGattCharacteristic<uint8_t, sizeof(config_package)> configChar{configUUID, config_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 	ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readCharOne{dataOneUUID, readValue, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 	Thread ble_server, transfer;
 	EventQueue queue{8 * EVENTS_EVENT_SIZE};
@@ -57,7 +61,7 @@ class BleServer : public ble::Gap::EventHandler
 	//helper functon that runs in the thread ble_server
 	static void waitForEvent(BleServer*);
 	static void transferExp(BleServer*);
-	GattCharacteristic* characteristics[2] = {&readCharOne, &dataChar};
+	GattCharacteristic* characteristics[3] = {&readCharOne, &dataChar, &configChar};
 	GattService customService{customServiceUUID, characteristics, sizeof(characteristics) / sizeof(GattCharacteristic *)};
 	
 	//helper function to construct event handler from class function
@@ -70,6 +74,7 @@ class BleServer : public ble::Gap::EventHandler
 	HardwareSerial* printer; //for debug purpose
 	#endif
 	uint8_t* data = nullptr; //this pointer points to the data the user wants to write in the characteristic
+	uint8_t* config =nullptr;
 	uint8_t* p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
 	size_t exp_len = 0; //try o avoid this maybe use std::array or std::vector
 	
@@ -83,6 +88,7 @@ class BleServer : public ble::Gap::EventHandler
 	void write(float&);
 	void write(float&, float&, float&);
 	void write(float&, float&);
+	float read(); 
 	void start(uint8_t* p = nullptr, size_t n = 0); //start method if you specify your own experiment in form of a byte array
 	//void start();
 	#ifndef NDEBUG
