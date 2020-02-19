@@ -1,4 +1,4 @@
-# phyphox Arduino Nano 33 BLE 
+# phyphox Arduino BLE
 Use phyphox to plot sensor data from your Arduino. 
 
 The purpose of this library is to use the phyphox app (see www.phyphox.org) to plot sensor data on your phone. phyphox is much more more than only 'plotting your data'. You can also perform data analysis with it. 
@@ -6,9 +6,14 @@ The purpose of this library is to use the phyphox app (see www.phyphox.org) to p
 
 What you will need:
 
-1.) Arduino Nano 33 Ble 
+1.) One of the following Boards:
 
-2.) The drivers for the Arduino Nano 33 Ble should be installed automatically. After that navigate to Tools -> Boards -> Board Manager and search 'Arduino nano 33 ble'. A package with the word 'mbed os' should appear. It shoudl look like this. Install it.
+- Arduino Nano 33 Ble
+- Arduino Nano Sense
+- Arduino Nano IoT
+- ESP32
+
+2.) The drivers for the Arduino Nano 33 Ble/IoT should be installed automatically. After that navigate to Tools -> Boards -> Board Manager and search 'Arduino nano 33 ble'. A package with the word 'mbed os' should appear. It shoudl look like this. Install it.
 
 ![alt text](https://github.com/AlexanderKrampe/Mbed-ArduinoNano33BLE/blob/master/IDE.png)
 
