@@ -7,10 +7,11 @@ The purpose of this library is to use the phyphox app (see www.phyphox.org) to p
 What you will need:
 
 1.) One of the following Boards:
-    - Arduino Nano 33 Ble 
-    - Arduino Nano Sense
-    - Arduino Nano IoT
-    - ESP32
+
+- Arduino Nano 33 Ble
+- Arduino Nano Sense
+- Arduino Nano IoT
+- ESP32
 
 2.) The drivers for the Arduino Nano 33 Ble/IoT should be installed automatically. After that navigate to Tools -> Boards -> Board Manager and search 'Arduino nano 33 ble'. A package with the word 'mbed os' should appear. It shoudl look like this. Install it.
 
