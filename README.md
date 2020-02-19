@@ -1,4 +1,4 @@
-# phyphox Arduino Nano 33 BLE 
+# phyphox Arduino BLE
 Use phyphox to plot sensor data from your Arduino. 
 
 The purpose of this library is to use the phyphox app (see www.phyphox.org) to plot sensor data on your phone. phyphox is much more more than only 'plotting your data'. You can also perform data analysis with it. 
