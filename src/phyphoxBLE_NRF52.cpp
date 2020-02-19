@@ -1,4 +1,5 @@
-#include "phyphoxBle.h"
+#if defined(ARDUINO_ARCH_MBED)
+#include "phyphoxBLE_NRF52.h"
 
 void BleServer::onDisconnectionComplete(const ble::DisconnectionCompleteEvent &event)
 {
@@ -227,16 +228,15 @@ void BleServer::write(float& f1, float& f2, float& f3)
 	ble.gattServer().write(readCharOne.getValueHandle(), data, 12);
 }
 
-float BleServer::read()
+void BleServer::read(float& f1)
 {	
-	float value = 0;
+	
 	uint16_t configSize = 4;
 	uint8_t myConfig[4];
 
 	ble.gattServer().read(configChar.getValueHandle(), myConfig, &configSize);
 
-	memcpy(&value,&myConfig[0], 4);
-	return value;
+	memcpy(&f1,&myConfig[0], 4);
 
 }
-
+#endif
