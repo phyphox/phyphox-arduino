@@ -228,15 +228,48 @@ void BleServer::write(float& f1, float& f2, float& f3)
 	ble.gattServer().write(readCharOne.getValueHandle(), data, 12);
 }
 
+void BleServer::write(float& f1, float& f2, float& f3, float& f4)
+{
+	 /**
+   * \brief Write 4 floats into characteristic
+   * The floats are parsed to uint8_t* 
+   * because the gattServer write method 
+   * expects a pointer to uint8_t
+   * \param param f1 and f2 and f3 and f4 represents four floats most likeley sensor data
+   */
+	float array[4] = {f1, f2, f3, f4};
+	data = reinterpret_cast<uint8_t*>(array);
+	ble.gattServer().write(readCharOne.getValueHandle(), data, 16);
+}
+void BleServer::write(float& f1, float& f2, float& f3, float& f4, float& f4)
+{
+	 /**
+   * \brief Write 5 floats into characteristic
+   * The floats are parsed to uint8_t* 
+   * because the gattServer write method 
+   * expects a pointer to uint8_t
+   * \param param f1 and f2 and f3 and f4 and f5 represents five floats most likeley sensor data
+   */
+	float array[4] = {f1, f2, f3, f4, f5};
+	data = reinterpret_cast<uint8_t*>(array);
+	ble.gattServer().write(readCharOne.getValueHandle(), data, 20);
+}
+void BleServer::write(uint8_t *arrayPointer, unsigned int arraySize)
+{
+	ble.gattServer().write(readCharOne.getValueHandle(), arrayPointer, arraySize);
+}
+
+
 void BleServer::read(float& f1)
 {	
-	
 	uint16_t configSize = 4;
 	uint8_t myConfig[4];
-
 	ble.gattServer().read(configChar.getValueHandle(), myConfig, &configSize);
-
 	memcpy(&f1,&myConfig[0], 4);
-
+}
+void BleServer::read(uint8_t *arrayPointer, unsigned int arraySize)
+{
+	uint16_t myArraySize = arraySize;
+	ble.gattServer().read(configChar.getValueHandle(), arrayPointer, &myArraySize);
 }
 #endif

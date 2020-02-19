@@ -2,6 +2,7 @@
 #define PHYPHOXBLE_NRF52_H
 #define NDEBUG
 
+#include <phyphoxBle.h>
 #include <mbed.h>
 #include <ble/BLE.h>
 #include <ble/GattServer.h>
@@ -13,6 +14,7 @@
 #include <AdvertisingDataBuilder.h>
 #include <HardwareSerial.h>
 
+
 #ifndef NDEBUG
 using arduino::HardwareSerial;
 #endif
@@ -20,6 +22,8 @@ using events::EventQueue;
 using rtos::Thread;
 using mbed::callback;
 using std::copy;
+
+
 
 class BleServer : public ble::Gap::EventHandler
 {
@@ -34,16 +38,16 @@ class BleServer : public ble::Gap::EventHandler
 	const UUID customServiceUUID = UUID("cddf0001-30f7-4671-8b43-5e40ba53514a");
 	const UUID phyphoxUUID = UUID("cddf0002-30f7-4671-8b43-5e40ba53514a");
 	uint8_t data_package[20] = {0};
-	uint8_t config_package[4] = {0};
+	uint8_t config_package[CONFIGSIZE] = {0};
 
-	char DEVICE_NAME[20] = "Ble";
+	char DEVICE_NAME[20] = "Arduino";
 	const UUID dataOneUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ac");
 	const UUID configUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ad");
 	
 	/*BLE stuff*/
 	BLE& ble = BLE::Instance(BLE::DEFAULT_INSTANCE);
     ReadWriteArrayGattCharacteristic<uint8_t, sizeof(data_package)> dataChar{phyphoxUUID, data_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY}; //Note: Use { } instead of () google most vexing parse
-	uint8_t readValue[12] = {0};
+	uint8_t readValue[DATASIZE] = {0};
 	ReadWriteArrayGattCharacteristic<uint8_t, sizeof(config_package)> configChar{configUUID, config_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 	ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readCharOne{dataOneUUID, readValue, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 	Thread ble_server, transfer;
@@ -85,10 +89,14 @@ class BleServer : public ble::Gap::EventHandler
 	BleServer(const BleServer&) = delete; //there is no need to copy a BleServer once established
 	BleServer &operator=(const BleServer&) = delete; //there is no need to assign a BleServer to a BleServer
 	~BleServer() = default; //no dynamic memory allocation 
+	void write(uint8_t*, unsigned int);	
 	void write(float&);
+	void write(float&, float&, float&, float&, float&);
+	void write(float&, float&, float&, float&);
 	void write(float&, float&, float&);
 	void write(float&, float&);
-	void read(float&); 
+	void read(uint8_t*, unsigned int);
+	void read(float&);
 	void start(uint8_t* p = nullptr, size_t n = 0); //start method if you specify your own experiment in form of a byte array
 	//void start();
 	#ifndef NDEBUG
