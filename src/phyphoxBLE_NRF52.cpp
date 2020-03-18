@@ -241,7 +241,7 @@ void BleServer::write(float& f1, float& f2, float& f3, float& f4)
 	data = reinterpret_cast<uint8_t*>(array);
 	ble.gattServer().write(readCharOne.getValueHandle(), data, 16);
 }
-void BleServer::write(float& f1, float& f2, float& f3, float& f4, float& f4)
+void BleServer::write(float& f1, float& f2, float& f3, float& f4, float& f5)
 {
 	 /**
    * \brief Write 5 floats into characteristic
@@ -250,7 +250,7 @@ void BleServer::write(float& f1, float& f2, float& f3, float& f4, float& f4)
    * expects a pointer to uint8_t
    * \param param f1 and f2 and f3 and f4 and f5 represents five floats most likeley sensor data
    */
-	float array[4] = {f1, f2, f3, f4, f5};
+	float array[5] = {f1, f2, f3, f4, f5};
 	data = reinterpret_cast<uint8_t*>(array);
 	ble.gattServer().write(readCharOne.getValueHandle(), data, 20);
 }
