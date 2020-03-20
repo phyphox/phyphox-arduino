@@ -2,8 +2,6 @@
 #ifndef PHYPHOXBLE_ESP32_H
 #define PHYPHOXBLE_ESP32_H
 
-
-
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
@@ -15,16 +13,11 @@ using std::copy;
 class BleServer
 {
     private:
-        //const UUID customServiceUUID = UUID("cddf0001-30f7-4671-8b43-5e40ba53514a");
-        //const UUID phyphoxUUID = UUID("cddf0002-30f7-4671-8b43-5e40ba53514a");
-        //const string customServiceUUID = "cddf0001-30f7-4671-8b43-5e40ba53514a";
-        //const string phyphoxUUID = "cddf0002-30f7-4671-8b43-5e40ba53514a";
+
         const char *customServiceUUID = "cddf0001-30f7-4671-8b43-5e40ba53514a";
         const char *phyphoxUUID = "cddf0002-30f7-4671-8b43-5e40ba53514a";        
         uint8_t data_package[20] = {0};
-        const char DEVICE_NAME[20] = "Arduino";    
-        //const UUID dataOneUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ac");
-        //const String dataOneUUID = "59f51a40-8852-4abe-a50f-2d45e6bd51ac";
+        char DEVICE_NAME[20] = "Arduino";    
         const char *dataOneUUID = "59f51a40-8852-4abe-a50f-2d45e6bd51ac";
 
         BLEServer *myServer;
@@ -35,7 +28,6 @@ class BleServer
         BLECharacteristic *experimentCharacteristic;
         BLEAdvertising *myAdvertising;
 
-        
    //     void when_connected();
 
    //     virtual void onDisconnectionComplete();
@@ -46,8 +38,7 @@ class BleServer
 
     public:
         BleServer() {};
-	//BleServer(char* s) {strcpy(DEVICE_NAME, s);};
-	BleServer(char* s) {};
+	BleServer(const char* s) {strcpy(DEVICE_NAME, s);};
         BleServer(const BleServer&) = delete; //there is no need to copy a BleServer once established
         BleServer &operator=(const BleServer&) = delete; //there is no need to assign a BleServer to a BleServer
         ~BleServer() = default; //no dynamic memory allocation 

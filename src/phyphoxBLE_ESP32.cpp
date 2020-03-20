@@ -22,7 +22,7 @@ void BleServer::start(uint8_t* exp_pointer, size_t len)
 
   this->p_exp = exp_pointer;
   this->exp_len = len;
-	BLEDevice::init("Arduino");
+	BLEDevice::init(DEVICE_NAME);
 	myServer = BLEDevice::createServer();
  	myService = myServer->createService(customServiceUUID);
   
