@@ -12,7 +12,7 @@
 using std::copy;
 
 
-class phyphoxBleServer
+class BleServer
 {
     private:
         //const UUID customServiceUUID = UUID("cddf0001-30f7-4671-8b43-5e40ba53514a");
@@ -45,10 +45,12 @@ class phyphoxBleServer
         size_t exp_len = 0; //try o avoid this maybe use std::array or std::vector
 
     public:
-        phyphoxBleServer() {};
-        phyphoxBleServer(const phyphoxBleServer&) = delete; //there is no need to copy a BleServer once established
-        phyphoxBleServer &operator=(const phyphoxBleServer&) = delete; //there is no need to assign a BleServer to a BleServer
-        ~phyphoxBleServer() = default; //no dynamic memory allocation 
+        BleServer() {};
+	//BleServer(char* s) {strcpy(DEVICE_NAME, s);};
+	BleServer(char* s) {};
+        BleServer(const BleServer&) = delete; //there is no need to copy a BleServer once established
+        BleServer &operator=(const BleServer&) = delete; //there is no need to assign a BleServer to a BleServer
+        ~BleServer() = default; //no dynamic memory allocation 
         void start(uint8_t* p = nullptr, size_t n = 0); 
         void when_subscription_received();
 

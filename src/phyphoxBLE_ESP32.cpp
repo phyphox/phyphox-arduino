@@ -6,10 +6,10 @@
 class MyExpCallback: public BLEDescriptorCallbacks {
 
     public:
-      MyExpCallback(phyphoxBleServer* myServerPointerParam):myServerPointer(myServerPointerParam) {};
+      MyExpCallback(BleServer* myServerPointerParam):myServerPointer(myServerPointerParam) {};
 
     private:
-      phyphoxBleServer* myServerPointer;
+      BleServer* myServerPointer;
 
     void onWrite(BLEDescriptor* pDescriptor){
       myServerPointer->when_subscription_received();
@@ -17,7 +17,7 @@ class MyExpCallback: public BLEDescriptorCallbacks {
   };
 
 
-void phyphoxBleServer::start(uint8_t* exp_pointer, size_t len)
+void BleServer::start(uint8_t* exp_pointer, size_t len)
 {
 
   this->p_exp = exp_pointer;
@@ -55,7 +55,7 @@ void phyphoxBleServer::start(uint8_t* exp_pointer, size_t len)
 
 }
 
-void phyphoxBleServer::write(float& value)
+void BleServer::write(float& value)
 {
   /**
    * \brief Write a single float into characteristic
@@ -69,28 +69,28 @@ void phyphoxBleServer::write(float& value)
   dataCharacteristic->notify();
 }
 
-void phyphoxBleServer::write(float& f1, float& f2)
+void BleServer::write(float& f1, float& f2)
 {
   float array[2] = {f1, f2};
   data = reinterpret_cast<uint8_t*>(array);
   dataCharacteristic->setValue(data,8);
   dataCharacteristic->notify();
 }
-void phyphoxBleServer::write(float& f1, float& f2, float& f3)
+void BleServer::write(float& f1, float& f2, float& f3)
 {
   float array[3] = {f1, f2, f3};
   data = reinterpret_cast<uint8_t*>(array);
   dataCharacteristic->setValue(data,12);
   dataCharacteristic->notify();
 }
-void phyphoxBleServer::write(float& f1, float& f2, float& f3, float& f4)
+void BleServer::write(float& f1, float& f2, float& f3, float& f4)
 {
   float array[4] = {f1, f2, f3, f4};
   data = reinterpret_cast<uint8_t*>(array);
   dataCharacteristic->setValue(data,16);
   dataCharacteristic->notify();
 }
-void phyphoxBleServer::write(float& f1, float& f2, float& f3, float& f4, float& f5)
+void BleServer::write(float& f1, float& f2, float& f3, float& f4, float& f5)
 {
   float array[5] = {f1, f2, f3, f4, f5};
   data = reinterpret_cast<uint8_t*>(array);
@@ -100,7 +100,7 @@ void phyphoxBleServer::write(float& f1, float& f2, float& f3, float& f4, float& 
 
 
 
-void phyphoxBleServer::when_subscription_received()
+void BleServer::when_subscription_received()
 {
     myAdvertising->stop();
     uint8_t* exp = this->p_exp;
