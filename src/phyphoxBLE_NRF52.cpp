@@ -174,8 +174,14 @@ void BleServer::start(uint8_t* exp_pointer, size_t len)
 	#ifndef NDEBUG
 	output("In start");
 	#endif
+
+	int length=0;
+	BleServer::myEXP.buildExperiment(length);
+	
 	p_exp = exp_pointer;
-	exp_len = len;
+	p_exp = myEXP.GENERATEDEXPERIMENT;
+
+	exp_len = length;
 	ble.init(this, &BleServer::bleInitComplete);
 	ble_server.start(mbed::callback(BleServer::waitForEvent, this));
 	queue.event(mbed::callback(BleServer::transferExp, this));

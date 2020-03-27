@@ -1,6 +1,7 @@
 #ifndef PHYPHOXBLE_NRF52_H
 #define PHYPHOXBLE_NRF52_H
 #define NDEBUG
+#include "generateExperiment.h"
 
 #include <phyphoxBle.h>
 #include <mbed.h>
@@ -24,9 +25,9 @@ using mbed::callback;
 using std::copy;
 
 
-
 class BleServer : public ble::Gap::EventHandler
 {
+	
 	private:
 	/* Members every server need to have
 	 * phyphox service uuid
@@ -43,7 +44,7 @@ class BleServer : public ble::Gap::EventHandler
 	char DEVICE_NAME[20] = "Arduino";
 	const UUID dataOneUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ac");
 	const UUID configUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ad");
-	
+	myExperiment myEXP;
 	/*BLE stuff*/
 	BLE& ble = BLE::Instance(BLE::DEFAULT_INSTANCE);
     ReadWriteArrayGattCharacteristic<uint8_t, sizeof(data_package)> dataChar{phyphoxUUID, data_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY}; //Note: Use { } instead of () google most vexing parse
@@ -89,6 +90,9 @@ class BleServer : public ble::Gap::EventHandler
 	BleServer(const BleServer&) = delete; //there is no need to copy a BleServer once established
 	BleServer &operator=(const BleServer&) = delete; //there is no need to assign a BleServer to a BleServer
 	~BleServer() = default; //no dynamic memory allocation 
+
+
+
 	void write(uint8_t*, unsigned int);	
 	void write(float&);
 	void write(float&, float&, float&, float&, float&);
