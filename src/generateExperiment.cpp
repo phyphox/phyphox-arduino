@@ -46,12 +46,6 @@ void myExperiment::buildExperiment(int& expSize){
 	currentBytePosition=currentBytePosition+sizeof(endPhyphox);
 	expSize = currentBytePosition;
 
-/*
-	const static int sizeOfBody = sizeof(BODY);
-	expSize = sizeOfHeader+sizeOfBody;
-	memcpy(&myExperiment::GENERATEDEXPERIMENT[0],&header[0],sizeOfHeader);
-	memcpy(&myExperiment::GENERATEDEXPERIMENT[0+sizeOfHeader],&BODY[0],sizeOfBody);
-*/
 }
 
 
@@ -176,10 +170,4 @@ void myExperiment::exportData(int& address){
 	address = address + size;
 }
 
-
-/*
-
-	//unsigned char BODY[] =  "<title>New experiment</title>\n<category>no category</category>\n<description></description>\n<data-containers>\n<container size=\"1000\" static=\"false\">t</container>\n<container size=\"1000\" static=\"false\">abs</container>\n</data-containers>\n<input>\n<sensor rate=\"0\" average=\"false\" type=\"accelerometer\">\n<output component=\"t\">t</output>\n<output component=\"abs\">abs</output>\n</sensor>\n</input>\n<output></output>\n<analysis sleep=\"0\"  onUserInput=\"false\"></analysis>\n<views>\n<view label=\"New view\">\n<graph label=\"LABEL\" aspectRatio=\"2.5\" style=\"lines\" lineWidth=\"1\" color=\"ff7e22\" partialUpdate=\"false\" history=\"1\" labelX=\"labelX\" labelY=\"labely\" labelZ=\"\" unitX=\"unitx\" unitY=\"unitY\" unitZ=\"\" logX=\"false\" logY=\"false\" logZ=\"false\" xPrecision=\"3\" yPrecision=\"3\" zPrecision=\"3\" scaleMinX=\"auto\" scaleMaxX=\"auto\" scaleMinY=\"auto\" scaleMaxY=\"auto\" scaleMinZ=\"auto\" scaleMaxZ=\"auto\" minX=\"0\" maxX=\"0\" minY=\"0\" maxY=\"0\" minZ=\"0\" maxZ=\"0\"  mapWidth=\"0\" >\n<input axis=\"x\">t</input>\n<input axis=\"y\">abs</input>\n</graph>\n</view></views>\n<export></export>\n</phyphox>";
-
-*/
         
