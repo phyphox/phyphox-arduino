@@ -8,9 +8,9 @@ void setup()
    //Experiment
    Experiment PlotRandomValues;		//Experiment to plot random values generated on Arduino
 
-   Distance_ToF.setTitle("Random Number Plotter");
-   Distance_ToF.setCategory("Arduino Experiments");
-   Distance_ToF.setDescription("Random numbers are generated on Arduino and plotted with phyphox afterwards");
+   PlotRandomValues.setTitle("Random Number Plotter");
+   PlotRandomValues.setCategory("Arduino Experiments");
+   PlotRandomValues.setDescription("Random numbers are generated on Arduino and plotted with phyphox afterwards");
 
    //View
    View firstView;
@@ -42,12 +42,12 @@ void setup()
 void loop()
 {
     
-  float randomDistance = random(0,100); //Erzeuge Zufallszahlen zwischen 0 - 100
+  float randomValue = random(0,100); //Erzeuge Zufallszahlen zwischen 0 - 100
   /*  The random number is written into Channel 1
    *  Up to 5 Channels can written at the same time with server.write(randomDistance, valueChannel2, valueChannel3.. )
    */
 
-  server.write(randomDistance);		
+  server.write(randomValue);		
   delay(50);
   
 }

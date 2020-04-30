@@ -57,7 +57,7 @@ void Experiment::getBytes(char *buffArray){
 		strcat(buffArray, "<output char=\"59f51a40-8852-4abe-a50f-2d45e6bd51ac\" conversion=\"float32LittleEndian\" ");
 		char add[20];
 		int k = (i-1)*4;
-		sprintf(add, "offset=\"%i\" >I%i", k,i);
+		sprintf(add, "offset=\"%i\" >CH%i", k,i);
 		strcat(buffArray, add);
 		strcat(buffArray,"</output>\n");
 	}

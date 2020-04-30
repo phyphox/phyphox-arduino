@@ -24,11 +24,11 @@ void Graph::setChannel(int x, int y)
 {
 	char xChar[1] = "";
 	char yChar[1] = "";
-	sprintf(xChar, "%i", x);
-	sprintf(yChar, "%i", y);
+	sprintf(xChar, "CH%i", x);
+	sprintf(yChar, "CH%i", y);
 
-	strcat(UNITX, xChar);
-	strcat(UNITY, yChar);
+	strcat(INPUTX, xChar);
+	strcat(INPUTY, yChar);
 
 }
 
@@ -50,9 +50,9 @@ void Graph::getBytes(char *buffArray)
 	strcat(buffArray,"\" unitZ=\"\" logX=\"false\" logY=\"false\" logZ=\"false\" xPrecision=\"3\" yPrecision=\"3\" zPrecision=\"3\" scaleMinX=\"auto\" scaleMaxX=\"auto\" scaleMinY=\"auto\" scaleMaxY=\"auto\" scaleMinZ=\"auto\" scaleMaxZ=\"auto\" minX=\"0\" maxX=\"0\" minY=\"0\" maxY=\"0\" minZ=\"0\" maxZ=\"0\"  mapWidth=\"0\" >\n");
 
 	strcat(buffArray, "\t\t\t<input axis=\"x\">");
-	strcat(buffArray, UNITX);
+	strcat(buffArray, INPUTX);
 	strcat(buffArray, "</input>\n\t\t\t<input axis=\"y\">");
-	strcat(buffArray, UNITY);
+	strcat(buffArray, INPUTY);
 	strcat(buffArray, "</input>\n\t\t</graph>\n");
 
 	
