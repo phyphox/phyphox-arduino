@@ -1,7 +1,6 @@
 #ifndef PHYPHOXBLE_NRF52_H
 #define PHYPHOXBLE_NRF52_H
 #define NDEBUG
-#include "generateExperiment.h"
 
 #include <phyphoxBle.h>
 #include <mbed.h>
@@ -14,7 +13,10 @@
 #include <AdvertisingParameters.h>
 #include <AdvertisingDataBuilder.h>
 #include <HardwareSerial.h>
-
+#include "element.h"	
+#include "graph.h"
+#include "view.h"
+#include "experiment.h"
 
 #ifndef NDEBUG
 using arduino::HardwareSerial;
@@ -44,10 +46,11 @@ class BleServer : public ble::Gap::EventHandler
 	char DEVICE_NAME[20] = "Arduino";
 	const UUID dataOneUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ac");
 	const UUID configUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ad");
-	myExperiment myEXP;
+	
+
 	/*BLE stuff*/
 	BLE& ble = BLE::Instance(BLE::DEFAULT_INSTANCE);
-    ReadWriteArrayGattCharacteristic<uint8_t, sizeof(data_package)> dataChar{phyphoxUUID, data_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY}; //Note: Use { } instead of () google most vexing parse
+    	ReadWriteArrayGattCharacteristic<uint8_t, sizeof(data_package)> dataChar{phyphoxUUID, data_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY}; //Note: Use { } instead of () google most vexing parse
 	uint8_t readValue[DATASIZE] = {0};
 	ReadWriteArrayGattCharacteristic<uint8_t, sizeof(config_package)> configChar{configUUID, config_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 	ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readCharOne{dataOneUUID, readValue, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
@@ -75,14 +78,15 @@ class BleServer : public ble::Gap::EventHandler
         return makeFunctionPointer(this, member);
 	}
 	
+
 	#ifndef NDEBUG
 	HardwareSerial* printer; //for debug purpose
 	#endif
 	uint8_t* data = nullptr; //this pointer points to the data the user wants to write in the characteristic
 	uint8_t* config =nullptr;
 	uint8_t* p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
-	size_t exp_len = 0; //try o avoid this maybe use std::array or std::vector
-	
+
+
 	public:
 	BleServer() {};
 	BleServer(const char* s) {strcpy(DEVICE_NAME, s);};
@@ -91,7 +95,8 @@ class BleServer : public ble::Gap::EventHandler
 	BleServer &operator=(const BleServer&) = delete; //there is no need to assign a BleServer to a BleServer
 	~BleServer() = default; //no dynamic memory allocation 
 
-
+	uint8_t EXPARRAY[4096] = {0};// block some storage
+	size_t exp_len = 0; //try o avoid this maybe use std::array or std::vector
 
 	void write(uint8_t*, unsigned int);	
 	void write(float&);
@@ -103,6 +108,8 @@ class BleServer : public ble::Gap::EventHandler
 	void read(float&);
 	void start(uint8_t* p = nullptr, size_t n = 0); //start method if you specify your own experiment in form of a byte array
 	//void start();
+
+	void addExperiment(Experiment&);
 	#ifndef NDEBUG
 	void begin(HardwareSerial*); //for debug purpose
 	void output(const char*); //for debug purpose
