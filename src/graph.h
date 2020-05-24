@@ -15,8 +15,8 @@ class Graph : public Element
 	char LABELX[50] = "Default Label X";
 	char LABELY[50] = "Default Label Y";
 
-	char INPUTX[5]="";
-	char INPUTY[5]="";
+	char INPUTX[5]="CH";
+	char INPUTY[5]="CH";
 
 	void setUnitX(char*);
 	void setUnitY(char*);

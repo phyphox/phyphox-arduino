@@ -22,10 +22,10 @@ void Graph::setLabelY(char *ly){
 
 void Graph::setChannel(int x, int y)
 {
-	char xChar[1] = "";
-	char yChar[1] = "";
-	sprintf(xChar, "CH%i", x);
-	sprintf(yChar, "CH%i", y);
+	char xChar[10] = "";
+	char yChar[10] = "";
+	sprintf(xChar, "%i", x);
+	sprintf(yChar, "%i", y);
 
 	strcat(INPUTX, xChar);
 	strcat(INPUTY, yChar);
@@ -38,7 +38,7 @@ void Graph::getBytes(char *buffArray)
 
 
 	strcat(buffArray,"\t\t<graph label=\"");
-	strcat(buffArray, UNITX);
+	strcat(buffArray, LABEL);
 	strcat(buffArray,"\" aspectRatio=\"2.5\" style=\"lines\" lineWidth=\"1\" color=\"ff7e22\" partialUpdate=\"false\" history=\"1\" labelX=\"");
 	strcat(buffArray,LABELX);
 	strcat(buffArray,"\" labelY=\"");
