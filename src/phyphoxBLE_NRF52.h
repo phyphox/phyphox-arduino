@@ -96,7 +96,7 @@ class BleServer : public ble::Gap::EventHandler
 	~BleServer() = default; //no dynamic memory allocation 
 
 	uint8_t EXPARRAY[4096] = {0};// block some storage
-	size_t exp_len = 0; //try o avoid this maybe use std::array or std::vector
+	size_t expLen = 0; //try o avoid this maybe use std::array or std::vector
 
 	void write(uint8_t*, unsigned int);	
 	void write(float&);

@@ -8,8 +8,14 @@
 #include <BLEServer.h>
 #include <esp_system.h>
 #include <BLE2902.h>
-using std::copy;
+#include "element.h"	
+#include "graph.h"
+#include "view.h"
+#include "experiment.h"
+//#include <HardwareSerial.h>
 
+
+using std::copy;
 
 class BleServer
 {
@@ -29,13 +35,16 @@ class BleServer
         BLECharacteristic *experimentCharacteristic;
         BLEAdvertising *myAdvertising;
 
+	//HardwareSerial* printer; //for debug purpose
+
+
    //     void when_connected();
 
    //     virtual void onDisconnectionComplete();
    //     virtual void onConnectionComplete();
         uint8_t* data = nullptr; //this pointer points to the data the user wants to write in the characteristic
         uint8_t* p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
-        size_t exp_len = 0; //try o avoid this maybe use std::array or std::vector
+	TaskHandle_t TaskTransfer;
 
     public:
         BleServer() {};
@@ -44,13 +53,22 @@ class BleServer
         BleServer &operator=(const BleServer&) = delete; //there is no need to assign a BleServer to a BleServer
         ~BleServer() = default; //no dynamic memory allocation 
         void start(uint8_t* p = nullptr, size_t n = 0); 
-        void when_subscription_received();
 
+        void when_subscription_received();
+	void startTask();
+	static void staticStartTask(void*);
+
+	void addExperiment(Experiment&);
         void write(float&);
         void write(float&, float&);
         void write(float&, float&, float&);
         void write(float&, float&, float&, float&);
         void write(float&, float&, float&, float&, float&);
+        size_t expLen = 0; //try o avoid this maybe use std::array or std::vector
+	uint8_t EXPARRAY[4000] = {0};// block some storage
+	
+	//void begin(HardwareSerial*); //for debug purpose
+
 };
 
 

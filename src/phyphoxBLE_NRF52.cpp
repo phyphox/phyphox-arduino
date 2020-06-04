@@ -63,7 +63,7 @@ void BleServer::transferExp(BleServer* server)
 {
 	BLE &ble = server ->ble;
 	uint8_t* exp = server -> p_exp;
-	size_t exp_len = server -> exp_len;
+	size_t exp_len = server -> expLen;
 
 	#ifndef NDEBUG
 	server -> output("In transfer exp");
@@ -178,7 +178,7 @@ void BleServer::start(uint8_t* exp_pointer, size_t len)
 
 	if(exp_pointer != nullptr){
 		p_exp = exp_pointer;
-		exp_len = len;
+		expLen = len;
 	}
 	ble.init(this, &BleServer::bleInitComplete);
 	ble_server.start(mbed::callback(BleServer::waitForEvent, this));
@@ -285,7 +285,7 @@ void BleServer::addExperiment(Experiment& exp)
 	exp.getBytes(buffer);
 	memcpy(&EXPARRAY[0],&buffer[0],strlen(buffer));
 	p_exp = &EXPARRAY[0];
-	exp_len = strlen(buffer);
+	expLen = strlen(buffer);
 }
 
 
