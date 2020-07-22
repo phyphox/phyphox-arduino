@@ -13,18 +13,39 @@ class MyExpCallback: public BLEDescriptorCallbacks {
       BleServer* myServerPointer;
 
     void onWrite(BLEDescriptor* pDescriptor){
-	uint8_t* rxValue = pDescriptor->getValue();
+      uint8_t* rxValue = pDescriptor->getValue();
 
-	if(pDescriptor->getLength() > 0){
-		if (rxValue[0] == 1) {
-			// start when_subscription_received() on cpu 1
-	      		myServerPointer->startTask();
-		}
-	}
+    	if(pDescriptor->getLength() > 0){
+    		if (rxValue[0] == 1) {
+    			// start when_subscription_received() on cpu 1
+    	      		myServerPointer->startTask();
+    		}
+    	}
 	
     };
   };
 
+class MyCharCallback: public BLECharacteristicCallbacks {
+  public:
+    MyCharCallback(BleServer* myServerPointerParam):myServerPointer(myServerPointerParam) {};
+  private:
+      BleServer* myServerPointer;
+
+
+
+    void onWrite(BLECharacteristic *pCharacteristic) {
+                 myServerPointer->configHandlerDebug();
+      
+    }      
+};
+
+void BleServer::configHandlerDebug(){
+  
+  if(configHandler!=nullptr){
+    (*configHandler)();
+  }
+  
+}
 
 void BleServer::start(uint8_t* exp_pointer, size_t len)
 {
@@ -49,14 +70,24 @@ void BleServer::start(uint8_t* exp_pointer, size_t len)
 		       BLECharacteristic::PROPERTY_WRITE |
 		       BLECharacteristic::PROPERTY_NOTIFY 
 	    );
+    configCharacteristic = myService->createCharacteristic(
+          configUUID,
+          BLECharacteristic::PROPERTY_READ   |
+           BLECharacteristic::PROPERTY_WRITE |
+           BLECharacteristic::PROPERTY_NOTIFY 
+      );
   myExperimentDescriptor = new BLE2902();
   myDataDescriptor = new BLE2902();
+  myConfigDescriptor = new BLE2902();
 
 
   myExperimentDescriptor->setCallbacks(new MyExpCallback(this));
 
   dataCharacteristic->addDescriptor(myDataDescriptor);
   experimentCharacteristic->addDescriptor(myExperimentDescriptor);
+  configCharacteristic->addDescriptor(myExperimentDescriptor);
+
+  configCharacteristic->setCallbacks(new MyCharCallback(this));
 
   myService->start();
   myAdvertising = BLEDevice::getAdvertising();
@@ -117,6 +148,19 @@ void BleServer::write(float& f1, float& f2, float& f3, float& f4, float& f5)
   dataCharacteristic->setValue(data,20);
   dataCharacteristic->notify();
 }
+
+void BleServer::read(uint8_t *arrayPointer, unsigned int arraySize)
+{
+  uint8_t* data = configCharacteristic->getData();
+  memcpy(arrayPointer,data,arraySize);
+}
+
+void BleServer::read(float& f)
+{
+  uint8_t* data = configCharacteristic->getData();
+  memcpy(&f,data,4);
+}
+
 
 void BleServer::when_subscription_received()
 {

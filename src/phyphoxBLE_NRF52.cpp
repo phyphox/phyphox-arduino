@@ -51,14 +51,20 @@ void BleServer::when_subscription_received(GattAttribute::Handle_t handle)
 	ble.gattServer().areUpdatesEnabled(*characteristics[1], &sub_dChar);
 	if(sub_dChar)
 	{
-		queue.call(transferExp, this);
+		//queue.call(transferExp, this);
+		transferQueue.call(transferExp, this);
 		sub_dChar = false;
 	}
 	//after experiment has been transfered start advertising again
 	ble.gap().startAdvertising(ble::LEGACY_ADVERTISING_HANDLE);
 
 }
-
+void BleServer::configReceived(const GattWriteCallbackParams *params)
+{
+	if(configHandler != nullptr){
+		transferQueue.call( configHandler ); 		
+	}
+}
 void BleServer::transferExp(BleServer* server)
 {
 	BLE &ble = server ->ble;
@@ -134,7 +140,9 @@ void BleServer::bleInitComplete(BLE::InitializationCompleteCallbackContext* para
 	ble.gap().onDisconnection(this, &BleServer::when_disconnection);
 	ble.gap().onConnection(this, &BleServer::when_connected);
 	*/
-	ble.gattServer().onUpdatesEnabled(as_cb(&BleServer::when_subscription_received)); //this is not deprecated
+	
+	ble.gattServer().onUpdatesEnabled(as_cb(&BleServer::when_subscription_received));
+	ble.gattServer().onDataWritten(as_cb(&BleServer::configReceived));
 	ble.gap().setEventHandler(this);
 	char name[strlen(DEVICE_NAME)];
 	strcpy(name, DEVICE_NAME);
@@ -153,13 +161,6 @@ void BleServer::bleInitComplete(BLE::InitializationCompleteCallbackContext* para
 	output("in init");
 	#endif
 }
-
-void BleServer::waitForEvent(BleServer* server)
-{
-	while(1)
-		server -> ble.waitForEvent(); //deprecated.
-}
-
 
 void BleServer::start(uint8_t* exp_pointer, size_t len)
 {
@@ -180,10 +181,11 @@ void BleServer::start(uint8_t* exp_pointer, size_t len)
 		p_exp = exp_pointer;
 		expLen = len;
 	}
+
+	bleEventThread.start(callback(&queue, &EventQueue::dispatch_forever));
+  	transferExpThread.start(callback(&transferQueue, &EventQueue::dispatch_forever));
+	ble.onEventsToProcess(makeFunctionPointer(this, &BleServer::schedule_ble_events));
 	ble.init(this, &BleServer::bleInitComplete);
-	ble_server.start(mbed::callback(BleServer::waitForEvent, this));
-	queue.event(mbed::callback(BleServer::transferExp, this));
-	transfer.start(mbed::callback(&queue, &EventQueue::dispatch_forever));
 }
 
 	
@@ -288,7 +290,9 @@ void BleServer::addExperiment(Experiment& exp)
 	expLen = strlen(buffer);
 }
 
-
+void BleServer::schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context) {
+    queue.call(mbed::Callback<void()>(&context->ble, &BLE::processEvents));
+}
 
 
 

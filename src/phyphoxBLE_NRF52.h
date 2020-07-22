@@ -50,24 +50,29 @@ class BleServer : public ble::Gap::EventHandler
 
 	/*BLE stuff*/
 	BLE& ble = BLE::Instance(BLE::DEFAULT_INSTANCE);
-    	ReadWriteArrayGattCharacteristic<uint8_t, sizeof(data_package)> dataChar{phyphoxUUID, data_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY}; //Note: Use { } instead of () google most vexing parse
+	ReadWriteArrayGattCharacteristic<uint8_t, sizeof(data_package)> dataChar{phyphoxUUID, data_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY}; //Note: Use { } instead of () google most vexing parse
 	uint8_t readValue[DATASIZE] = {0};
 	ReadWriteArrayGattCharacteristic<uint8_t, sizeof(config_package)> configChar{configUUID, config_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 	ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readCharOne{dataOneUUID, readValue, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
-	Thread ble_server, transfer;
-	EventQueue queue{8 * EVENTS_EVENT_SIZE};
+	Thread bleEventThread;
+	Thread transferExpThread;
+	EventQueue queue{32 * EVENTS_EVENT_SIZE};
 	/*end BLE stuff*/
+	EventQueue transferQueue{32 * EVENTS_EVENT_SIZE};
+
 	
 	//helper function to initialize BLE server and for connection poperties
 	void bleInitComplete(BLE::InitializationCompleteCallbackContext*);
 	void when_disconnection(const Gap::DisconnectionCallbackParams_t *);
 	void when_subscription_received(GattAttribute::Handle_t);
+	void configReceived(const GattWriteCallbackParams *params);
+
 	void when_connected(const Gap::ConnectionCallbackParams_t *);
 	virtual void onDisconnectionComplete(const ble::DisconnectionCompleteEvent&);
 	virtual void onConnectionComplete(const ble::ConnectionCompleteEvent&);
    
 	//helper functon that runs in the thread ble_server
-	static void waitForEvent(BleServer*);
+	//static void waitForEvent(BleServer*);
 	static void transferExp(BleServer*);
 	GattCharacteristic* characteristics[3] = {&readCharOne, &dataChar, &configChar};
 	GattService customService{customServiceUUID, characteristics, sizeof(characteristics) / sizeof(GattCharacteristic *)};
@@ -78,6 +83,7 @@ class BleServer : public ble::Gap::EventHandler
         return makeFunctionPointer(this, member);
 	}
 	
+	void schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context);
 
 	#ifndef NDEBUG
 	HardwareSerial* printer; //for debug purpose
@@ -97,6 +103,8 @@ class BleServer : public ble::Gap::EventHandler
 
 	uint8_t EXPARRAY[4096] = {0};// block some storage
 	size_t expLen = 0; //try o avoid this maybe use std::array or std::vector
+
+	void (*configHandler)() = nullptr;
 
 	void write(uint8_t*, unsigned int);	
 	void write(float&);
