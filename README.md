@@ -31,3 +31,11 @@ In line 1 we include our phyphox library that establishes a Bluetooth Low Energy
 - OK now we want to send our voltage to phyphox. We do this by calling: server.write(voltage). The delay is optional you can also change the value. Now in phyphox connecet to Arduino. After the experiment has been transferred click on the 'play' symbol in the upper left corner to start your data capture. If everything worked fine we should see something like this. 
 
 ![alt text](https://github.com/AlexanderKrampe/Mbed-ArduinoNano33BLE/blob/master/exp.png)
+
+
+TODO:
+
+- revise channel selection
+- implement experiment generation on esp32
+- memory optimization (using vectors?)
+- request larger mtu size

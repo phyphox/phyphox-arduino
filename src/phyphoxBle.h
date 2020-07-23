@@ -1,5 +1,5 @@
-#ifndef PHYBLE_H
-#define PHYBLE_H
+#ifndef PHYPHOXBLE
+#define PHYPHOXBLE
 
 #ifndef DATASIZE
 #define DATASIZE 20
@@ -17,6 +17,7 @@
 #endif
 
 #include "Arduino.h"
+
 
 struct crc32
 {

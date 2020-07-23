@@ -1,0 +1,42 @@
+<phyphox xmlns="http://phyphox.org/xml" xmlns:editor="http://phyphox.org/editor/xml" version="1.7" editor:version="1.0" locale="en">
+    <title>getData</title>
+    <category>Arduino Library</category>
+    <color>00979c</color>
+    <description></description>
+    <data-containers>
+        <container size="1000" static="false">t</container>
+        <container size="1000" static="false">z</container>
+    </data-containers>
+    <input>
+        <sensor editor:uuid="183" editor:posx="621.5625" editor:posy="145.75" rate="0" average="false" type="accelerometer">
+            <output component="z">z</output>
+            <output component="t">t</output>
+        </sensor>
+    </input>
+    <output>
+        <bluetooth editor:uuid="186" editor:posx="1122" editor:posy="130"  name="phyphox" >
+            <input char="59f51a40-8852-4abe-a50f-2d45e6bd51ad" conversion="float32LittleEndian">z</input>
+        </bluetooth>
+    </output>
+    <analysis sleep="0"  onUserInput="false">
+    </analysis>
+    <views>
+        <view label="Raw Data">
+            <info editor:uuid="258" label="This &quot;experiment&quot; reads out the accelerometer in z direction and sends the value to your arduino" >
+            </info>
+            <graph editor:uuid="238" editor:posx="1197.8580852919986" editor:posy="356.4454466462989" label="Accelerometer Z" aspectRatio="2.5" style="lines" lineWidth="1" color="ff7e22" partialUpdate="false" history="1" labelX="time" labelY="acceleration" labelZ="" unitX="s" unitY="m/s²" unitZ="" logX="false" logY="false" logZ="false" xPrecision="3" yPrecision="3" zPrecision="3" scaleMinX="auto" scaleMaxX="auto" scaleMinY="auto" scaleMaxY="auto" scaleMinZ="auto" scaleMaxZ="auto" minX="0" maxX="0" minY="0" maxY="0" minZ="0" maxZ="0"  mapWidth="0"       >
+                <input axis="x">t</input>
+                <input axis="y">z</input>
+            </graph>
+            <value editor:uuid="245" editor:posx="1180.34375" editor:posy="255.21875" label="acceleration Z" size="1" precision="2" scientific="false" unit="m/s²" factor="1" >
+                <input>z</input>
+            </value>
+        </view>
+    </views>
+    <export>
+        <set name="Rawdata">
+            <data name="Time">t</data>
+            <data name="Acceleration Z">z</data>
+        </set>
+    </export>
+</phyphox>
