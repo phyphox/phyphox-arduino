@@ -1,23 +1,23 @@
 #include <phyphoxBle.h> 
-BleServer server("phyphox"); //Server anlegen
+BleServer server("phyphox"); //Init server
 
 void setup()
 {
    server.start();
 
    //Experiment
-   Experiment PlotRandomValues;		//Experiment to plot random values generated on Arduino
+   Experiment PlotRandomValues;   //generate experiment on Arduino which plot random values
 
    PlotRandomValues.setTitle("Random Number Plotter");
    PlotRandomValues.setCategory("Arduino Experiments");
-   PlotRandomValues.setDescription("Random numbers are generated on Arduino and plotted with phyphox afterwards");
+   PlotRandomValues.setDescription("Random numbers are generated on Arduino and visualized with phyphox afterwards");
 
    //View
    View firstView;
-   firstView.setLabel("FirstView");	//Create a View
+   firstView.setLabel("FirstView"); //Create a "view"
 
    //Graph
-   Graph firstGraph;			//Create Graph which will plot random numbers against time     
+   Graph firstGraph;      //Create graph which will plot random numbers over time     
    firstGraph.setLabel("Randum number over time");
    firstGraph.setUnitX("s");
    firstGraph.setUnitY("");
@@ -30,11 +30,11 @@ void setup()
    *  Channel 1 to N corresponding to the N-parameter which is written in server.write()
    */
 
-   firstGraph.setChannel(0,1);		
+   firstGraph.setChannel(0,1);    
 
-   firstView.addElement(firstGraph);      	//Attach Graph to View
-   PlotRandomValues.addView(firstView);         //Attach View to Experiment
-   server.addExperiment(PlotRandomValues);    	//Attach Experiment to Server
+   firstView.addElement(firstGraph);            //attach graph to view
+   PlotRandomValues.addView(firstView);         //Attach view to experiment
+   server.addExperiment(PlotRandomValues);      //Attach experiment to server
 
 }
 
@@ -42,12 +42,13 @@ void setup()
 void loop()
 {
     
-  float randomValue = random(0,100); //Erzeuge Zufallszahlen zwischen 0 - 100
+  float randomValue = random(0,100); //create random number between 0 - 100
+  
   /*  The random number is written into Channel 1
    *  Up to 5 Channels can written at the same time with server.write(randomDistance, valueChannel2, valueChannel3.. )
    */
 
-  server.write(randomValue);		
+  server.write(randomValue);    
   delay(50);
   
 }
