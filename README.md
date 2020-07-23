@@ -10,8 +10,8 @@ What you will need:
 
 - Arduino Nano 33 Ble
 - Arduino Nano Sense
-- Arduino Nano IoT
-- ESP32
+- ESP32  
+- TODO: Arduino Nano IoT
 
 2.) The drivers for the Arduino Nano 33 Ble/IoT should be installed automatically. After that navigate to Tools -> Boards -> Board Manager and search 'Arduino nano 33 ble'. A package with the word 'mbed os' should appear. It shoudl look like this. Install it.
 
