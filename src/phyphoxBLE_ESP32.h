@@ -12,8 +12,6 @@
 #include "graph.h"
 #include "view.h"
 #include "experiment.h"
-//#include <HardwareSerial.h>
-
 
 using std::copy;
 
@@ -25,7 +23,7 @@ class BleServer
         const char *customServiceUUID = "cddf0001-30f7-4671-8b43-5e40ba53514a";
         const char *phyphoxUUID = "cddf0002-30f7-4671-8b43-5e40ba53514a";        
         uint8_t data_package[20] = {0};
-        char DEVICE_NAME[20] = "Arduino";    
+        char DEVICE_NAME[20] = "phyphox";    
         const char *dataOneUUID = "59f51a40-8852-4abe-a50f-2d45e6bd51ac";
         const char *configUUID = "59f51a40-8852-4abe-a50f-2d45e6bd51ad";
 
@@ -39,16 +37,17 @@ class BleServer
         BLECharacteristic *configCharacteristic;
         BLEAdvertising *myAdvertising;
 
-	//HardwareSerial* printer; //for debug purpose
+        //     void when_connected();
+        //     virtual void onDisconnectionComplete();
+        //     virtual void onConnectionComplete();
+        uint8_t* data = nullptr; //this pointer points to the data the user wants to write in the characteristic
+        uint8_t* p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
+        TaskHandle_t TaskTransfer;
 
 
-   //     void when_connected();
+        size_t expLen = 0; //try o avoid this maybe use std::array or std::vector
+        uint8_t EXPARRAY[4000] = {0};// block some storage
 
-    //     virtual void onDisconnectionComplete();
-    //     virtual void onConnectionComplete();
-    uint8_t* data = nullptr; //this pointer points to the data the user wants to write in the characteristic
-    uint8_t* p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
-	TaskHandle_t TaskTransfer;
     public:
         BleServer() {};
         BleServer(const char* s) {strcpy(DEVICE_NAME, s);};
@@ -58,10 +57,8 @@ class BleServer
         void start(uint8_t* p = nullptr, size_t n = 0); 
 
         void when_subscription_received();
-        void startTask();
-        static void staticStartTask(void*);
-
         void addExperiment(Experiment&);
+
         void write(float&);
         void write(float&, float&);
         void write(float&, float&, float&);
@@ -73,10 +70,8 @@ class BleServer
         void configHandlerDebug();
         void (*configHandler)() = nullptr;
 
-        size_t expLen = 0; //try o avoid this maybe use std::array or std::vector
-        uint8_t EXPARRAY[4000] = {0};// block some storage
-	
-        //void begin(HardwareSerial*); //for debug purpose
+        void startTask();
+        static void staticStartTask(void*);
 
 };
 

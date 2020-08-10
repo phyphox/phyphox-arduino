@@ -16,6 +16,7 @@ What you will need:
 
 TODO:
 
+- Arduino Nano IoT
 - revise channel selection
 - memory optimization (using vectors?)
 - request larger mtu size
