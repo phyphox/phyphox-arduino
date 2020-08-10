@@ -13,9 +13,9 @@ class Experiment
 {
 	public:
 
-    	Experiment() {};                     
-    	Experiment(const Experiment&) = delete;         
-    	Experiment &operator=(const Experiment &) = delete;
+	Experiment() {};                     
+	Experiment(const Experiment&) = delete;         
+	Experiment &operator=(const Experiment &) = delete;
 	~Experiment() = default;
 
 
@@ -24,8 +24,8 @@ class Experiment
 	void setDescription(char*);
 
 	void getBytes(char*);
-
 	void addView(View&);
+
 
 	char TITLE[50] = "Default Experiment Title";
 	char CATEGORY[50] = "Arduino Experiments";

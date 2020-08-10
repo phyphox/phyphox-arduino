@@ -14,6 +14,8 @@
 
 #elif defined(ESP32)
 #include "phyphoxBLE_ESP32.h"
+#else
+#error "Unsupported board selected!"
 #endif
 
 #include "Arduino.h"

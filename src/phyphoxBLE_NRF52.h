@@ -43,7 +43,7 @@ class BleServer : public ble::Gap::EventHandler
 	uint8_t data_package[20] = {0};
 	uint8_t config_package[CONFIGSIZE] = {0};
 
-	char DEVICE_NAME[20] = "Arduino";
+	char DEVICE_NAME[20] = "phyphox";
 	const UUID dataOneUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ac");
 	const UUID configUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ad");
 	
