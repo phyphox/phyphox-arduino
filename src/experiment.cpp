@@ -53,7 +53,7 @@ void Experiment::getBytes(char *buffArray){
 	strcat(buffArray, "<input>\n");
 	strcat(buffArray, "\t<bluetooth mode=\"notification\" rate=\"1\" subscribeOnStart=\"false\">\n\t\t");
 
-	for(int i=1; i<=1;i++){
+	for(int i=1; i<=5;i++){
 		strcat(buffArray, "<output char=\"59f51a40-8852-4abe-a50f-2d45e6bd51ac\" conversion=\"float32LittleEndian\" ");
 		char add[20];
 		int k = (i-1)*4;
