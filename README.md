@@ -1,7 +1,7 @@
 # phyphox Arduino BLE
 Use phyphox to plot sensor data from your Microcontroller. 
 
-The purpose of this library is to use the phyphox app (see www.phyphox.org) to plot sensor data on your phone with the open source app phyphox. In the other direction you can also use this library to access sensor data from your phone to use in your Arduino/ESP32 project.
+The purpose of this library is to use the phyphox app (see www.phyphox.org) to plot sensor data on your phone with the open source app phyphox. In the other direction you can also use this library to access sensor data from your phone to use in your [Arduino](https://www.arduino.cc/) or ESP32 project.
 
 ## Supported boards
 - Arduino Nano 33 Ble
@@ -22,7 +22,7 @@ Alternatively, you can download this repository here as a zip file from github a
 
 ## Usage
 
-The easiest way to learn how to use this library is by looking at the examples in the `examples` folder.
+The easiest way to learn how to use this library is by looking at the examples in the `examples` folder. In most cases, you can simply connect to your Arduino running this library by scanning for Bluetooth devices via the "+"-button on the main screen of phyphox.
 
 ### randomNumbers.ino
 
