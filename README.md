@@ -47,9 +47,9 @@ void loop() {
 
 This example shows how you can set a title, category and description as well as how to define graphs and setting axis labels and units. You can define one or multiple views (shown as tabs in phyphox), each of which can hold one or more graphs.
 
-For each graph you need to call `setChannel(x, y)` with x and y being an index of your data set. This index corresponds to the order of the values that you transfer in a call to `server.write`. At the moment `server.write` supports up to five values.
+For each graph you need to call `setChannel(x, y)` with x and y being an index of your data set. This index corresponds to the order of the values that you transfer in a call to `server.write` while the index `0` is special and corresponds to the timestamp at which phyphox receives the value. At the moment `server.write` supports up to five values.
 
-For example, let's assume you have the float values `foo`, `bar` and `time`. You can then call server.write(time, foo, bar) to send a set with all three values. If you call `setChannel(0,1)`, your graph would plot `foo` on the y axis and `time` on the x axis. If you call `setChannel(2,0)`, your graph would plot `time` on the y axis and `bar` on the x axis.
+For example, let's assume you have the float values `foo` and `bar`. You can then call server.write(foo, bar) to send a set with both values. If you call `setChannel(0,1)`, your graph would plot `foo` on the y axis over time on the x axis. If you call `setChannel(2,1)`, your graph would plot `foo` on the y axis and `bar` on the x axis.
 
 ### getDataFromSmartphone.ino
 
