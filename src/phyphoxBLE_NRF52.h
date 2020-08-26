@@ -26,6 +26,9 @@ using rtos::Thread;
 using mbed::callback;
 using std::copy;
 
+#ifndef DATASIZE
+#define DATASIZE 20
+#endif
 
 class BleServer : public ble::Gap::EventHandler
 {
@@ -46,7 +49,7 @@ class BleServer : public ble::Gap::EventHandler
 	char DEVICE_NAME[20] = "phyphox";
 	const UUID dataOneUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ac");
 	const UUID configUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ad");
-	
+		
 
 	/*BLE stuff*/
 	BLE& ble = BLE::Instance(BLE::DEFAULT_INSTANCE);
@@ -54,6 +57,7 @@ class BleServer : public ble::Gap::EventHandler
 	uint8_t readValue[DATASIZE] = {0};
 	ReadWriteArrayGattCharacteristic<uint8_t, sizeof(config_package)> configChar{configUUID, config_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 	ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readCharOne{dataOneUUID, readValue, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
+
 	Thread bleEventThread;
 	Thread transferExpThread;
 	EventQueue queue{32 * EVENTS_EVENT_SIZE};

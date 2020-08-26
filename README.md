@@ -10,6 +10,7 @@ What you will need:
 
 - Arduino Nano 33 Ble
 - Arduino Nano Sense
+- ESP32
 
 TODO:
 
