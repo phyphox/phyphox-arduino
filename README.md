@@ -35,17 +35,16 @@ The easiest way to learn how to use this library is by looking at the examples i
 This is our minimal example. It submits random numbers to phyphox. All you need to do to submit a value to phyphox is including this library, setting up you server instance, starting the server (i.e. in `setup()`) and writing your data to the server.
 
 ```arduino
-#include <phyphoxBle.h>      //Include library
-BleServer server("phyphox"); //Create sever instance
+#include <phyphoxBle.h> 
 
 void setup() {
-  server.start();             //Start server
+    PhyphoxBLE::start();                //Start the BLE server
 }
 
-void loop() {	
-	float randomNumber = random(0,100);
-	server.write(randomNumber); //Submit value to phyphox
-	delay(50);
+void loop() {
+    float randomNumber = random(0,100); //Generate random number in the range 0 to 100
+    PhyphoxBLE::write(randomNumber);    //Send value to phyphox
+    delay(50);                          //Shortly pause before repeating
 }
 ```
 
