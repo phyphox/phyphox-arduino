@@ -5,12 +5,18 @@
 #include <stdio.h>
 
 
-//void BleServer::start(uint8_t* exp_pointer, size_t len)
+void BleServer::start(uint8_t* exp_pointer, size_t len){
+  p_exp = exp_pointer;
+  expLen = len;
+  start();
+}
+
 void BleServer::start()
 {
 
 
   controlCharacteristic.setEventHandler(BLEWritten, controlCharacteristicWritten);
+  configCharacteristic.setEventHandler(BLEWritten, configCharacteristicWritten);
 
 	if(p_exp == nullptr){
   
@@ -40,17 +46,18 @@ void BleServer::start()
   
   BLE.begin();
   BLE.setLocalName(DEVICE_NAME);
-  BLE.setAdvertisedService(phyphoxService);
-
+  BLE.setAdvertisedService(phyphoxExperimentService);
+  //BLE.setAdvertisedService(phyphoxDataService);
 
   // add the characteristics to the service
-  phyphoxService.addCharacteristic(dataCharacteristic);
-  phyphoxService.addCharacteristic(experimentCharacteristic);
-  phyphoxService.addCharacteristic(configCharacteristic);
-  phyphoxService.addCharacteristic(controlCharacteristic);
+  phyphoxExperimentService.addCharacteristic(experimentCharacteristic);
+  phyphoxExperimentService.addCharacteristic(controlCharacteristic);
+  phyphoxDataService.addCharacteristic(configCharacteristic);
+  phyphoxDataService.addCharacteristic(dataCharacteristic);
 
   // add the service
-  BLE.addService(phyphoxService);
+  BLE.addService(phyphoxExperimentService);
+  BLE.addService(phyphoxDataService);
 
   // start advertising
   BLE.advertise();
@@ -65,16 +72,16 @@ void BleServer::poll()
 
 void BleServer::read(uint8_t *arrayPointer, unsigned int arraySize)
 {
-  controlCharacteristic.readValue(arrayPointer, arraySize);
-  
+  configCharacteristic.readValue(arrayPointer, arraySize);
 }
-/*
+
 void BleServer::read(float& f)
 {
-  //uint8_t* data = configCharacteristic->getData();
-  //memcpy(&f,data,4);
+  uint8_t readDATA[4];
+  configCharacteristic.readValue(readDATA, 4);
+  memcpy(&f,&readDATA[0],4);
 }
-*/
+
 void BleServer::addExperiment(Experiment& exp)
 {
   char buffer[4000] =""; //this should be reworked 
@@ -180,4 +187,9 @@ if(exp_len%20 != 0){
   BLE.advertise();
 }
 
+void BleServer::configCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic){
+  if(configHandler!=nullptr){
+    (*configHandler)();
+  }
+}
 #endif
