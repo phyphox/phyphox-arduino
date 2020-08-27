@@ -13,10 +13,8 @@
 #include <AdvertisingParameters.h>
 #include <AdvertisingDataBuilder.h>
 #include <HardwareSerial.h>
-#include "element.h"	
-#include "graph.h"
-#include "view.h"
-#include "experiment.h"
+
+#include "phyphoxBleExperiment.h"
 
 #ifndef NDEBUG
 using arduino::HardwareSerial;
@@ -30,102 +28,109 @@ using std::copy;
 #define DATASIZE 20
 #endif
 
-class BleServer : public ble::Gap::EventHandler
+class PhyphoxBleEventHandler : public ble::Gap::EventHandler {
+    public:
+
+    virtual void onDisconnectionComplete(const ble::DisconnectionCompleteEvent&);
+    virtual void onConnectionComplete(const ble::ConnectionCompleteEvent&);
+    PhyphoxBleEventHandler(BLE& ble):
+        ble(ble) {
+    }
+
+    private: 
+    BLE& ble;
+};
+
+class PhyphoxBLE
 {
 	
 	private:
-	/* Members every server need to have
-	 * phyphox service uuid
-	 * phyphox uuid for experiment transfer
-	 * a buffer that hlds the data_packages which contans 20bytes
-	 * an underlying BLE object 
-	 * a characteristic to that phyphox subscribes named data char
-	 */
-	const UUID customServiceUUID = UUID("cddf0001-30f7-4671-8b43-5e40ba53514a");
-	const UUID phyphoxUUID = UUID("cddf0002-30f7-4671-8b43-5e40ba53514a");
-	uint8_t data_package[20] = {0};
-	uint8_t config_package[CONFIGSIZE] = {0};
 
-	char DEVICE_NAME[20] = "phyphox";
-	const UUID dataOneUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ac");
-	const UUID configUUID = UUID("59f51a40-8852-4abe-a50f-2d45e6bd51ad");
-		
+    static PhyphoxBleEventHandler eventHandler;
+
+
+	static const UUID phyphoxServiceUUID;
+	static const UUID phyphoxUUID;
+
+	static const UUID phyphoxDataServiceUUID;
+	static const UUID dataOneUUID;
+	static const UUID configUUID;
+
+    static char name[50];
+
+	static uint8_t data_package[20];
+	static uint8_t config_package[CONFIGSIZE];
 
 	/*BLE stuff*/
-	BLE& ble = BLE::Instance(BLE::DEFAULT_INSTANCE);
-	ReadWriteArrayGattCharacteristic<uint8_t, sizeof(data_package)> dataChar{phyphoxUUID, data_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY}; //Note: Use { } instead of () google most vexing parse
-	uint8_t readValue[DATASIZE] = {0};
-	ReadWriteArrayGattCharacteristic<uint8_t, sizeof(config_package)> configChar{configUUID, config_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
-	ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readCharOne{dataOneUUID, readValue, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
+	static BLE& ble;
+	static ReadWriteArrayGattCharacteristic<uint8_t, sizeof(data_package)> dataChar; //Note: Use { } instead of () google most vexing parse
+	static uint8_t readValue[DATASIZE];
+	static ReadWriteArrayGattCharacteristic<uint8_t, sizeof(config_package)> configChar;
+	static ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readCharOne;
 
-	Thread bleEventThread;
-	Thread transferExpThread;
-	EventQueue queue{32 * EVENTS_EVENT_SIZE};
+	static Thread bleEventThread;
+	static Thread transferExpThread;
+	static EventQueue queue;
 	/*end BLE stuff*/
-	EventQueue transferQueue{32 * EVENTS_EVENT_SIZE};
+	static EventQueue transferQueue;
 
 	
 	//helper function to initialize BLE server and for connection poperties
-	void bleInitComplete(BLE::InitializationCompleteCallbackContext*);
-	void when_disconnection(const Gap::DisconnectionCallbackParams_t *);
-	void when_subscription_received(GattAttribute::Handle_t);
-	void configReceived(const GattWriteCallbackParams *params);
+	static void bleInitComplete(BLE::InitializationCompleteCallbackContext*);
+	static void when_disconnection(const Gap::DisconnectionCallbackParams_t *);
+	static void when_subscription_received(GattAttribute::Handle_t);
+	static void configReceived(const GattWriteCallbackParams *params);
 
-	void when_connected(const Gap::ConnectionCallbackParams_t *);
-	virtual void onDisconnectionComplete(const ble::DisconnectionCompleteEvent&);
-	virtual void onConnectionComplete(const ble::ConnectionCompleteEvent&);
+	static void when_connected(const Gap::ConnectionCallbackParams_t *);
    
 	//helper functon that runs in the thread ble_server
-	//static void waitForEvent(BleServer*);
-	static void transferExp(BleServer*);
-	GattCharacteristic* characteristics[3] = {&readCharOne, &dataChar, &configChar};
-	GattService customService{customServiceUUID, characteristics, sizeof(characteristics) / sizeof(GattCharacteristic *)};
+	//static void waitForEvent();
+	static void transferExp();
+	static GattCharacteristic* phyphoxCharacteristics[];
+	static GattService phyphoxService;
+
+	static GattCharacteristic* phyphoxDataCharacteristics[];
+	static GattService phyphoxDataService;
 	
-	//helper function to construct event handler from class function
-	template<typename ContextType> FunctionPointerWithContext<ContextType> as_cb(void (BleServer::*member)(ContextType context)) 
-	{
-        return makeFunctionPointer(this, member);
-	}
-	
-	void schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context);
+	static void schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context);
 
 	#ifndef NDEBUG
-	HardwareSerial* printer; //for debug purpose
+	static HardwareSerial* printer; //for debug purpose
 	#endif
-	uint8_t* data = nullptr; //this pointer points to the data the user wants to write in the characteristic
-	uint8_t* config =nullptr;
-	uint8_t* p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
+	static uint8_t* data; //this pointer points to the data the user wants to write in the characteristic
+	static uint8_t* config;
+	static uint8_t* p_exp; //this pointer will point to the byte array which holds an experiment
 
 
 	public:
-	BleServer() {};
-	BleServer(const char* s) {strcpy(DEVICE_NAME, s);};
-	/* TODO: add constructor with UUID input */
-	BleServer(const BleServer&) = delete; //there is no need to copy a BleServer once established
-	BleServer &operator=(const BleServer&) = delete; //there is no need to assign a BleServer to a BleServer
-	~BleServer() = default; //no dynamic memory allocation 
 
-	uint8_t EXPARRAY[4096] = {0};// block some storage
-	size_t expLen = 0; //try o avoid this maybe use std::array or std::vector
+	static uint8_t EXPARRAY[4096];// block some storage
+	static size_t expLen; //try o avoid this maybe use std::array or std::vector
 
-	void (*configHandler)() = nullptr;
+	static void (*configHandler)();
 
-	void write(uint8_t*, unsigned int);	
-	void write(float&);
-	void write(float&, float&, float&, float&, float&);
-	void write(float&, float&, float&, float&);
-	void write(float&, float&, float&);
-	void write(float&, float&);
-	void read(uint8_t*, unsigned int);
-	void read(float&);
-	void start(uint8_t* p = nullptr, size_t n = 0); //start method if you specify your own experiment in form of a byte array
-	//void start();
+    static void poll();
+    static void poll(int timeout);
 
-	void addExperiment(Experiment&);
+    static void start(const char* DEVICE_NAME, uint8_t* p, size_t n = 0); 
+    static void start(const char* DEVICE_NAME);
+    static void start(uint8_t* p, size_t n = 0); 
+    static void start();
+
+	static void write(uint8_t*, unsigned int);	
+	static void write(float&);
+	static void write(float&, float&, float&, float&, float&);
+	static void write(float&, float&, float&, float&);
+	static void write(float&, float&, float&);
+	static void write(float&, float&);
+	static void read(uint8_t*, unsigned int);
+	static void read(float&);
+
+	static void addExperiment(PhyphoxBleExperiment&);
 	#ifndef NDEBUG
-	void begin(HardwareSerial*); //for debug purpose
-	void output(const char*); //for debug purpose
-	void output(const uint32_t);
+	static void begin(HardwareSerial*); //for debug purpose
+	static void output(const char*); //for debug purpose
+	static void output(const uint32_t);
 	#endif
 };
 

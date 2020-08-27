@@ -1,15 +1,11 @@
 #include <phyphoxBle.h> 
-BleServer server("phyphox"); //Server anlegen
 
-void setup()
-{
-  server.start(); //server starten
+void setup() {
+    PhyphoxBLE::start();                 //Start the BLE server
 }
 
-void loop()
-{
-	
-	float randomNumber = random(0,100); //Erzeuge Zufallszahlen zwischen 0 - 100
-	server.write(randomNumber);
-	delay(50);
+void loop() {
+	float randomNumber = random(0,100); //Generate random number in the range 0 to 100
+	PhyphoxBLE::write(randomNumber);     //Send value to phyphox
+	delay(50);                          //Shortly pause before repeating
 }

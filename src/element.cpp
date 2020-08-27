@@ -1,6 +1,6 @@
-#include "element.h"
+#include "phyphoxBleExperiment.h"
 
-void Element::setLabel(char *l){
+void PhyphoxBleExperiment::Element::setLabel(const char *l){
 	memset(&LABEL[0], 0, sizeof(LABEL));
 	strcat(LABEL, l);
 }

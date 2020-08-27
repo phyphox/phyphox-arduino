@@ -6,7 +6,10 @@ The purpose of this library is to use the phyphox app (see www.phyphox.org) to p
 ## Supported boards
 - Arduino Nano 33 Ble
 - Arduino Nano Sense
+- Arduino Nano 33 IoT (see note below)
 - ESP 32
+
+Note: The Arduino Nano 33 IoT is somewhat unusual. You will need to install the ArduinoBLE library to use it and you will need to call "PhyphoxBLE.poll()" periodically for it to work. See the "randomNumbers-IoT" example.
 
 ## Concept of phyphox
 
@@ -19,6 +22,9 @@ This library generates an experiment configuration in this file format and allow
 You should be able to find this library in the library search of your Arduino IDE. There you should usually find the latest release from here, which has been tagged with a version number.
 
 Alternatively, you can download this repository here as a zip file from github and install it with via the Arduino IDE's menu using the "Add ZIP library" entry. We recommend using the Arduino library manager, but directly installing a version from here might be relevant to try a specific branch or new feature.
+
+You will may also need to install an BLE library specific to your board:
+- ArduinoBLE for the Arduino Nano 33 IoT
 
 ## Usage
 
