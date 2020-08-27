@@ -32,7 +32,7 @@ The easiest way to learn how to use this library is by looking at the examples i
 
 ### randomNumbers.ino
 
-This is our minimal example. It submits random numbers to phyphox. All you need to do to submit a value to phyphox is including this library, setting up you server instance, starting the server (i.e. in `setup()`) and writing your data to the server.
+This is our minimal example. It submits random numbers to phyphox. All you need to do to submit a value to phyphox is including this library, starting the server (i.e. in `setup()`) and writing your data to the server.
 
 ```arduino
 #include <phyphoxBle.h> 
