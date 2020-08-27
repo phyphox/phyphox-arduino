@@ -83,3 +83,4 @@ This library is released under the GNU Lesser General Public Licence v3.0 (or ne
 ## Contact
 
 Contact us any time at contact@phyphox.org and learn more about phyphox on https://phyphox.org.
+

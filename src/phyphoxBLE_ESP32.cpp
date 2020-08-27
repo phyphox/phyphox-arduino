@@ -4,34 +4,54 @@
 #include <stdio.h>
 #include "esp_system.h"
 
+//init statics
+char *BleServer::DEVICE_NAME = "phyphox";
+void (*BleServer::configHandler)() = nullptr;
+uint8_t storage[4000];
+uint8_t *BleServer::EXPARRAY=storage;
+uint8_t* BleServer::p_exp = nullptr;
+size_t BleServer::expLen = 0;
+
+BLEServer *BleServer::myServer;
+BLEService *BleServer::phyphoxExperimentService;
+BLEService *BleServer::phyphoxDataService;
+BLEDescriptor *BleServer::myExperimentDescriptor;
+BLEDescriptor *BleServer::myDataDescriptor;
+BLEDescriptor *BleServer::myConfigDescriptor;
+BLECharacteristic *BleServer::dataCharacteristic;
+BLECharacteristic *BleServer::experimentCharacteristic;
+BLECharacteristic *BleServer::configCharacteristic;
+BLEAdvertising *BleServer::myAdvertising;
+TaskHandle_t BleServer::TaskTransfer;
+uint8_t* BleServer::data;
+
 class MyExpCallback: public BLEDescriptorCallbacks {
 
     public:
-      MyExpCallback(BleServer* myServerPointerParam):myServerPointer(myServerPointerParam) {};
+      MyExpCallback(){};
 
     private:
-      BleServer* myServerPointer;
 
     void onWrite(BLEDescriptor* pDescriptor){
       uint8_t* rxValue = pDescriptor->getValue();
 
+
     	if(pDescriptor->getLength() > 0){
     		if (rxValue[0] == 1) {
     			// start when_subscription_received() on cpu 1
-    	      		myServerPointer->startTask();
+    	      		BleServer::startTask();
     		}
     	}
-	
     };
   };
 
 class MyCharCallback: public BLECharacteristicCallbacks {
   public:
-    MyCharCallback(BleServer* myServerPointerParam):myServerPointer(myServerPointerParam) {};
+    MyCharCallback(){};
   private:
     BleServer* myServerPointer;
     void onWrite(BLECharacteristic *pCharacteristic) {
-                 myServerPointer->configHandlerDebug();
+                 BleServer::configHandlerDebug();
       
     }      
 };
@@ -42,86 +62,98 @@ void BleServer::configHandlerDebug(){
     (*configHandler)();
   }
   
+  
 }
 
-void BleServer::start(uint8_t* exp_pointer, size_t len)
+void BleServer::start(uint8_t* exp_pointer, size_t len){
+  p_exp = exp_pointer;
+  expLen = len;
+  start();
+}
+
+void BleServer::start()
 {
-	if(exp_pointer != nullptr){
-		this->p_exp = exp_pointer;
-		this->expLen = len;
-	}else{
-      Experiment defaultExperiment;
-      defaultExperiment.setTitle("Default Experiment");
-      defaultExperiment.setCategory("Arduino Experiments");
-      defaultExperiment.setDescription("This is a default experiment! It is created because there was no custom experiment added.");
-      //View
-      View firstView;
-      firstView.setLabel("FirstView"); //Create a "view"
+	if(p_exp == nullptr){
+    Experiment defaultExperiment;
+    defaultExperiment.setTitle("Default Experiment");
+    defaultExperiment.setCategory("Arduino Experiments");
+    defaultExperiment.setDescription("This is a default experiment! It is created because there was no custom experiment added.");
+    //View
+    View firstView;
+    firstView.setLabel("FirstView"); //Create a "view"
 
-      //Graph
-      Graph firstGraph;      //Create graph which will plot random numbers over time     
-      firstGraph.setLabel("default label");
-      firstGraph.setUnitX("unit x");
-      firstGraph.setUnitY("unit y");
-      firstGraph.setLabelX("label x");
-      firstGraph.setLabelY("label y");
-      firstGraph.setChannel(0,1);    
+    //Graph
+    Graph firstGraph;      //Create graph which will plot random numbers over time     
+    firstGraph.setLabel("default label");
+    firstGraph.setUnitX("unit x");
+    firstGraph.setUnitY("unit y");
+    firstGraph.setLabelX("label x");
+    firstGraph.setLabelY("label y");
+    firstGraph.setChannel(0,1);    
 
-      firstView.addElement(firstGraph);       
-      defaultExperiment.addView(firstView);
-      this->addExperiment(defaultExperiment);  
-  }
+    firstView.addElement(firstGraph);       
+    defaultExperiment.addView(firstView);
+    addExperiment(defaultExperiment);  
+    }
+
 	BLEDevice::init(DEVICE_NAME);
 	myServer = BLEDevice::createServer();
-	myService = myServer->createService(customServiceUUID);
 
-	dataCharacteristic = myService->createCharacteristic(
-	     dataOneUUID,
+	phyphoxExperimentService = myServer->createService(phyphoxExperimentServiceUUID);
+
+  experimentCharacteristic = phyphoxExperimentService->createCharacteristic(
+          experimentCharacteristicUUID,
+          BLECharacteristic::PROPERTY_READ   |
+           BLECharacteristic::PROPERTY_WRITE |
+           BLECharacteristic::PROPERTY_NOTIFY 
+      );  
+
+  phyphoxDataService = myServer->createService(phyphoxDataServiceUUID);
+
+	dataCharacteristic = phyphoxDataService->createCharacteristic(
+	     dataCharacteristicUUID,
 	     BLECharacteristic::PROPERTY_READ |
 	     BLECharacteristic::PROPERTY_WRITE |
 	     BLECharacteristic::PROPERTY_NOTIFY 
 
 	   );
-	experimentCharacteristic = myService->createCharacteristic(
-		      phyphoxUUID,
-		      BLECharacteristic::PROPERTY_READ   |
-		       BLECharacteristic::PROPERTY_WRITE |
-		       BLECharacteristic::PROPERTY_NOTIFY 
-	    );
-    configCharacteristic = myService->createCharacteristic(
-          configUUID,
+
+    configCharacteristic = phyphoxDataService->createCharacteristic(
+          configCharacteristicUUID,
           BLECharacteristic::PROPERTY_READ   |
            BLECharacteristic::PROPERTY_WRITE |
            BLECharacteristic::PROPERTY_NOTIFY 
       );
+
   myExperimentDescriptor = new BLE2902();
   myDataDescriptor = new BLE2902();
   myConfigDescriptor = new BLE2902();
 
 
-  myExperimentDescriptor->setCallbacks(new MyExpCallback(this));
+  myExperimentDescriptor->setCallbacks(new MyExpCallback());
 
   dataCharacteristic->addDescriptor(myDataDescriptor);
   experimentCharacteristic->addDescriptor(myExperimentDescriptor);
   configCharacteristic->addDescriptor(myConfigDescriptor);
 
-  configCharacteristic->setCallbacks(new MyCharCallback(this));
+  configCharacteristic->setCallbacks(new MyCharCallback());
 
-  myService->start();
+  phyphoxExperimentService->start();
+  phyphoxDataService->start();
   myAdvertising = BLEDevice::getAdvertising();
-  myAdvertising->addServiceUUID(myService->getUUID());
+  myAdvertising->addServiceUUID(phyphoxExperimentService->getUUID());
   BLEDevice::startAdvertising();
 
 }
 
 //thank you stackoverflow =)
 void BleServer::staticStartTask(void* _this){
-	static_cast<BleServer*>(_this)->when_subscription_received();
+	BleServer::when_subscription_received();
 }	
 
 void BleServer::startTask()
 {
-	xTaskCreatePinnedToCore(staticStartTask, "TaskTransfer",10000, this,1, &TaskTransfer, 1); 
+	xTaskCreatePinnedToCore(staticStartTask, "TaskTransfer",10000, NULL,1, &TaskTransfer, 1); 
 }
 
 void BleServer::write(float& value)
@@ -183,10 +215,10 @@ void BleServer::read(float& f)
 void BleServer::when_subscription_received()
 {
 
-    this->myAdvertising->stop();
+    myAdvertising->stop();
 
-    uint8_t* exp = this->p_exp;
-    size_t exp_len = this->expLen;
+    uint8_t* exp = p_exp;
+    size_t exp_len = expLen;
 
     uint8_t header[20] = {0}; //20 byte as standard package size for ble transfer
     const char phyphox[] = "phyphox";

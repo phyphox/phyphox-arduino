@@ -1,19 +1,19 @@
 #ifndef PHYPHOXBLE
 #define PHYPHOXBLE
 
-#ifndef DATASIZE
-#define DATASIZE 20
-#endif
-
 #ifndef CONFIGSIZE
 #define CONFIGSIZE 20
 #endif
 
 #if defined(ARDUINO_ARCH_MBED)
-#include "phyphoxBLE_NRF52.h"
+    #include "phyphoxBLE_NRF52.h"
+
 
 #elif defined(ESP32)
-#include "phyphoxBLE_ESP32.h"
+    #include "phyphoxBLE_ESP32.h"
+#elif defined(ARDUINO_SAMD_NANO_33_IOT)
+    #include <ArduinoBLE.h>
+    #include "phyphoxBLE_NanoIOT.h"
 #else
 #error "Unsupported board selected!"
 #endif
