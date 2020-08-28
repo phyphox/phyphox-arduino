@@ -69,10 +69,10 @@ For now, this library is rather lightweight. Feel free to browse the `.h` files 
 ## Missing features
 
 In the future we would like to see...
-- Support for the Arduino Nano 33 IoT
 - Some memory optimization
 - Compression for the transfer of the phyphox experiment generated on the Arduino
 - Option to request a larger mtu size
+- Addition graph settings
 - Proper documentation
 
 If you can help with this, we are happy to receive a pull request. You can contact us via contact@phyphox.org if you plan on a large addition to this library and want to make sure that it does not collide with anything we are already working on.
