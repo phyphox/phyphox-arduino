@@ -2,39 +2,52 @@
 
 #include "phyphoxBLE_NanoIOT.h"
 #include "Arduino.h"
-#include <stdio.h>
+#include <stdio.h> 
+
+BLEService PhyphoxBLE::phyphoxExperimentService{phyphoxBleExperimentServiceUUID}; // create service
+BLECharacteristic PhyphoxBLE::experimentCharacteristic{phyphoxBleExperimentCharacteristicUUID, BLERead | BLEWrite| BLENotify, 20, false};
+BLECharacteristic PhyphoxBLE::controlCharacteristic{phyphoxBleExperimentControlCharacteristicUUID, BLERead | BLEWrite| BLENotify, 20, false};
+
+BLEService PhyphoxBLE::phyphoxDataService{phyphoxBleDataServiceUUID}; // create service
+BLECharacteristic PhyphoxBLE::dataCharacteristic{phyphoxBleDataCharacteristicUUID, BLERead | BLEWrite | BLENotify, 20, false};
+BLECharacteristic PhyphoxBLE::configCharacteristic{phyphoxBleConfigCharacteristicUUID, BLERead | BLEWrite| BLENotify, 20, false};
 
 
-void BleServer::start(uint8_t* exp_pointer, size_t len){
+uint8_t* PhyphoxBLE::data = nullptr; //this pointer points to the data the user wants to write in the characteristic
+uint8_t* PhyphoxBLE::p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
+
+size_t PhyphoxBLE::expLen = 0; //try o avoid this maybe use std::array or std::vector
+uint8_t PhyphoxBLE::EXPARRAY[4000] = {0};// block some storage
+
+void(*PhyphoxBLE::configHandler)() = nullptr;
+
+void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len){
+  p_exp = exp_pointer;
+  expLen = len;
+  start(DEVICE_NAME);
+}
+
+void PhyphoxBLE::start(uint8_t* exp_pointer, size_t len){
   p_exp = exp_pointer;
   expLen = len;
   start();
 }
 
-void BleServer::start()
+void PhyphoxBLE::start(const char* DEVICE_NAME)
 {
-
 
   controlCharacteristic.setEventHandler(BLEWritten, controlCharacteristicWritten);
   configCharacteristic.setEventHandler(BLEWritten, configCharacteristicWritten);
 
 	if(p_exp == nullptr){
   
-      Experiment defaultExperiment;
-      defaultExperiment.setTitle("Default Experiment");
-      defaultExperiment.setCategory("Arduino Experiments");
-      defaultExperiment.setDescription("This is a default experiment! It is created because there was no custom experiment added.");
+      PhyphoxBleExperiment defaultExperiment;
+
       //View
-      View firstView;
-      firstView.setLabel("FirstView"); //Create a "view"
+      PhyphoxBleExperiment::View firstView;
 
       //Graph
-      Graph firstGraph;      //Create graph which will plot random numbers over time     
-      firstGraph.setLabel("default label");
-      firstGraph.setUnitX("unit x");
-      firstGraph.setUnitY("unit y");
-      firstGraph.setLabelX("label x");
-      firstGraph.setLabelY("label y");
+      PhyphoxBleExperiment::Graph firstGraph;      //Create graph which will plot random numbers over time     
       firstGraph.setChannel(0,1);    
 
       firstView.addElement(firstGraph);       
@@ -64,25 +77,33 @@ void BleServer::start()
 
 }
 
+void PhyphoxBLE::start() {
+    PhyphoxBLE::start("phyphox-Arduino");
+}
 
-void BleServer::poll()
+void PhyphoxBLE::poll()
 {
   BLE.poll();
 }
 
-void BleServer::read(uint8_t *arrayPointer, unsigned int arraySize)
+void PhyphoxBLE::poll(int timeout)
+{
+  BLE.poll(timeout);
+}
+
+void PhyphoxBLE::read(uint8_t *arrayPointer, unsigned int arraySize)
 {
   configCharacteristic.readValue(arrayPointer, arraySize);
 }
 
-void BleServer::read(float& f)
+void PhyphoxBLE::read(float& f)
 {
   uint8_t readDATA[4];
   configCharacteristic.readValue(readDATA, 4);
   memcpy(&f,&readDATA[0],4);
 }
 
-void BleServer::addExperiment(Experiment& exp)
+void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
   char buffer[4000] =""; //this should be reworked 
   exp.getBytes(buffer);
@@ -92,42 +113,42 @@ void BleServer::addExperiment(Experiment& exp)
 }
 
 
-void BleServer::write(float& value)
+void PhyphoxBLE::write(float& value)
 {
   data = reinterpret_cast<uint8_t*>(&value);
   dataCharacteristic.writeValue(data,4);
 }
 
 
-void BleServer::write(float& f1, float& f2)
+void PhyphoxBLE::write(float& f1, float& f2)
 {
   float array[2] = {f1, f2};
   data = reinterpret_cast<uint8_t*>(array);
   dataCharacteristic.writeValue(data,8);
 }
 
-void BleServer::write(float& f1, float& f2, float& f3)
+void PhyphoxBLE::write(float& f1, float& f2, float& f3)
 {
   float array[3] = {f1, f2, f3};
   data = reinterpret_cast<uint8_t*>(array);
   dataCharacteristic.writeValue(data,12);
 }
 
-void BleServer::write(float& f1, float& f2, float& f3 , float& f4)
+void PhyphoxBLE::write(float& f1, float& f2, float& f3 , float& f4)
 {
   float array[4] = {f1, f2, f3, f4};
   data = reinterpret_cast<uint8_t*>(array);
   dataCharacteristic.writeValue(data,16);
 }
 
-void BleServer::write(float& f1, float& f2, float& f3 , float& f4, float& f5)
+void PhyphoxBLE::write(float& f1, float& f2, float& f3 , float& f4, float& f5)
 {
   float array[5] = {f1, f2, f3, f4, f5};
   data = reinterpret_cast<uint8_t*>(array);
   dataCharacteristic.writeValue(data,20);
 }
 
-void BleServer::controlCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic) {
+void PhyphoxBLE::controlCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic) {
   byte value = 0;
   characteristic.readValue(value);
   if (value & 0x01) {
@@ -139,7 +160,7 @@ void BleServer::controlCharacteristicWritten(BLEDevice central, BLECharacteristi
   
 }
 
-void BleServer::transferExperiment(){
+void PhyphoxBLE::transferExperiment(){
 
   BLE.stopAdvertise();
 
@@ -149,8 +170,8 @@ void BleServer::transferExperiment(){
   uint8_t header[20] = {0}; //20 byte as standard package size for ble transfer
   const char phyphox[] = "phyphox";
   uint32_t table[256];
-  crc32::generate_table(table);
-  uint32_t checksum = crc32::update(table, 0, exp, exp_len);
+  phyphoxBleCrc32::generate_table(table);
+  uint32_t checksum = phyphoxBleCrc32::update(table, 0, exp, exp_len);
   size_t arrayLength = exp_len;
   uint8_t experimentSizeArray[4] = {0};
   experimentSizeArray[0]=  (arrayLength >> 24);
@@ -187,7 +208,7 @@ if(exp_len%20 != 0){
   BLE.advertise();
 }
 
-void BleServer::configCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic){
+void PhyphoxBLE::configCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic){
   if(configHandler!=nullptr){
     (*configHandler)();
   }

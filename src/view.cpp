@@ -1,23 +1,23 @@
-#include "view.h"
+#include "phyphoxBleExperiment.h"
 
 
-void View::addElement(Graph& g)
+void PhyphoxBleExperiment::View::addElement(Element& e)
 {
-	for(int i=0; i<nElements; i++){
+	for(int i=0; i<phyphoxBleNElements; i++){
 		if(ELEMENTS[i]==nullptr){
-			ELEMENTS[i] = &g;
+			ELEMENTS[i] = &e;
 			break;
 		}
 	}	
 
 }
 
-void View::setLabel(char *l){
+void PhyphoxBleExperiment::View::setLabel(const char *l){
 	memset(&LABEL[0], 0, sizeof(LABEL));
 	strcat(LABEL, l);
 }
 
-void View::getBytes(char *buffArray)
+void PhyphoxBleExperiment::View::getBytes(char *buffArray)
 {
 	
 	strcat(buffArray, "\t<view label=\"");
@@ -25,7 +25,7 @@ void View::getBytes(char *buffArray)
 	strcat(buffArray, "\">\n");
 
 	//loop over elements
-	for(int i=0; i<nElements; i++){
+	for(int i=0; i<phyphoxBleNElements; i++){
 		if(ELEMENTS[i]!=nullptr){
 			ELEMENTS[i]->getBytes(buffArray);
 		}
