@@ -1,12 +1,12 @@
 #if defined(ARDUINO_ARCH_MBED)
 #include "phyphoxBLE_NRF52.h"
 
-const UUID PhyphoxBLE::phyphoxServiceUUID = UUID(phyphoxBleExperimentServiceUUID);
-const UUID PhyphoxBLE::phyphoxUUID = UUID(phyphoxBleExperimentCharacteristicUUID);
+const UUID PhyphoxBLE::phyphoxExperimentServiceUUID = UUID(phyphoxBleExperimentServiceUUID);
+const UUID PhyphoxBLE::experimentCharacteristicUUID = UUID(phyphoxBleExperimentCharacteristicUUID);
 
 const UUID PhyphoxBLE::phyphoxDataServiceUUID = UUID(phyphoxBleDataServiceUUID);
-const UUID PhyphoxBLE::dataOneUUID = UUID(phyphoxBleDataCharacteristicUUID);
-const UUID PhyphoxBLE::configUUID = UUID(phyphoxBleConfigCharacteristicUUID);
+const UUID PhyphoxBLE::dataCharacteristicUUID = UUID(phyphoxBleDataCharacteristicUUID);
+const UUID PhyphoxBLE::configCharacteristicUUID = UUID(phyphoxBleConfigCharacteristicUUID);
 
 char PhyphoxBLE::name[50] = "";
 
@@ -19,10 +19,14 @@ uint8_t PhyphoxBLE::config_package[CONFIGSIZE] = {0};
 /*BLE stuff*/
 BLE& bleInstance = BLE::Instance(BLE::DEFAULT_INSTANCE);
 BLE& PhyphoxBLE::ble = bleInstance;
-ReadWriteArrayGattCharacteristic<uint8_t, sizeof(PhyphoxBLE::data_package)> PhyphoxBLE::dataChar{PhyphoxBLE::phyphoxUUID, PhyphoxBLE::data_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY}; //Note: Use { } instead of () google most vexing parse
+
 uint8_t PhyphoxBLE::readValue[DATASIZE] = {0};
-ReadWriteArrayGattCharacteristic<uint8_t, sizeof(PhyphoxBLE::config_package)> PhyphoxBLE::configChar{PhyphoxBLE::configUUID, PhyphoxBLE::config_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
-ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(PhyphoxBLE::readValue)> PhyphoxBLE::readCharOne{PhyphoxBLE::dataOneUUID, PhyphoxBLE::readValue, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
+
+ReadWriteArrayGattCharacteristic<uint8_t, sizeof(PhyphoxBLE::data_package)> PhyphoxBLE::dataCharacteristic{PhyphoxBLE::dataCharacteristicUUID, PhyphoxBLE::data_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY}; //Note: Use { } instead of () google most vexing parse
+ReadWriteArrayGattCharacteristic<uint8_t, sizeof(PhyphoxBLE::config_package)> PhyphoxBLE::configCharacteristic{PhyphoxBLE::configCharacteristicUUID, PhyphoxBLE::config_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
+
+//Experiment Transfer
+ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(PhyphoxBLE::readValue)> PhyphoxBLE::experimentCharacteristic{PhyphoxBLE::experimentCharacteristicUUID, PhyphoxBLE::readValue, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 
 EventQueue PhyphoxBLE::queue{32 * EVENTS_EVENT_SIZE};
 /*end BLE stuff*/
@@ -30,10 +34,10 @@ EventQueue PhyphoxBLE::transferQueue{32 * EVENTS_EVENT_SIZE};
 
 PhyphoxBleEventHandler PhyphoxBLE::eventHandler(bleInstance);
 
-GattCharacteristic* PhyphoxBLE::phyphoxCharacteristics[1] = {&PhyphoxBLE::readCharOne};
-GattService PhyphoxBLE::phyphoxService{PhyphoxBLE::phyphoxServiceUUID, PhyphoxBLE::phyphoxCharacteristics, sizeof(PhyphoxBLE::phyphoxCharacteristics) / sizeof(GattCharacteristic *)};
+GattCharacteristic* PhyphoxBLE::phyphoxCharacteristics[1] = {&PhyphoxBLE::experimentCharacteristic};
+GattService PhyphoxBLE::phyphoxService{PhyphoxBLE::phyphoxExperimentServiceUUID, PhyphoxBLE::phyphoxCharacteristics, sizeof(PhyphoxBLE::phyphoxCharacteristics) / sizeof(GattCharacteristic *)};
 
-GattCharacteristic* PhyphoxBLE::phyphoxDataCharacteristics[2] = {&PhyphoxBLE::dataChar, &PhyphoxBLE::configChar};
+GattCharacteristic* PhyphoxBLE::phyphoxDataCharacteristics[2] = {&PhyphoxBLE::dataCharacteristic, &PhyphoxBLE::configCharacteristic};
 GattService PhyphoxBLE::phyphoxDataService{PhyphoxBLE::phyphoxDataServiceUUID, PhyphoxBLE::phyphoxDataCharacteristics, sizeof(PhyphoxBLE::phyphoxDataCharacteristics) / sizeof(GattCharacteristic *)};
 
 uint8_t* PhyphoxBLE::data = nullptr; //this pointer points to the data the user wants to write in the characteristic
@@ -47,19 +51,19 @@ void (*PhyphoxBLE::configHandler)() = nullptr;
 
 void PhyphoxBleEventHandler::onDisconnectionComplete(const ble::DisconnectionCompleteEvent &event)
 {
-	#ifndef NDEBUG
-	if(printer)
-		printer -> println("Disconnection");
-	#endif
+	//#ifndef NDEBUG
+	//if(printer)
+	//	printer -> println("Disconnection");
+	//#endif
 	ble.gap().startAdvertising(ble::LEGACY_ADVERTISING_HANDLE);
 }
 
 void PhyphoxBleEventHandler::onConnectionComplete(const ble::ConnectionCompleteEvent &event)
 {
-	#ifndef NDEBUG
-	if(printer)
-		printer -> println("Connection with device");
-	#endif	
+	//#ifndef NDEBUG
+	//if(printer)
+	//	printer -> println("Connection with device");
+	//#endif	
 }
 
 #ifndef NDEBUG
@@ -92,7 +96,8 @@ void PhyphoxBLE::when_subscription_received(GattAttribute::Handle_t handle)
 	output("Received a subscription");
 	#endif
 	bool sub_dChar = false;
-	ble.gattServer().areUpdatesEnabled(*PhyphoxBLE::phyphoxCharacteristics[1], &sub_dChar);
+	ble.gattServer().areUpdatesEnabled(experimentCharacteristic, &sub_dChar);
+	
 	if(sub_dChar)
 	{
 		transferQueue.call(transferExp);
@@ -144,14 +149,14 @@ void PhyphoxBLE::transferExp()
 	copy(experimentSizeArray, experimentSizeArray+ 4, header + 7);
 	copy(checksumArray, checksumArray +  4, header +11); 
 	
-	ble.gattServer().write(PhyphoxBLE::dataChar.getValueHandle(), header, sizeof(header));
-	wait_us(60000);
+	ble.gattServer().write(PhyphoxBLE::experimentCharacteristic.getValueHandle(), header, sizeof(header));
+	wait_us(30000);
 	
 	for(size_t i = 0; i < exp_len/20; ++i)
 	{
 		copy(exp+i*20, exp+i*20+20, header);
-		ble.gattServer().write(PhyphoxBLE::dataChar.getValueHandle(), header, sizeof(header));
-		wait_us(60000);
+		ble.gattServer().write(PhyphoxBLE::experimentCharacteristic.getValueHandle(), header, sizeof(header));
+		wait_us(30000);
 	}
 	
 	if(exp_len%20 != 0)
@@ -159,8 +164,8 @@ void PhyphoxBLE::transferExp()
 		const size_t rest = exp_len%20;
 		uint8_t slice[rest];
 		copy(exp + exp_len - rest, exp + exp_len, slice);
-		ble.gattServer().write(PhyphoxBLE::dataChar.getValueHandle(), slice, sizeof(slice));
-		wait_us(60000);
+		ble.gattServer().write(PhyphoxBLE::experimentCharacteristic.getValueHandle(), slice, sizeof(slice));
+		wait_us(30000);
 	}
 }
 
@@ -175,8 +180,19 @@ void PhyphoxBLE::bleInitComplete(BLE::InitializationCompleteCallbackContext* par
 	ble::AdvertisingDataBuilder adv_data_builder(_adv_buffer);
 	ble::AdvertisingParameters adv_parameters(ble::advertising_type_t::CONNECTABLE_UNDIRECTED, ble::adv_interval_t(ble::millisecond_t(100)));
 	adv_data_builder.setFlags();
-    adv_data_builder.setLocalServiceList(mbed::make_Span(&phyphoxServiceUUID, 1));
-    adv_data_builder.setName(name);
+    adv_data_builder.setLocalServiceList(mbed::make_Span(&phyphoxExperimentServiceUUID, 1));
+    ble_error_t error = adv_data_builder.setName(name);
+
+  	#ifndef NDEBUG
+    if(error == BLE_ERROR_BUFFER_OVERFLOW){
+		output("BLE_ERROR_BUFFER_OVERFLOW");
+    }else if(error == BLE_ERROR_NONE){
+		output("BLE_ERROR_NONE");
+    }else if(error == BLE_ERROR_INVALID_PARAM){
+		output("BLE_ERROR_INVALID_PARAM");
+    }
+	#endif
+
     ble.gap().setAdvertisingParameters(ble::LEGACY_ADVERTISING_HANDLE, adv_parameters);
     ble.gap().setAdvertisingPayload(ble::LEGACY_ADVERTISING_HANDLE,adv_data_builder.getAdvertisingData());
     ble.gattServer().addService(phyphoxService);
@@ -210,6 +226,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len
 		p_exp = exp_pointer;
 		expLen = len;
 	}else{
+		
       PhyphoxBleExperiment defaultExperiment;
 
       //View
@@ -223,6 +240,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len
       defaultExperiment.addView(firstView);
       
       addExperiment(defaultExperiment);
+      
 	}
 
 	bleEventThread.start(callback(&queue, &EventQueue::dispatch_forever));
@@ -259,7 +277,7 @@ void PhyphoxBLE::write(float& value)
      * \param f1 represent a float most likeley sensor data
     */
 	data = reinterpret_cast<uint8_t*>(&value);
-	ble.gattServer().write(readCharOne.getValueHandle(), data, 4);
+	ble.gattServer().write(dataCharacteristic.getValueHandle(), data, 4);
 }
 
 
@@ -278,7 +296,7 @@ void PhyphoxBLE::write(float& f1, float& f2)
 
 	float array[2] = {f1, f2};
 	data = reinterpret_cast<uint8_t*>(array);
-	ble.gattServer().write(readCharOne.getValueHandle(), data, 8);
+	ble.gattServer().write(dataCharacteristic.getValueHandle(), data, 8);
 }
 
 void PhyphoxBLE::write(float& f1, float& f2, float& f3)
@@ -292,7 +310,7 @@ void PhyphoxBLE::write(float& f1, float& f2, float& f3)
    */
 	float array[3] = {f1, f2, f3};
 	data = reinterpret_cast<uint8_t*>(array);
-	ble.gattServer().write(readCharOne.getValueHandle(), data, 12);
+	ble.gattServer().write(dataCharacteristic.getValueHandle(), data, 12);
 }
 
 void PhyphoxBLE::write(float& f1, float& f2, float& f3, float& f4)
@@ -306,7 +324,7 @@ void PhyphoxBLE::write(float& f1, float& f2, float& f3, float& f4)
    */
 	float array[4] = {f1, f2, f3, f4};
 	data = reinterpret_cast<uint8_t*>(array);
-	ble.gattServer().write(readCharOne.getValueHandle(), data, 16);
+	ble.gattServer().write(dataCharacteristic.getValueHandle(), data, 16);
 }
 void PhyphoxBLE::write(float& f1, float& f2, float& f3, float& f4, float& f5)
 {
@@ -319,11 +337,11 @@ void PhyphoxBLE::write(float& f1, float& f2, float& f3, float& f4, float& f5)
    */
 	float array[5] = {f1, f2, f3, f4, f5};
 	data = reinterpret_cast<uint8_t*>(array);
-	ble.gattServer().write(readCharOne.getValueHandle(), data, 20);
+	ble.gattServer().write(dataCharacteristic.getValueHandle(), data, 20);
 }
 void PhyphoxBLE::write(uint8_t *arrayPointer, unsigned int arraySize)
 {
-	ble.gattServer().write(readCharOne.getValueHandle(), arrayPointer, arraySize);
+	ble.gattServer().write(dataCharacteristic.getValueHandle(), arrayPointer, arraySize);
 }
 
 
@@ -331,13 +349,13 @@ void PhyphoxBLE::read(float& f1)
 {	
 	uint16_t configSize = 4;
 	uint8_t myConfig[4];
-	ble.gattServer().read(configChar.getValueHandle(), myConfig, &configSize);
+	ble.gattServer().read(configCharacteristic.getValueHandle(), myConfig, &configSize);
 	memcpy(&f1,&myConfig[0], 4);
 }
 void PhyphoxBLE::read(uint8_t *arrayPointer, unsigned int arraySize)
 {
 	uint16_t myArraySize = arraySize;
-	ble.gattServer().read(configChar.getValueHandle(), arrayPointer, &myArraySize);
+	ble.gattServer().read(configCharacteristic.getValueHandle(), arrayPointer, &myArraySize);
 }
 
 
