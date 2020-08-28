@@ -49,12 +49,12 @@ class PhyphoxBLE
     static PhyphoxBleEventHandler eventHandler;
 
 
-	static const UUID phyphoxServiceUUID;
-	static const UUID phyphoxUUID;
-
+	static const UUID phyphoxExperimentServiceUUID;
 	static const UUID phyphoxDataServiceUUID;
-	static const UUID dataOneUUID;
-	static const UUID configUUID;
+
+	static const UUID experimentCharacteristicUUID;
+	static const UUID dataCharacteristicUUID;
+	static const UUID configCharacteristicUUID;
 
     static char name[50];
 
@@ -63,10 +63,10 @@ class PhyphoxBLE
 
 	/*BLE stuff*/
 	static BLE& ble;
-	static ReadWriteArrayGattCharacteristic<uint8_t, sizeof(data_package)> dataChar; //Note: Use { } instead of () google most vexing parse
+	static ReadWriteArrayGattCharacteristic<uint8_t, sizeof(data_package)> dataCharacteristic; //Note: Use { } instead of () google most vexing parse
 	static uint8_t readValue[DATASIZE];
-	static ReadWriteArrayGattCharacteristic<uint8_t, sizeof(config_package)> configChar;
-	static ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> readCharOne;
+	static ReadWriteArrayGattCharacteristic<uint8_t, sizeof(config_package)> configCharacteristic;
+	static ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(readValue)> experimentCharacteristic;
 
 	static Thread bleEventThread;
 	static Thread transferExpThread;
@@ -95,7 +95,7 @@ class PhyphoxBLE
 	static void schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context);
 
 	#ifndef NDEBUG
-	static HardwareSerial* printer; //for debug purpose
+	static inline HardwareSerial* printer; //for debug purpose
 	#endif
 	static uint8_t* data; //this pointer points to the data the user wants to write in the characteristic
 	static uint8_t* config;
