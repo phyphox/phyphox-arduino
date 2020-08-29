@@ -250,7 +250,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len
 }
 
 void PhyphoxBLE::start(uint8_t* exp_pointer, size_t len) {
-    start("phyphox-Arduino", exp_pointer, len);
+    start("phyphox", exp_pointer, len);
 }
 
 void PhyphoxBLE::start(const char* DEVICE_NAME) {
@@ -258,7 +258,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME) {
 }
 
 void PhyphoxBLE::start() {
-    start("phyphox-Arduino", nullptr, 0);
+    start("phyphox", nullptr, 0);
 }
 
 void PhyphoxBLE::poll() {
