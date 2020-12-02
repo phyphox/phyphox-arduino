@@ -87,14 +87,7 @@ void loop() {
     echoDataset("Measured", measuredData);
 
     PhyphoxBLE::write(measuredData[0],measuredData[1],measuredData[2],measuredData[3]);     //Send value to phyphox  
-
-    if(averageCounter < averageOver){
-      averageMeasuredData[0]+=measuredData[0]/averageOver;
-      averageMeasuredData[1]+=measuredData[1]/averageOver;
-      averageMeasuredData[2]+=measuredData[2]/averageOver;
-      averageMeasuredData[3]+=measuredData[3]/averageOver;
-      averageCounter+=1;
-    }else{
+    if(averageCounter == averageOver){
       storeMeasuredData(averageMeasuredData);
       averageMeasuredData[0]=0;
       averageMeasuredData[1]=0;
@@ -102,6 +95,14 @@ void loop() {
       averageMeasuredData[3]=0;
       averageCounter=0;      
     }
+    if(averageCounter < averageOver){
+      averageMeasuredData[0]+=measuredData[0]/averageOver;
+      averageMeasuredData[1]+=measuredData[1]/averageOver;
+      averageMeasuredData[2]+=measuredData[2]/averageOver;
+      averageMeasuredData[3]+=measuredData[3]/averageOver;
+      averageCounter+=1;
+    }
+
     
     
     updateLED(measuredData[0]);
@@ -244,7 +245,7 @@ bool transferOldData(int setNumber, int offset){
 void storeMeasuredData(float dataArray[4]){
   byte byteArray[4*measuredDataLength];
   memcpy(&byteArray[0],&dataArray[0],4*measuredDataLength);
-  File file = SPIFFS.open("/set"+String(datasetNumber)+".txt", "a");  
+  File file = SPIFFS.open("/set"+String(datasetNumber)+".txt", "r+");  
   file.seek(lineNumber*4*measuredDataLength, SeekSet);    
   file.write(byteArray, 4*measuredDataLength);
   file.close();
