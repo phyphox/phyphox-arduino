@@ -207,7 +207,11 @@ void PhyphoxBLE::write(float& f1, float& f2, float& f3, float& f4, float& f5)
   dataCharacteristic->setValue(data,20);
   dataCharacteristic->notify();
 }
-
+void PhyphoxBLE::write(uint8_t *arrayPointer, unsigned int arraySize)
+{
+  dataCharacteristic->setValue(arrayPointer,arraySize);
+  dataCharacteristic->notify();
+}
 void PhyphoxBLE::read(uint8_t *arrayPointer, unsigned int arraySize)
 {
   uint8_t* data = configCharacteristic->getData();

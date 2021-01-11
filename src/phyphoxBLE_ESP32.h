@@ -59,6 +59,8 @@ class PhyphoxBLE
         static void write(float&, float&, float&);
         static void write(float&, float&, float&, float&);
         static void write(float&, float&, float&, float&, float&);
+		static void write(uint8_t *, unsigned int );
+
 
         static void read(uint8_t*, unsigned int);
         static void read(float&);
