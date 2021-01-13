@@ -214,7 +214,9 @@ void receivedConfig(){
       Serial.println(" °C");
       delay(50);
       currentOffset = readArray[5]/10.0;
-      airSensor.setTemperatureOffset(currentOffset);
+	  if(currentOffset>=0){
+		airSensor.setTemperatureOffset(currentOffset);  
+	  }      
       Serial.print("New Offset: ");    
       Serial.print(currentOffset);
       Serial.println(" °C");
