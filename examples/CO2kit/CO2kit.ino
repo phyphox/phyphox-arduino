@@ -37,6 +37,9 @@ bool BLUE = 1;
 
 int readyPin = 5;
 
+uint8_t versionID = 2;
+uint8_t currentOffset;
+uint8_t statusCO2calibration=0;
 /*
  * The following byte array contains the complete phyphox experiment.
  * The phyphox experiment (xml-file) where the byte array is generated from can be found in the github repository https://github.com/Dorsel89/phyphox-hardware (CO2-Monitor Kit folder).
@@ -71,6 +74,7 @@ void setup() {
   initStorage();               // Start the SPIFFS and list all contents
   Serial.print("Temperature offset: ");
   Serial.println(airSensor.getTemperatureOffset());
+  currentOffset = airSensor.getTemperatureOffset()*10;
 
 
 }
@@ -86,7 +90,14 @@ void loop() {
 
     echoDataset("Measured", measuredData);
 
-    PhyphoxBLE::write(measuredData[0],measuredData[1],measuredData[2],measuredData[3]);     //Send value to phyphox  
+    uint8_t Data[20]={0};
+    memcpy(&Data[0],&measuredData[0],16);
+    Data[16]=currentOffset;
+    Data[17]=statusCO2calibration;
+    Data[18]=versionID;
+
+    PhyphoxBLE::write(&Data[0], 20);
+    //PhyphoxBLE::write(measuredData[0],measuredData[1],measuredData[2],measuredData[3]);     //Send value to phyphox  
     if(averageCounter == averageOver){
       storeMeasuredData(averageMeasuredData);
       averageMeasuredData[0]=0;
@@ -173,7 +184,7 @@ void printSetData(float _setNumber){
     Serial.print(" ");      
     Serial.println(bufferArray[3]);
     }
-}
+  }
 void receivedConfig(){
 
     /*
@@ -185,8 +196,7 @@ void receivedConfig(){
     uint8_t readArray[6] = {0};
     PhyphoxBLE::read(&readArray[0],6);
     if(readArray[0]==1){
-        // just send current data
-        Serial.println("Resending of old data requested.");
+         Serial.println("Resending of old data requested.");
         oldDataTransmissionOffset = 0;
         oldDataTransmissionSet = datasetNumber;
     }
@@ -195,25 +205,23 @@ void receivedConfig(){
       Serial.print("Calibration with fresh air ");
       airSensor.setAutoSelfCalibration(false);
       Serial.println(airSensor.setForcedRecalibrationFactor(400));
+      statusCO2calibration=1;
       }
     if(readArray[1]==2){  
       //TEMPERATURE CALIBRATION
-      Serial.print("Temperature is set to: ");
-      Serial.print(readArray[5]);
-      Serial.println(" °C");
-      delay(50);
-      
       Serial.print("Current Offset: ");
       Serial.print(airSensor.getTemperatureOffset());
       Serial.println(" °C");
       delay(50);
-      
-      float offset = airSensor.getTemperature()-readArray[5]+airSensor.getTemperatureOffset();
-      airSensor.setTemperatureOffset(offset);
-      delay(50);
-      Serial.print("New offset: ");
-      Serial.print(offset);
+      currentOffset = readArray[5]/10.0;
+	  if(currentOffset>=0){
+		airSensor.setTemperatureOffset(currentOffset);  
+	  }      
+      Serial.print("New Offset: ");    
+      Serial.print(currentOffset);
       Serial.println(" °C");
+      delay(50);
+      Serial.print("Restarting ESP32..");
       delay(1000);
       ESP.restart();
       }
