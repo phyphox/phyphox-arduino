@@ -11,6 +11,7 @@ uint8_t storage[4000];
 uint8_t *PhyphoxBLE::EXPARRAY=storage;
 uint8_t* PhyphoxBLE::p_exp = nullptr;
 size_t PhyphoxBLE::expLen = 0;
+HardwareSerial* PhyphoxBLE::printer =nullptr;
 
 BLEServer *PhyphoxBLE::myServer;
 BLEService *PhyphoxBLE::phyphoxExperimentService;
@@ -56,6 +57,16 @@ class MyCharCallback: public BLECharacteristicCallbacks {
     }      
 };
 
+class MyServerCallbacks: public BLEServerCallbacks {
+    void onConnect(BLEServer* pServer) {
+      //
+    };
+
+    void onDisconnect(BLEServer* pServer) {
+      PhyphoxBLE::disconnected();
+    }
+};
+
 void PhyphoxBLE::configHandlerDebug(){
   
   if(configHandler!=nullptr){
@@ -79,6 +90,9 @@ void PhyphoxBLE::start(uint8_t* exp_pointer, size_t len){
 
 void PhyphoxBLE::start(const char * DEVICE_NAME)
 {
+  if(printer){
+    printer -> println("starting server");
+  }
 	if(p_exp == nullptr){
           PhyphoxBleExperiment defaultExperiment;
 
@@ -97,7 +111,7 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
 
 	BLEDevice::init(DEVICE_NAME);
 	myServer = BLEDevice::createServer();
-
+  myServer->setCallbacks(new MyServerCallbacks());
 	phyphoxExperimentService = myServer->createService(phyphoxBleExperimentServiceUUID);
 
   experimentCharacteristic = phyphoxExperimentService->createCharacteristic(
@@ -158,11 +172,13 @@ void PhyphoxBLE::poll(int timeout) {
 //thank you stackoverflow =)
 void PhyphoxBLE::staticStartTask(void* _this){
 	PhyphoxBLE::when_subscription_received();
+  delay(1);
 }	
 
 void PhyphoxBLE::startTask()
 {
-	xTaskCreatePinnedToCore(staticStartTask, "TaskTransfer",10000, NULL,1, &TaskTransfer, 1); 
+	xTaskCreatePinnedToCore(staticStartTask, "TaskTransfer",10000, NULL,1, &TaskTransfer, 1);
+  delay(1);
 }
 
 void PhyphoxBLE::write(float& value)
@@ -256,11 +272,12 @@ void PhyphoxBLE::when_subscription_received()
     copy(checksumArray, checksumArray +  4, header +11); 
     experimentCharacteristic->setValue(header,sizeof(header));
     experimentCharacteristic->notify();
+
     for(size_t i = 0; i < exp_len/20; ++i){
         copy(exp+i*20, exp+i*20+20, header);
         experimentCharacteristic->setValue(header,sizeof(header));
         experimentCharacteristic->notify();
-		delay(1);
+		    delay(10);// mh does not work anymore with 1ms delay?!   
 	}
   
 	if(exp_len%20 != 0){
@@ -274,7 +291,8 @@ void PhyphoxBLE::when_subscription_received()
  
 
 	myAdvertising->start();
-
+  
+  
 	vTaskDelete( NULL );
 
 }
@@ -287,12 +305,21 @@ void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 	expLen = strlen(buffer);
 }
 
-/*
+void PhyphoxBLE::disconnected(){
+  if(printer){
+    printer -> println("device disconnected");
+  }
+  myAdvertising->start();
+}
+
+
 void PhyphoxBLE::begin(HardwareSerial* hwPrint)
 {
-	printer = hwPrint;
-      	if(printer)
-		printer->begin(115200);       
+  
+	 printer = hwPrint;
+   if(printer)
+	   printer->begin(115200);       
+  
 }
-*/
+
 #endif

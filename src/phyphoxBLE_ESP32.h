@@ -32,7 +32,7 @@ class PhyphoxBLE
 
         //     void when_connected();
         //     virtual void onDisconnectionComplete();
-        //     virtual void onConnectionComplete();
+        
         static uint8_t* data; //this pointer points to the data the user wants to write in the characteristic
         static uint8_t* p_exp; //this pointer will point to the byte array which holds an experiment
         static TaskHandle_t TaskTransfer;
@@ -43,6 +43,7 @@ class PhyphoxBLE
 
     public:
 
+        static void disconnected();
         static void start(const char* DEVICE_NAME, uint8_t* p, size_t n = 0); 
         static void start(const char* DEVICE_NAME);
         static void start(uint8_t* p, size_t n = 0); 
@@ -69,6 +70,10 @@ class PhyphoxBLE
 
         static void startTask();
         static void staticStartTask(void*);
+
+        static HardwareSerial* printer; //for debug purpose
+        static void begin(HardwareSerial*); //for debug purpose
+
 
 };
 
