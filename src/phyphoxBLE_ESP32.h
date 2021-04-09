@@ -74,6 +74,10 @@ class PhyphoxBLE
         static HardwareSerial* printer; //for debug purpose
         static void begin(HardwareSerial*); //for debug purpose
 
+        static uint16_t minConInterval;
+        static uint16_t maxConInterval;
+        static uint16_t slaveLatency;
+        static uint16_t timeout;
 
 };
 

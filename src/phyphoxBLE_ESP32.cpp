@@ -26,6 +26,11 @@ BLEAdvertising *PhyphoxBLE::myAdvertising;
 TaskHandle_t PhyphoxBLE::TaskTransfer;
 uint8_t* PhyphoxBLE::data;
 
+uint16_t PhyphoxBLE::minConInterval = 6;  //7.5ms
+uint16_t PhyphoxBLE::maxConInterval = 24; //30ms
+uint16_t PhyphoxBLE::slaveLatency = 0;
+uint16_t PhyphoxBLE::timeout = 50;
+
 class MyExpCallback: public BLEDescriptorCallbacks {
 
     public:
@@ -58,8 +63,8 @@ class MyCharCallback: public BLECharacteristicCallbacks {
 };
 
 class MyServerCallbacks: public BLEServerCallbacks {
-    void onConnect(BLEServer* pServer) {
-      //
+    void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {
+      pServer->updateConnParams(param->connect.remote_bda,PhyphoxBLE::minConInterval,PhyphoxBLE::maxConInterval,PhyphoxBLE::slaveLatency,PhyphoxBLE::timeout);
     };
 
     void onDisconnect(BLEServer* pServer) {
