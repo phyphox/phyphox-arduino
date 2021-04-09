@@ -52,6 +52,10 @@ class PhyphoxBLE
         static void poll(int timeout);
 
         static void(*configHandler)();
+        static uint16_t minConInterval;
+        static uint16_t maxConInterval;
+        static uint16_t slaveLatency;
+        static uint16_t timeout;
         
 };
 

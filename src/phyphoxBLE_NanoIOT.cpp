@@ -12,6 +12,10 @@ BLEService PhyphoxBLE::phyphoxDataService{phyphoxBleDataServiceUUID}; // create 
 BLECharacteristic PhyphoxBLE::dataCharacteristic{phyphoxBleDataCharacteristicUUID, BLERead | BLEWrite | BLENotify, 20, false};
 BLECharacteristic PhyphoxBLE::configCharacteristic{phyphoxBleConfigCharacteristicUUID, BLERead | BLEWrite| BLENotify, 20, false};
 
+uint16_t PhyphoxBLE::minConInterval = 6;  //7.5ms
+uint16_t PhyphoxBLE::maxConInterval = 24; //30ms
+uint16_t PhyphoxBLE::slaveLatency = 0;
+uint16_t PhyphoxBLE::timeout = 50;
 
 uint8_t* PhyphoxBLE::data = nullptr; //this pointer points to the data the user wants to write in the characteristic
 uint8_t* PhyphoxBLE::p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
@@ -71,6 +75,9 @@ void PhyphoxBLE::start(const char* DEVICE_NAME)
   // add the service
   BLE.addService(phyphoxExperimentService);
   BLE.addService(phyphoxDataService);
+
+  // set connection parameter
+  BLE.setConnectionInterval(minConInterval, maxConInterval);
 
   // start advertising
   BLE.advertise();
