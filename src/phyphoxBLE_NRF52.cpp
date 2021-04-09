@@ -56,6 +56,7 @@ void PhyphoxBleEventHandler::onDisconnectionComplete(const ble::DisconnectionCom
 	//	printer -> println("Disconnection");
 	//#endif
 	ble.gap().startAdvertising(ble::LEGACY_ADVERTISING_HANDLE);
+	PhyphoxBLE::currentConnections= PhyphoxBLE::currentConnections -1;
 }
 
 void PhyphoxBleEventHandler::onConnectionComplete(const ble::ConnectionCompleteEvent &event)
@@ -65,7 +66,7 @@ void PhyphoxBleEventHandler::onConnectionComplete(const ble::ConnectionCompleteE
 	//	printer -> println("Connection with device");
 	//#endif
 
-	
+	PhyphoxBLE::currentConnections+=1;
 
 	
 	ble.gap().updateConnectionParameters(event.getConnectionHandle(),

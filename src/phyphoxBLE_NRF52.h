@@ -109,6 +109,8 @@ class PhyphoxBLE
 	static inline uint16_t slaveLatency = 0;
 	static inline uint16_t timeout = 50;
 
+	static inline uint16_t currentConnections = 0;	
+
 	static void (*configHandler)();
 
     static void poll();
