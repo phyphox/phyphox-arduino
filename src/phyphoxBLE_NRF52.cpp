@@ -63,7 +63,17 @@ void PhyphoxBleEventHandler::onConnectionComplete(const ble::ConnectionCompleteE
 	//#ifndef NDEBUG
 	//if(printer)
 	//	printer -> println("Connection with device");
-	//#endif	
+	//#endif
+
+	
+
+	
+	ble.gap().updateConnectionParameters(event.getConnectionHandle(),
+                                    ble::conn_interval_t(PhyphoxBLE::minConInterval),
+                                    ble::conn_interval_t(PhyphoxBLE::maxConInterval),
+                                    ble::slave_latency_t (PhyphoxBLE::slaveLatency),
+                                   ble::supervision_timeout_t(PhyphoxBLE::timeout));	
+	
 }
 
 #ifndef NDEBUG
@@ -178,6 +188,7 @@ void PhyphoxBLE::bleInitComplete(BLE::InitializationCompleteCallbackContext* par
 
 	uint8_t _adv_buffer[ble::LEGACY_ADVERTISING_MAX_SIZE];
 	ble::AdvertisingDataBuilder adv_data_builder(_adv_buffer);
+	//adv_data_builder.setConnectionIntervalPreference(ble::conn_interval_t(minConInterval) ,ble::conn_interval_t(maxConInterval) );
 	ble::AdvertisingParameters adv_parameters(ble::advertising_type_t::CONNECTABLE_UNDIRECTED, ble::adv_interval_t(ble::millisecond_t(100)));
 	adv_data_builder.setFlags();
     adv_data_builder.setLocalServiceList(mbed::make_Span(&phyphoxExperimentServiceUUID, 1));
