@@ -53,7 +53,7 @@ void loop() {
   PhyphoxBLE::write(voltage);
 
   Serial.print("Voltage = ");
-  Serial.print(voltage);
+  Serial.println(voltage);
 
   delay(20);
 }
