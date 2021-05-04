@@ -10,7 +10,7 @@ class PhyphoxBleExperiment {
 
 	public:
 
-	PhyphoxBleExperiment() {};                     
+	PhyphoxBleExperiment() = default;                     
 	PhyphoxBleExperiment(const PhyphoxBleExperiment&) = delete;         
 	PhyphoxBleExperiment &operator=(const PhyphoxBleExperiment &) = delete;
 	~PhyphoxBleExperiment() = default;
@@ -18,7 +18,7 @@ class PhyphoxBleExperiment {
     class Element {
 	    public:
 
-        	Element() {};                     
+        	Element() = default;                     
         	Element(const Element&) = delete;         
         	Element &operator=(const Element &) = delete;
 		    ~Element() = default;
@@ -38,7 +38,7 @@ class PhyphoxBleExperiment {
     class Graph : public Element 
     {
 	    public:
-        	Graph() {};                     
+        	Graph() = default;                     
         	Graph(const Graph&) = delete;         
         	Graph &operator=(const Graph &) = delete;
 	    ~Graph() = default;
@@ -70,7 +70,7 @@ class PhyphoxBleExperiment {
     class View
     {
 	    public:
-        	View() {};                     
+        	View() =default;                     
         	View(const View&) = delete;         
         	View &operator=(const View &) = delete;
 	    ~View() = default;

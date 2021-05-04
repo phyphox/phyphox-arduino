@@ -13,8 +13,9 @@ static const char *phyphoxBleConfigCharacteristicUUID = "cddf1003-30f7-4671-8b43
 #ifndef CONFIGSIZE
 #define CONFIGSIZE 20
 #endif
-
-#if defined(ARDUINO_ARCH_MBED)
+#if defined(ARDUINO_SAMD_MKR1000)
+    #include "phyphoxBLE_NINAB31.h"
+#elif defined(ARDUINO_ARCH_MBED)
     #include "phyphoxBLE_NRF52.h"
 
 
