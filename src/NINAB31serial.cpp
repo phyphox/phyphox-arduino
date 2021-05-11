@@ -4,13 +4,24 @@
 String NINAB31Serial::m_input="";
 bool NINAB31Serial::connected=false;
 
+bool NINAB31Serial::configModule(){
+    Serial3.print("AT+UMRS=115200,2,8,1,1\r");
+    Serial3.print("AT&W0\r");
+    Serial3.print("AT+CPWROFF\r");
+    Serial3.flush();
+    delay(2000);
+    digitalWrite(22,HIGH);
+    delay(500);
+    digitalWrite(22,LOW);
+    delay(1000);
+    return checkResponse("ATE0",1000);
+}
 
 bool NINAB31Serial::begin(){
     Serial3.begin(115200);
     delay(1000);
     if(!checkResponse("ATE0",1000)){
-        Serial.println("ERROR: Module not connected");
-        return false;
+        return configModule();
     }
     return true;
 }

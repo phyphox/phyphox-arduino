@@ -14,6 +14,7 @@ class NINAB31Serial
     static bool connected;
 
 	public:
+    static bool configModule();
     static bool begin();
     static bool setLocalName(String name);
     static bool writeValue(int characteristic, String value);
