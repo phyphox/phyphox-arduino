@@ -5,25 +5,33 @@ String NINAB31Serial::m_input="";
 bool NINAB31Serial::connected=false;
 
 bool NINAB31Serial::configModule(){
-    Serial3.print("AT+UMRS=115200,2,8,1,1\r");
-    Serial3.print("AT&W0\r");
-    Serial3.print("AT+CPWROFF\r");
+    Serial3.print("AT+UMRS=115200,2,8,1,1\r"); //115200, no flow control, 8 data bits, 1 stop bit, no parity
+    Serial3.print("AT&W0\r"); //write configuration to nonvolatile memory
+    Serial3.print("AT+CPWROFF\r"); //restart module into new configuration
     Serial3.flush();
-    delay(2000);
-    digitalWrite(22,HIGH);
+    delay(2000); //wait for module to come up
+    /*digitalWrite(22,HIGH); //hardware power cycle - avoid if possible
     delay(500);
     digitalWrite(22,LOW);
     delay(1000);
-    return checkResponse("ATE0",1000);
+    */
+    return checkResponse("ATE0",500); //send command (echo off) and check if module is responding correctly
 }
 
 bool NINAB31Serial::begin(){
     Serial3.begin(115200);
-    delay(1000);
-    if(!checkResponse("ATE0",1000)){
-        return configModule();
+    delay(500);
+    checkResponse("AT",500); //throwaway command in case buffer gets reinitialized because Serial3.begin was already called
+    for(int i=0;i<3;i++){ //try to send a command, in case it fails configure device and restart it
+        if(checkResponse("ATE0",500)){
+            return true;
+        }else{
+            if(configModule()){
+                return true;
+            }
+        }
     }
-    return true;
+    return false;
 }
 
 bool NINAB31Serial::setLocalName(String name){
