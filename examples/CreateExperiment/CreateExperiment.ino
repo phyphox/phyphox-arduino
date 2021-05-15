@@ -15,6 +15,14 @@ void setup()
    PhyphoxBleExperiment::View firstView;
    firstView.setLabel("FirstView"); //Create a "view"
 
+   //Export
+   PhyphoxBleExperiment::Export firstExport;
+   firstExport.setName("FirstExport");
+
+   PhyphoxBleExperiment::Exportdata firstData;
+   firstData.setName("firstData");
+   firstData.setBuffer("1");
+
    //Graph
    PhyphoxBleExperiment::Graph firstGraph;      //Create graph which will plot random numbers over time     
    firstGraph.setLabel("Random number over time");
@@ -51,6 +59,8 @@ void setup()
    firstView.addElement(firstGraph);            //attach graph to view
    firstView.addElement(secondGraph);            //attach second graph to view
    plotRandomValues.addView(firstView);         //Attach view to experiment
+   firstExport.addElement(firstData);
+   plotRandomValues.addExport(firstExport);
    PhyphoxBLE::addExperiment(plotRandomValues);      //Attach experiment to server
 
 }

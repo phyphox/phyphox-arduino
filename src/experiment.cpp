@@ -26,6 +26,17 @@ void PhyphoxBleExperiment::setDescription(const char *d){
 	strcat(DESCRIPTION, d);
 }
 
+void PhyphoxBleExperiment::addExport(Export& e)
+{
+	for(int i=0; i<phyphoxBleNExports; i++)
+	{
+		if(EXPORTS[i]==nullptr){
+			EXPORTS[i] = &e;
+			break;
+		}
+	}
+}
+
 void PhyphoxBleExperiment::getBytes(char *buffArray){
 	//header
 	strcat(buffArray, "<phyphox version=\"1.10\">\n");
@@ -83,7 +94,13 @@ void PhyphoxBleExperiment::getBytes(char *buffArray){
 	strcat(buffArray,"</views>\n");
 
 	//build export
-	strcat(buffArray, "<export></export>\n");
+	strcat(buffArray, "<export>\n");
+	for(int i=0;i<phyphoxBleNExports; i++){
+		if(EXPORTS[i]!=nullptr){
+			EXPORTS[i]->getBytes(buffArray);
+		}
+	}
+	strcat(buffArray, "</export>\n");
 	
 	//close
 	strcat(buffArray, "</phyphox>");

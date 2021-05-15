@@ -3,6 +3,7 @@
 
 #define phyphoxBleNViews 5
 #define phyphoxBleNElements 5
+#define phyphoxBleNExports 5
 
 #include <Arduino.h>
 
@@ -85,12 +86,59 @@ class PhyphoxBleExperiment {
 	    private: 
     };
 
+	class Exportdata : public Element 
+    {
+	    public:
+        	Exportdata() {};                     
+        	Exportdata(const Exportdata&) = delete;         
+        	Exportdata &operator=(const Exportdata &) = delete;
+	    ~Exportdata() = default;
+
+	    char NAME[50] = "name";
+		char BUFFER[50] = "buffer";
+
+	    char INPUTX[5] = "CH0";
+	    char INPUTY[5] = "CH1";
+
+	    char STYLE[8] = "lines";
+
+	    void setName(const char*);
+		void setBuffer(const char*);
+	    void setChannel(int, int);
+	    void setStyle(const char*);
+
+	    void phyphoxTimestamp();
+	    void getBytes(char*);
+	    private:
+
+
+    };
+
+	class Export
+    {
+	    public:
+        	Export() {};                     
+        	Export(const Export&) = delete;         
+        	Export &operator=(const Export &) = delete;
+	    ~Export() = default;
+
+
+	    void setName(const char*);
+	    void getBytes(char*);
+	    void addElement(Element&);
+
+	    char NAME[50] = "Name";
+	    Element *ELEMENTS[phyphoxBleNExports]={nullptr};
+	    private: 
+    };
+
 	void setTitle(const char*);
 	void setCategory(const char*);
 	void setDescription(const char*);
 
 	void getBytes(char*);
 	void addView(View&);
+	void addExport(Export&);
 
 
 	char TITLE[50] = "Arduino-Experiment";
@@ -98,6 +146,7 @@ class PhyphoxBleExperiment {
 	char DESCRIPTION[500] = "An experiment created with the phyphox BLE library for Arduino-compatible micro controllers.";
 
 	View *VIEWS[phyphoxBleNViews] = {nullptr};
+	Export *EXPORTS[phyphoxBleNExports] = {nullptr};
 
 };
 
