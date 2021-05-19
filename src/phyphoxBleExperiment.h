@@ -124,6 +124,22 @@ class PhyphoxBleExperiment {
 	    private: 
     };
 
+	class InfoField : public Element
+    {
+	    public:
+        	InfoField() {};                     
+        	InfoField(const InfoField&) = delete;         
+        	InfoField &operator=(const InfoField &) = delete;
+	    ~InfoField() = default;
+
+
+	    void setInfo(const char*);
+	    void getBytes(char*);
+
+	    char INFO[250] = "Info";
+	    private: 
+    };
+
 	void setTitle(const char*);
 	void setCategory(const char*);
 	void setDescription(const char*);

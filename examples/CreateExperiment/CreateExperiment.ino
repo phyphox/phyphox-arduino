@@ -15,18 +15,6 @@ void setup()
    PhyphoxBleExperiment::View firstView;
    firstView.setLabel("FirstView"); //Create a "view"
 
-   //Export
-   PhyphoxBleExperiment::ExportSet mySet;
-   mySet.setName("mySet");
-
-   PhyphoxBleExperiment::ExportData myData1;
-   myData1.setName("value");
-   myData1.setDatachannel(1);
-
-   PhyphoxBleExperiment::ExportData myData2;
-   myData2.setName("value^2");
-   myData2.setDatachannel(2);
-
    //Graph
    PhyphoxBleExperiment::Graph firstGraph;      //Create graph which will plot random numbers over time     
    firstGraph.setLabel("Random number over time");
@@ -60,12 +48,31 @@ void setup()
 
    secondGraph.setChannel(1,2);
 
+   //Info
+   PhyphoxBleExperiment::InfoField myInfo;      //Creates an info-box.
+   myInfo.setInfo("Random number generator");
+
+   //Export
+   PhyphoxBleExperiment::ExportSet mySet;       //Provides exporting the data to excel etc.
+   mySet.setName("mySet");
+
+   PhyphoxBleExperiment::ExportData myData1;
+   myData1.setName("myData1");
+   myData1.setDatachannel(1);
+
+   PhyphoxBleExperiment::ExportData myData2;
+   myData2.setName("myData2");
+   myData2.setDatachannel(2);
+
+   //attach to experiment
+
    firstView.addElement(firstGraph);            //attach graph to view
    firstView.addElement(secondGraph);            //attach second graph to view
+   firstView.addElement(myInfo);                //attach info to view
    plotRandomValues.addView(firstView);         //Attach view to experiment
-   mySet.addElement(myData1);
-   mySet.addElement(myData2);
-   plotRandomValues.addExportSet(mySet);
+   mySet.addElement(myData1);                   //attach data to exportSet
+   mySet.addElement(myData2);                   //attach data to exportSet
+   plotRandomValues.addExportSet(mySet);        //attach exportSet to experiment
    PhyphoxBLE::addExperiment(plotRandomValues);      //Attach experiment to server
 
 }
