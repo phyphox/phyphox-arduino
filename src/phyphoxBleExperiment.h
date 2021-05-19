@@ -94,8 +94,8 @@ class PhyphoxBleExperiment {
         	ExportData &operator=(const ExportData &) = delete;
 	    ~ExportData() = default;
 
-	    char NAME[50] = "name";
-		char BUFFER[50] = "buffer";
+	    char NAME[50] = "Name";
+		char BUFFER[50] = "CH1";
 
 	    void setName(const char*);
 		void setDatachannel(int);
@@ -137,6 +137,24 @@ class PhyphoxBleExperiment {
 	    void getBytes(char*);
 
 	    char INFO[250] = "Info";
+	    private: 
+    };
+
+	class Separator : public Element
+    {
+	    public:
+        	Separator() {};                     
+        	Separator(const Separator&) = delete;         
+        	Separator &operator=(const Separator &) = delete;
+	    ~Separator() = default;
+
+
+	    void setHeight(float);
+		void setColor(char*);
+	    void getBytes(char*);
+
+	    char COLOR[8] = "404040";
+		char HEIGHT[6] = "10.1";
 	    private: 
     };
 

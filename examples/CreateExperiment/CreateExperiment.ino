@@ -48,9 +48,14 @@ void setup()
 
    secondGraph.setChannel(1,2);
 
+   //Separator
+   PhyphoxBleExperiment::Separator mySeparator;      //Creates a line to separate elements.
+   mySeparator.setHeight(0.3);                       //Sets height of the separator.
+   mySeparator.setColor("404040");                   //Sets color of the separator. Use a 6 digit hexadecimal value in "quotation marks".
+
    //Info
    PhyphoxBleExperiment::InfoField myInfo;      //Creates an info-box.
-   myInfo.setInfo("Random number generator");
+   myInfo.setInfo("Random Info Text");
 
    //Export
    PhyphoxBleExperiment::ExportSet mySet;       //Provides exporting the data to excel etc.
@@ -68,6 +73,7 @@ void setup()
 
    firstView.addElement(firstGraph);            //attach graph to view
    firstView.addElement(secondGraph);            //attach second graph to view
+   firstView.addElement(mySeparator);
    firstView.addElement(myInfo);                //attach info to view
    plotRandomValues.addView(firstView);         //Attach view to experiment
    mySet.addElement(myData1);                   //attach data to exportSet
