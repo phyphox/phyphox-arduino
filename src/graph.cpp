@@ -20,6 +20,18 @@ void PhyphoxBleExperiment::Graph::setLabelY(const char *ly){
 	strcat(LABELY, ly);
 }
 
+void PhyphoxBleExperiment::Graph::setColor(const char *c){
+	sprintf(COLOR, c);
+}
+
+void PhyphoxBleExperiment::Graph::setXPrecision(int px){
+	sprintf(XPRECISION, "%d", px);
+}
+
+void PhyphoxBleExperiment::Graph::setYPrecision(int py){
+	sprintf(YPRECISION, "%d", py);
+}
+
 void PhyphoxBleExperiment::Graph::setChannel(int x, int y)
 {
 	sprintf(INPUTX, "CH%i", x);
@@ -46,8 +58,14 @@ void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 	strcat(buffArray,UNITX);
 	strcat(buffArray,"\" unitY=\"");
 	strcat(buffArray,UNITY);
+	strcat(buffArray,"\" xPrecision=\"");
+	strcat(buffArray,XPRECISION);
+	strcat(buffArray,"\" yPrecision=\"");
+	strcat(buffArray,YPRECISION);
 	strcat(buffArray,"\" style=\"");
 	strcat(buffArray,STYLE);
+	strcat(buffArray,"\" color=\"");
+	strcat(buffArray,COLOR);
 	strcat(buffArray,"\">\n");
 
 	strcat(buffArray, "\t\t\t<input axis=\"x\">");

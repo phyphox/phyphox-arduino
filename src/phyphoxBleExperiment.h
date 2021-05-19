@@ -48,6 +48,9 @@ class PhyphoxBleExperiment {
 	    char UNITY[50] = "";
 	    char LABELX[50] = "time";
 	    char LABELY[50] = "value";
+		char COLOR[8] = "ff7e22";
+		char XPRECISION[5] = "3";
+		char YPRECISION[5] = "3";
 
 	    char INPUTX[5] = "CH0";
 	    char INPUTY[5] = "CH1";
@@ -58,6 +61,9 @@ class PhyphoxBleExperiment {
 	    void setUnitY(const char*);
 	    void setLabelX(const char*);
 	    void setLabelY(const char*);
+		void setXPrecision(int);
+		void setYPrecision(int);
+		void setColor(const char*);
 	    void setChannel(int, int);
 	    void setStyle(const char*);
 

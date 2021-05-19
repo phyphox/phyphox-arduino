@@ -22,6 +22,8 @@ void setup()
    firstGraph.setUnitY("");
    firstGraph.setLabelX("time");
    firstGraph.setLabelY("random number");
+   firstGraph.setXPrecision(1);                 //The amount of digits shown after the decimal point
+   firstGraph.setYPrecision(1);
 
    /* Assign Channels, so which data is plotted on x or y axis 
    *  first parameter represents x-axis, second y-axis
@@ -39,6 +41,7 @@ void setup()
    secondGraph.setLabelX("random number");
    secondGraph.setLabelY("squared");
    secondGraph.setStyle("dots");
+   secondGraph.setColor("2E728E");                //Sets Color of line
 
    /* Assign Channels, so which data is plotted on x or y axis 
    *  first parameter represents x-axis, second y-axis
