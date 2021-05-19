@@ -134,9 +134,11 @@ class PhyphoxBleExperiment {
 
 
 	    void setInfo(const char*);
+		void setColor(const char*);
 	    void getBytes(char*);
 
 	    char INFO[250] = "Info";
+		char COLOR[8] = "";
 	    private: 
     };
 
@@ -150,7 +152,7 @@ class PhyphoxBleExperiment {
 
 
 	    void setHeight(float);
-		void setColor(char*);
+		void setColor(const char*);
 	    void getBytes(char*);
 
 	    char COLOR[8] = "404040";

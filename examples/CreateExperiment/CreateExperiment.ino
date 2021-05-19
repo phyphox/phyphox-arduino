@@ -51,11 +51,12 @@ void setup()
    //Separator
    PhyphoxBleExperiment::Separator mySeparator;      //Creates a line to separate elements.
    mySeparator.setHeight(0.3);                       //Sets height of the separator.
-   mySeparator.setColor("404040");                   //Sets color of the separator. Use a 6 digit hexadecimal value in "quotation marks".
+   mySeparator.setColor("404040");                   //Sets color of the separator. Uses a 6 digit hexadecimal value in "quotation marks".
 
    //Info
    PhyphoxBleExperiment::InfoField myInfo;      //Creates an info-box.
    myInfo.setInfo("Random Info Text");
+   myInfo.setColor("404040");                   //Sets font color. Uses a 6 digit hexadecimal value in "quotation marks".
 
    //Export
    PhyphoxBleExperiment::ExportSet mySet;       //Provides exporting the data to excel etc.

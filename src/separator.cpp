@@ -5,7 +5,7 @@ void PhyphoxBleExperiment::Separator::setHeight(float h)
 	sprintf(HEIGHT, "%.2f", h);
 }
 
-void PhyphoxBleExperiment::Separator::setColor(char *c)
+void PhyphoxBleExperiment::Separator::setColor(const char *c)
 {
 	sprintf(COLOR, c);
 } 
