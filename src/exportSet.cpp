@@ -1,6 +1,6 @@
 #include "phyphoxBleExperiment.h"
 
-void PhyphoxBleExperiment::Export::addElement(Element& e)
+void PhyphoxBleExperiment::ExportSet::addElement(Element& e)
 {
 	for(int i=0; i<phyphoxBleNElements; i++){
 		if(ELEMENTS[i]==nullptr){
@@ -11,12 +11,12 @@ void PhyphoxBleExperiment::Export::addElement(Element& e)
 
 }
 
-void PhyphoxBleExperiment::Export::setName(const char *n){
+void PhyphoxBleExperiment::ExportSet::setName(const char *n){
 	memset(&NAME[0], 0, sizeof(NAME));
 	strcat(NAME, n);
 }
 
-void PhyphoxBleExperiment::Export::getBytes(char *buffArray)
+void PhyphoxBleExperiment::ExportSet::getBytes(char *buffArray)
 {
 	
 	strcat(buffArray, "\t<set name=\"");

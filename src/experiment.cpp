@@ -26,12 +26,12 @@ void PhyphoxBleExperiment::setDescription(const char *d){
 	strcat(DESCRIPTION, d);
 }
 
-void PhyphoxBleExperiment::addExport(Export& e)
+void PhyphoxBleExperiment::addExportSet(ExportSet& e)
 {
-	for(int i=0; i<phyphoxBleNExports; i++)
+	for(int i=0; i<phyphoxBleNExportSets; i++)
 	{
-		if(EXPORTS[i]==nullptr){
-			EXPORTS[i] = &e;
+		if(EXPORTSETS[i]==nullptr){
+			EXPORTSETS[i] = &e;
 			break;
 		}
 	}
@@ -95,9 +95,9 @@ void PhyphoxBleExperiment::getBytes(char *buffArray){
 
 	//build export
 	strcat(buffArray, "<export>\n");
-	for(int i=0;i<phyphoxBleNExports; i++){
-		if(EXPORTS[i]!=nullptr){
-			EXPORTS[i]->getBytes(buffArray);
+	for(int i=0;i<phyphoxBleNExportSets; i++){
+		if(EXPORTSETS[i]!=nullptr){
+			EXPORTSETS[i]->getBytes(buffArray);
 		}
 	}
 	strcat(buffArray, "</export>\n");
