@@ -57,34 +57,35 @@ For each graph you need to call `setChannel(x, y)` with x and y being an index o
 For example, let's assume you have the float values `foo` and `bar`. You can then call server.write(foo, bar) to send a set with both values. If you call `setChannel(0,1)`, your graph would plot `foo` on the y axis over time on the x axis. If you call `setChannel(2,1)`, your graph would plot `foo` on the y axis and `bar` on the x axis.
 
 Here are some useful methods to create your own experiment:
-| Target     | Method                   | Input                         | Second Input | Explanation                                        |
-| ---------- | ------------------------ | ----------------------------- | ----------------------------------------------------------------- |
-| Experiment | setTitle(char*)          | New title                     | Sets a title for the experiment                                   |
-| Experiment | setCategory(char*)       | New Category                  | Sets a category for the experiment                                |
-| Experiment | setDescription(char*)    | New Description               | Sets a description for the experiment                             |
-| Experiment | addView(View&)           | View                          | Adds a view to the corresponding experiment                       |
-| Experiment | addExportSet(ExportSet&) | ExportSet                     | Adds an exportSet to the corresponding experiment                 |
-| View       | addElement(Element&)     | Graph, Info, Value, Separator | Adds an element to the corresponding view                         |
-| View       | setLabel(char*)          | New Label                     | Sets a label for the view                                         |
-| Graph      | setLabel(char*)          | New Label                     | Sets a label for the graph                                        |
-| Graph      | setUnitX(char*)          | Unit for X                    | Sets the unit for x (similar with y)                              |
-| Graph      | setLabelX(char*)         | Label for X                   | Sets a label for x (similar with y)                               |
-| Graph      | setXPrecision(int)       | Precision value               | Sets the amount of digits after the decimal point (similar with y)|
-| Graph      | setChannel(int, int)     | As explained above            | As explained above                                                |
-| Graph      | setStyle(char*)          | "lines", "dots", ...          | Sets the style. For more possibilities check the wiki             |
-| Graph      | setColor(char*)          | 6 digits hexadecimal code     | Sets the color of the line in the graph                           |
-| Separator  | setHeight(float)         | height of the line            | Creates a line to separate parts of the experiment                |
-| Separator  | setColor(char*)          | 6 digits hexadecimal code     | Sets the color of the line                                        |
-| Info       | setInfo(char*)           | Infotext                      | Sets the infotext                                                 |
-| Info       | setColor(char*)          | 6 digits hexadecimal code     | Sets the font color                                               |
-| Value      | setLabel(char*)          | New Label                     | Sets a label for the displayed value                              |
-| Value      | setPrecision(int)        | Precision value               | Sets the amount of digits after the decimal point                 |
-| Value      | setUnit(char*)           | Unit                          | Sets a unit for the displayed value                               |
-| Value      | setColor(char*)          | 6 digits hexadecimal code     | Sets the font color                                               |
-| Value      | setChannel(int)          | As explained above            | As explained above, just with one parameter                       |
-| ExportSet  | setName(char*)           | New name                      | Sets a name for the exportSet (Used to export to Excel, etc.)     |
-| ExportData | setName(char*)           | New name                      | Sets a name for the exportData                                    |
-| ExportData | setDatachannel(int)      | Channel to be exported        | Defines which channel should be exported for this dataset         |
+
+| Target     | Method                   | Second Input | Explanation                                        |
+| ---------- | ------------------------ | ----------------------------------------------------------------- |
+| Experiment | setTitle(char*)          | Sets a title for the experiment                                   |
+| Experiment | setCategory(char*)       | Sets a category for the experiment                                |
+| Experiment | setDescription(char*)    | Sets a description for the experiment                             |
+| Experiment | addView(View&)           | Adds a view to the corresponding experiment                       |
+| Experiment | addExportSet(ExportSet&) | Adds an exportSet to the corresponding experiment                 |
+| View       | addElement(Element&)     | Adds an element to the corresponding view                         |
+| View       | setLabel(char*)          | Sets a label for the view                                         |
+| Graph      | setLabel(char*)          | Sets a label for the graph                                        |
+| Graph      | setUnitX(char*)          | Sets the unit for x (similar with y)                              |
+| Graph      | setLabelX(char*)         | Sets a label for x (similar with y)                               |
+| Graph      | setXPrecision(int)       | Sets the amount of digits after the decimal point (similar with y)|
+| Graph      | setChannel(int, int)     | As explained above (1-5)                                          |
+| Graph      | setStyle(char*)          | Sets the style. For more possibilities check the wiki             |
+| Graph      | setColor(char*)          | Sets the line color of the graph (use a 6 digit hexadecimal code) |
+| Separator  | setHeight(float)         | Creates a line to separate parts of the experiment                |
+| Separator  | setColor(char*)          | Sets the color of the line (use a 6 digit hexadecimal code)       |
+| Info       | setInfo(char*)           | Sets the infotext                                                 |
+| Info       | setColor(char*)          | Sets the font color (use a 6 digit hexadecimal code)              |
+| Value      | setLabel(char*)          | Sets a label for the displayed value                              |
+| Value      | setPrecision(int)        | Sets the amount of digits after the decimal point                 |
+| Value      | setUnit(char*)           | Sets a unit for the displayed value                               |
+| Value      | setColor(char*)          | Sets the font color (use a 6 digit hexadecimal code)              |
+| Value      | setChannel(int)          | As explained above, just with one parameter (1-5)                 |
+| ExportSet  | setName(char*)           | Sets a name for the exportSet (Used to export to Excel, etc.)     |
+| ExportData | setName(char*)           | Sets a name for the exportData                                    |
+| ExportData | setDatachannel(int)      | Defines which channel should be exported for this dataset (1-5)   |
 
 ### getDataFromSmartphone.ino
 
