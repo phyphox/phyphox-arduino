@@ -58,7 +58,7 @@ For example, let's assume you have the float values `foo` and `bar`. You can the
 
 Here are some useful methods to create your own experiment:
 
-| Target     | Method                   | Second Input | Explanation                                        |
+| Target     | Method                   | Explanation                                                       |
 | ---------- | ------------------------ | ----------------------------------------------------------------- |
 | Experiment | setTitle(char*)          | Sets a title for the experiment                                   |
 | Experiment | setCategory(char*)       | Sets a category for the experiment                                |
