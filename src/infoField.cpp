@@ -15,9 +15,9 @@ void PhyphoxBleExperiment::InfoField::getBytes(char *buffArray)
 
 	strcat(buffArray,"\t\t<info label=\"");
 	strcat(buffArray, INFO);
-    strcat(buffArray,"\t\t\" color=\"");
+    strcat(buffArray,"\" color=\"");
     strcat(buffArray, COLOR);
 	strcat(buffArray,"\">\n");
-	strcat(buffArray, "\t\t</info>\n");
+	strcat(buffArray,"\t\t</info>\n");
 	
 }

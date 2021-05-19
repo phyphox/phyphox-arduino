@@ -138,7 +138,7 @@ class PhyphoxBleExperiment {
 	    void getBytes(char*);
 
 	    char INFO[250] = "Info";
-		char COLOR[8] = "";
+		char COLOR[8] = "ffffff";
 	    private: 
     };
 
@@ -157,6 +157,30 @@ class PhyphoxBleExperiment {
 
 	    char COLOR[8] = "404040";
 		char HEIGHT[6] = "10.1";
+	    private: 
+    };
+
+	class Value : public Element
+    {
+	    public:
+        	Value() {};                     
+        	Value(const Value&) = delete;         
+        	Value &operator=(const Value &) = delete;
+	    ~Value() = default;
+
+
+	    void setLabel(const char*);
+		void setPrecision(int);
+		void setUnit(const char*);
+		void setColor(const char*);
+	    void getBytes(char*);
+		void setChannel(int);
+
+	    char LABEL[50] = "Value";
+		char PRECISION[2] = "2";
+		char UNIT[50] = "Unit";
+		char COLOR[8] = "ffffff";
+		char INPUTVALUE[5] = "CH1";
 	    private: 
     };
 

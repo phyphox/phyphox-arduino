@@ -58,6 +58,14 @@ void setup()
    myInfo.setInfo("Random Info Text");
    myInfo.setColor("404040");                   //Sets font color. Uses a 6 digit hexadecimal value in "quotation marks".
 
+   //Value
+   PhyphoxBleExperiment::Value myValue;         //Creates a value-box.
+   myValue.setLabel("Number");                  //Sets the label
+   myValue.setPrecision(2);                     //The amount of digits shown after the decimal point.
+   myValue.setUnit("u");                        //The physical unit associated with the displayed value.
+   myValue.setColor("FFFFFF");                  //Sets font color. Uses a 6 digit hexadecimal value in "quotation marks".
+   myValue.setChannel(1);
+
    //Export
    PhyphoxBleExperiment::ExportSet mySet;       //Provides exporting the data to excel etc.
    mySet.setName("mySet");
@@ -76,11 +84,12 @@ void setup()
    firstView.addElement(secondGraph);            //attach second graph to view
    firstView.addElement(mySeparator);
    firstView.addElement(myInfo);                //attach info to view
-   plotRandomValues.addView(firstView);         //Attach view to experiment
+   firstView.addElement(myValue);               //attach value to view
+   plotRandomValues.addView(firstView);         //attach view to experiment
    mySet.addElement(myData1);                   //attach data to exportSet
    mySet.addElement(myData2);                   //attach data to exportSet
    plotRandomValues.addExportSet(mySet);        //attach exportSet to experiment
-   PhyphoxBLE::addExperiment(plotRandomValues);      //Attach experiment to server
+   PhyphoxBLE::addExperiment(plotRandomValues);      //attach experiment to server
 
 }
 
