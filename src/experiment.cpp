@@ -38,6 +38,8 @@ void PhyphoxBleExperiment::addExportSet(ExportSet& e)
 }
 
 void PhyphoxBleExperiment::getBytes(char *buffArray){
+	bool noExports = true;
+
 	//header
 	strcat(buffArray, "<phyphox version=\"1.10\">\n");
 	//build title
@@ -98,7 +100,17 @@ void PhyphoxBleExperiment::getBytes(char *buffArray){
 	for(int i=0;i<phyphoxBleNExportSets; i++){
 		if(EXPORTSETS[i]!=nullptr){
 			EXPORTSETS[i]->getBytes(buffArray);
+			noExports = false;
 		}
+	}
+	if(noExports) {
+		strcat(buffArray,"\t<set name=\"mySet\">\n");
+    	strcat(buffArray,"\t\t<data name=\"myData1\">CH1</data>\n");
+    	strcat(buffArray,"\t\t<data name=\"myData2\">CH2</data>\n");
+    	strcat(buffArray,"\t\t<data name=\"myData3\">CH3</data>\n");
+    	strcat(buffArray,"\t\t<data name=\"myData4\">CH4</data>\n");
+    	strcat(buffArray,"\t\t<data name=\"myData5\">CH5</data>\n");
+		strcat(buffArray,"\t</set>\n");
 	}
 	strcat(buffArray, "</export>\n");
 	

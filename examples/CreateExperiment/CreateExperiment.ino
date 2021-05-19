@@ -20,8 +20,12 @@ void setup()
    mySet.setName("mySet");
 
    PhyphoxBleExperiment::ExportData myData1;
-   myData1.setName("myData1");
-   myData1.setBuffer("1");
+   myData1.setName("value");
+   myData1.setDatachannel(1);
+
+   PhyphoxBleExperiment::ExportData myData2;
+   myData2.setName("value^2");
+   myData2.setDatachannel(2);
 
    //Graph
    PhyphoxBleExperiment::Graph firstGraph;      //Create graph which will plot random numbers over time     
@@ -60,6 +64,7 @@ void setup()
    firstView.addElement(secondGraph);            //attach second graph to view
    plotRandomValues.addView(firstView);         //Attach view to experiment
    mySet.addElement(myData1);
+   mySet.addElement(myData2);
    plotRandomValues.addExportSet(mySet);
    PhyphoxBLE::addExperiment(plotRandomValues);      //Attach experiment to server
 
