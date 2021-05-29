@@ -193,6 +193,8 @@ class PhyphoxBleExperiment {
 	void setTitle(const char*);
 	void setCategory(const char*);
 	void setDescription(const char*);
+	void setConfig(const char*);
+
 
 	void getBytes(char*);
 	void addView(View&);
@@ -202,6 +204,7 @@ class PhyphoxBleExperiment {
 	char TITLE[50] = "Arduino-Experiment";
 	char CATEGORY[50] = "Arduino Experiments";
 	char DESCRIPTION[500] = "An experiment created with the phyphox BLE library for Arduino-compatible micro controllers.";
+	char CONFIG[8] = "000000";
 
 	View *VIEWS[phyphoxBleNViews] = {nullptr};
 	ExportSet *EXPORTSETS[phyphoxBleNExportSets] = {nullptr};

@@ -26,6 +26,11 @@ void PhyphoxBleExperiment::setDescription(const char *d){
 	strcat(DESCRIPTION, d);
 }
 
+void PhyphoxBleExperiment::setConfig(const char *t){
+	memset(&CONFIG[0], 0, sizeof(CONFIG));
+	strcat(CONFIG, t);
+}
+
 void PhyphoxBleExperiment::addExportSet(ExportSet& e)
 {
 	for(int i=0; i<phyphoxBleNExportSets; i++)
@@ -64,7 +69,12 @@ void PhyphoxBleExperiment::getBytes(char *buffArray){
 
 	//build input
 	strcat(buffArray, "<input>\n");
-	strcat(buffArray, "\t<bluetooth mode=\"notification\" rate=\"1\" subscribeOnStart=\"false\">\n\t\t");
+	strcat(buffArray, "\t<bluetooth mode=\"notification\" rate=\"1\" subscribeOnStart=\"false\">\n");
+
+	//build config
+	strcat(buffArray,"\t\t<config char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"hexadecimal\">");
+	strcat(buffArray, CONFIG);
+    strcat(buffArray,"</config>\n\t\t");
 
 	for(int i=1; i<=5;i++){
 		strcat(buffArray, "<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" ");
@@ -72,7 +82,7 @@ void PhyphoxBleExperiment::getBytes(char *buffArray){
 		int k = (i-1)*4;
 		sprintf(add, "offset=\"%i\" >CH%i", k,i);
 		strcat(buffArray, add);
-		strcat(buffArray,"</output>\n");
+		strcat(buffArray,"</output>\n\t\t");
 	}
 	strcat(buffArray,"<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" extra=\"time\">CH0</output>");
 

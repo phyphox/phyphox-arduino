@@ -63,6 +63,7 @@ Here are some useful methods to create your own experiment:
 | Experiment | setTitle(char*)          | Sets a title for the experiment                                   |
 | Experiment | setCategory(char*)       | Sets a category for the experiment                                |
 | Experiment | setDescription(char*)    | Sets a description for the experiment                             |
+| Experiment | setConfig(char*)         | Sets a config (use a 6 digit hexadecimal code as input)           |
 | Experiment | addView(View&)           | Adds a view to the corresponding experiment                       |
 | Experiment | addExportSet(ExportSet&) | Adds an exportSet to the corresponding experiment                 |
 | View       | addElement(Element&)     | Adds an element to the corresponding view                         |
