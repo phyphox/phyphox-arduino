@@ -88,7 +88,7 @@ class PhyphoxBleExperiment {
 	    void addElement(Element&);
 
 	    char LABEL[50] = "Data";
-	    Element *ELEMENTS[phyphoxBleNViews]={nullptr};
+	    Element *ELEMENTS[phyphoxBleNElements]={nullptr};
 	    private: 
     };
 
@@ -184,9 +184,31 @@ class PhyphoxBleExperiment {
 
 	    char LABEL[50] = "Value";
 		char PRECISION[2] = "2";
-		char UNIT[50] = "Unit";
+		char UNIT[10] = "Unit";
 		char COLOR[8] = "ffffff";
 		char INPUTVALUE[5] = "CH1";
+	    private: 
+    };
+
+	class Edit : public Element
+    {
+	    public:
+        	Edit() {};                     
+        	Edit(const Edit&) = delete;         
+        	Edit &operator=(const Edit &) = delete;
+	    ~Edit() = default;
+
+
+	    void setLabel(const char*);
+		void setUnit(const char*);
+		void setSigned(bool);
+		void setDecimal(bool);
+	    void getBytes(char*);
+
+	    char LABEL[50] = "Edit";
+		char UNIT[10] = "Unit";
+		char SIGNED[7] = "true";
+		char DECIMAL[7]= "true";
 	    private: 
     };
 

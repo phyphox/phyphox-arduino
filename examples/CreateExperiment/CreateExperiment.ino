@@ -10,6 +10,7 @@ void setup()
    plotRandomValues.setTitle("Random Number Plotter");
    plotRandomValues.setCategory("Arduino Experiments");
    plotRandomValues.setDescription("Random numbers are generated on Arduino and visualized with phyphox afterwards");
+   plotRandomValues.setConfig("F0F0F0");
 
    //View
    PhyphoxBleExperiment::View firstView;
@@ -62,12 +63,19 @@ void setup()
    myInfo.setColor("404040");                   //Sets font color. Uses a 6 digit hexadecimal value in "quotation marks".
 
    //Value
-   PhyphoxBleExperiment::Value myValue;         //Creates a value-box.
-   myValue.setLabel("Number");                  //Sets the label
-   myValue.setPrecision(2);                     //The amount of digits shown after the decimal point.
-   myValue.setUnit("u");                        //The physical unit associated with the displayed value.
-   myValue.setColor("FFFFFF");                  //Sets font color. Uses a 6 digit hexadecimal value in "quotation marks".
-   myValue.setChannel(1);
+   //PhyphoxBleExperiment::Value myValue;         //Creates a value-box.
+   //myValue.setLabel("Number");                  //Sets the label
+   //myValue.setPrecision(2);                     //The amount of digits shown after the decimal point.
+   //myValue.setUnit("u");                        //The physical unit associated with the displayed value.
+   //myValue.setColor("FFFFFF");                  //Sets font color. Uses a 6 digit hexadecimal value in "quotation marks".
+   //myValue.setChannel(1);
+
+   //Edit
+   PhyphoxBleExperiment::Edit myEdit;     
+   myEdit.setLabel("Editfield");
+   myEdit.setUnit("u");
+   myEdit.setSigned(false);
+   myEdit.setDecimal(false);
 
    //Export
    PhyphoxBleExperiment::ExportSet mySet;       //Provides exporting the data to excel etc.
@@ -87,7 +95,7 @@ void setup()
    firstView.addElement(secondGraph);            //attach second graph to view
    firstView.addElement(mySeparator);
    firstView.addElement(myInfo);                //attach info to view
-   firstView.addElement(myValue);               //attach value to view
+   firstView.addElement(myEdit);               //attach value to view
    plotRandomValues.addView(firstView);         //attach view to experiment
    mySet.addElement(myData1);                   //attach data to exportSet
    mySet.addElement(myData2);                   //attach data to exportSet
