@@ -7,7 +7,8 @@
 //init statics
 uint8_t PhyphoxBLE::data_package[20] = {0};
 void (*PhyphoxBLE::configHandler)() = nullptr;
-uint8_t storage[4000];
+uint8_t storage[32000];
+//uint8_t *storage = (uint8_t*) malloc(8000 * sizeof(char));
 uint8_t *PhyphoxBLE::EXPARRAY=storage;
 uint8_t* PhyphoxBLE::p_exp = nullptr;
 size_t PhyphoxBLE::expLen = 0;
@@ -303,11 +304,32 @@ void PhyphoxBLE::when_subscription_received()
 }
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
-	char buffer[4000] =""; //this should be reworked 
-	exp.getBytes(buffer);
-	memcpy(&EXPARRAY[0],&buffer[0],strlen(buffer));
+	// char buffer[4000] =""; //this should be reworked 
+	// exp.getBytes(buffer);
+	// memcpy(&EXPARRAY[0],&buffer[0],strlen(buffer));
+	// p_exp = &EXPARRAY[0];
+	// expLen = strlen(buffer);
+
+  
+  char buffer[4000] =""; //this should be reworked 
+  uint16_t length = 0;
+
+	exp.getFirstBytes(buffer);
+	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
+  length += strlen(buffer);
+  memset(&(buffer[0]), NULL, strlen(buffer));
+
+  exp.getViewBytes(buffer);
+	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
+  length += strlen(buffer);
+  exp.getLastBytes(buffer);
+  memset(&(buffer[0]), NULL, strlen(buffer));
+
+  exp.getLastBytes(buffer);
+	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
+  length += strlen(buffer);
 	p_exp = &EXPARRAY[0];
-	expLen = strlen(buffer);
+	expLen = length;
 }
 
 void PhyphoxBLE::disconnected(){

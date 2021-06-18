@@ -1,0 +1,7 @@
+{
+    "C_Cpp.dimInactiveRegions": false,
+    "files.associations": {
+        "cmath": "cpp",
+        "string_view": "cpp"
+    }
+}

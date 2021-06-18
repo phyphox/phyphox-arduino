@@ -44,28 +44,15 @@ class PhyphoxBleExperiment {
         	Graph &operator=(const Graph &) = delete;
 	    ~Graph() = default;
 
-	    char UNITX[50] = "s";
-	    char UNITY[50] = "";
-	    char LABELX[50] = "time";
-	    char LABELY[50] = "value";
-		char COLOR[8] = "ff7e22";
-		char XPRECISION[5] = "3";
-		char YPRECISION[5] = "3";
-
-	    char INPUTX[5] = "CH0";
-	    char INPUTY[5] = "CH1";
-
-	    char STYLE[8] = "lines";
-
-	    void setUnitX(const char*);
-	    void setUnitY(const char*);
-	    void setLabelX(const char*);
-	    void setLabelY(const char*);
-		void setXPrecision(int);
-		void setYPrecision(int);
-		void setColor(const char*);
-	    void setChannel(int, int);
-	    void setStyle(const char*);
+	    // void setUnitX(const char*);
+	    // void setUnitY(const char*);
+	    // void setLabelX(const char*);
+	    // void setLabelY(const char*);
+		// void setXPrecision(int);
+		// void setYPrecision(int);
+		// void setColor(const char*);
+	     void setChannel(int, int);
+	    // void setStyle(const char*);
 
 	    void phyphoxTimestamp();
 	    void getBytes(char*);
@@ -219,6 +206,9 @@ class PhyphoxBleExperiment {
 
 
 	void getBytes(char*);
+	void getFirstBytes(char*);
+	void getViewBytes(char*);
+	void getLastBytes(char*);
 	void addView(View&);
 	void addExportSet(ExportSet&);
 
