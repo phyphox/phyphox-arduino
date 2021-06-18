@@ -25,13 +25,6 @@ void PhyphoxBleExperiment::View::getBytes(char *buffArray, uint8_t elem)
 		strcat(buffArray, "\">\n");
 	}
 	
-
-	//loop over elements
-	// for(int i=0; i<phyphoxBleNElements; i++){
-	// 	if(ELEMENTS[i]!=nullptr){
-	// 		ELEMENTS[i]->getBytes(buffArray);
-	// 	}
-	// }
 	if(ELEMENTS[elem]!=nullptr){
 		ELEMENTS[elem]->getBytes(buffArray);
 	}

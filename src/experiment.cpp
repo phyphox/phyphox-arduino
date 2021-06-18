@@ -98,17 +98,10 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray){
 }
 
 void PhyphoxBleExperiment::getViewBytes(char *buffArray, uint8_t view, uint8_t element){
-	//build views
 
 	if(VIEWS[view]!=nullptr && view<phyphoxBleNViews){
 		VIEWS[view]->getBytes(buffArray,element);
 	}
-
-	// for(int i=0;i<phyphoxBleNViews; i++){
-	// 	if(VIEWS[i]!=nullptr){
-	// 		VIEWS[i]->getBytes(buffArray);
-	// 	}
-	// }
 	
 }
 

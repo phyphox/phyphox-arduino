@@ -304,13 +304,7 @@ void PhyphoxBLE::when_subscription_received()
 }
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
-	// char buffer[4000] =""; //this should be reworked 
-	// exp.getBytes(buffer);
-	// memcpy(&EXPARRAY[0],&buffer[0],strlen(buffer));
-	// p_exp = &EXPARRAY[0];
-	// expLen = strlen(buffer);
-
-  char buffer[2000] =""; //this should be reworked 
+  char buffer[2000] ="";
   uint16_t length = 0;
 
 	exp.getFirstBytes(buffer);
