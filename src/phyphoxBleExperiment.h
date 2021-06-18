@@ -71,7 +71,7 @@ class PhyphoxBleExperiment {
 
 
 	    void setLabel(const char*);
-	    void getBytes(char*);
+	    void getBytes(char*,uint8_t);
 	    void addElement(Element&);
 
 	    char LABEL[50] = "Data";
@@ -207,7 +207,7 @@ class PhyphoxBleExperiment {
 
 	void getBytes(char*);
 	void getFirstBytes(char*);
-	void getViewBytes(char*);
+	void getViewBytes(char*,uint8_t,uint8_t);
 	void getLastBytes(char*);
 	void addView(View&);
 	void addExportSet(ExportSet&);

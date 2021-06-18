@@ -38,7 +38,7 @@ void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 {
 	char tmp[] = "\n";
 
-	for(int i=0; i<180; i++) {
+	for(int i=0; i<850; i++) {
 			strcat(buffArray,tmp);
 	}
 
