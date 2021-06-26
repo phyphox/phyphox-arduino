@@ -157,7 +157,7 @@ public:
 		void getBytes(char *);
 
 		char COLOR[8] = "404040";
-		char HEIGHT[6] = "10.1";
+		char HEIGHT[6] = "0.1";
 
 	private:
 	};
@@ -212,6 +212,7 @@ public:
 	void setCategory(const char *);
 	void setDescription(const char *);
 	void setConfig(const char *);
+	void setDeviceName(const char *);
 
 	void getBytes(char *);
 	void getFirstBytes(char *);
@@ -224,6 +225,7 @@ public:
 	char CATEGORY[50] = "Arduino Experiments";
 	char DESCRIPTION[500] = "An experiment created with the phyphox BLE library for Arduino-compatible micro controllers.";
 	char CONFIG[8] = "000000";
+	char DEVICENAME[20] = "MyDevice";
 
 	View *VIEWS[phyphoxBleNViews] = {nullptr};
 	ExportSet *EXPORTSETS[phyphoxBleNExportSets] = {nullptr};

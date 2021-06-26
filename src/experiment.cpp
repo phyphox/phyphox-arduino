@@ -31,6 +31,11 @@ void PhyphoxBleExperiment::setConfig(const char *t){
 	strcat(CONFIG, t);
 }
 
+void PhyphoxBleExperiment::setDeviceName(const char *d){
+	memset(&DEVICENAME[0], 0, sizeof(DEVICENAME));
+	strcat(DEVICENAME, d);
+}
+
 void PhyphoxBleExperiment::addExportSet(ExportSet& e)
 {
 	for(int i=0; i<phyphoxBleNExportSets; i++)
@@ -67,7 +72,9 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray){
 
 	//build input
 	strcat(buffArray, "<input>\n");
-	strcat(buffArray, "\t<bluetooth mode=\"notification\" rate=\"1\" subscribeOnStart=\"false\">\n");
+	strcat(buffArray, "\t<bluetooth name=\"");
+	strcat(buffArray, DEVICENAME);
+	strcat(buffArray, "\" mode=\"notification\" rate=\"1\" subscribeOnStart=\"false\">\n");
 
 	//build config
 	strcat(buffArray,"\t\t<config char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"hexadecimal\">");
