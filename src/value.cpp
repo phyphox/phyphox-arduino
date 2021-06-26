@@ -22,7 +22,7 @@ void PhyphoxBleExperiment::Value::setUnit(const char* u)
 
 void PhyphoxBleExperiment::Value::setChannel(int c)
 {
-	printf(INPUTVALUE, "CH%i", c);
+	sprintf(INPUTVALUE, "CH%i", c);
 }
 
 void PhyphoxBleExperiment::Value::setWild(const char *w){

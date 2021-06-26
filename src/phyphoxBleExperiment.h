@@ -197,7 +197,7 @@ public:
 		char PRECISION[2] = "2";
 		char UNIT[10] = "Unit";
 		char COLOR[8] = "ffffff";
-		char INPUTVALUE[5] = "CH1";
+		char INPUTVALUE[5] = "CH3";
 		char NAME[50] = "Name";
 		char WILD[100] = "";
 
@@ -217,6 +217,7 @@ public:
 		void setSigned(bool);
 		void setDecimal(bool);
 		void setWild(const char *);
+		void setChannel(int);
 		void getBytes(char *);
 
 		char LABEL[50] = "Edit";
@@ -225,6 +226,7 @@ public:
 		char DECIMAL[7] = "true";
 		char NAME[50] = "Name";
 		char WILD[100] = "";
+		char BUFFER[5] = "CH5";
 
 	private:
 	};

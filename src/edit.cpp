@@ -27,6 +27,10 @@ void PhyphoxBleExperiment::Edit::setWild(const char *w){
 	strcat(WILD, w);
 }
 
+void PhyphoxBleExperiment::Edit::setChannel(int b){
+	sprintf(BUFFER, "CH%i", b);
+}
+
 void PhyphoxBleExperiment::Edit::getBytes(char *buffArray)
 {
 	strcat(buffArray,"\t\t<edit label=\"");
@@ -40,6 +44,8 @@ void PhyphoxBleExperiment::Edit::getBytes(char *buffArray)
     strcat(buffArray,"\" ");
 	strcat(buffArray, WILD);
 	strcat(buffArray," facor=\"1\" default=\"0\">\n");
-    strcat(buffArray,"\t\t<output>CH3</output>\n");
+    strcat(buffArray,"\t\t<output>");
+    strcat(buffArray, BUFFER);
+    strcat(buffArray,"</output>\n");
 	strcat(buffArray, "\t\t</edit>\n");	
 }

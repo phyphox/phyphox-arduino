@@ -70,7 +70,7 @@ void setup()
    myValue.setPrecision(2);                     //The amount of digits shown after the decimal point.
    myValue.setUnit("u");                        //The physical unit associated with the displayed value.
    myValue.setColor("FFFFFF");                  //Sets font color. Uses a 6 digit hexadecimal value in "quotation marks".
-   myValue.setChannel(1);
+   myValue.setChannel(3);
    myValue.setWild("size=\"4\"");
 
    //Edit
@@ -79,6 +79,7 @@ void setup()
    myEdit.setUnit("u");
    myEdit.setSigned(false);
    myEdit.setDecimal(false);
+   myEdit.setChannel(3);
    myEdit.setWild("max=\"10\"");
 
    //Export
@@ -100,7 +101,7 @@ void setup()
    secondView.addElement(myInfo);                //attach info to view
    secondView.addElement(mySeparator);          //attach separator to view
    secondView.addElement(myValue);               //attach value to view
-   secondView.addElement(myEdit);               //attach editfield to view
+   secondView.addElement(myEdit);               //attach editfield to view (Linked to value)
    plotRandomValues.addView(firstView);         //attach view to experiment
    plotRandomValues.addView(secondView);
    mySet.addElement(myData1);                   //attach data to exportSet
