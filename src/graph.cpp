@@ -43,6 +43,11 @@ void PhyphoxBleExperiment::Graph::setStyle(const char *s){
 	strcat(STYLE, s);
 }
 
+void PhyphoxBleExperiment::Graph::setWild(const char *w){
+	memset(&WILD[0], 0, sizeof(WILD));
+	strcat(WILD, w);
+}
+
 void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 {
 	
@@ -66,7 +71,9 @@ void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 	strcat(buffArray,STYLE);
 	strcat(buffArray,"\" color=\"");
 	strcat(buffArray,COLOR);
-	strcat(buffArray,"\">\n");
+	strcat(buffArray,"\" ");
+	strcat(buffArray, WILD);
+	strcat(buffArray,">\n");
 
 	strcat(buffArray, "\t\t\t<input axis=\"x\">");
 	strcat(buffArray, INPUTX);

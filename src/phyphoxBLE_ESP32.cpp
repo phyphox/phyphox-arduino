@@ -314,7 +314,7 @@ void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 
   for(uint8_t i=0;i<phyphoxBleNViews; i++){
     for(int j=0; j<phyphoxBleNElements; j++){
-      exp.getViewBytes(buffer,0,j);
+      exp.getViewBytes(buffer,i,j);
 	    memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
       length += strlen(buffer);
       memset(&(buffer[0]), NULL, strlen(buffer));

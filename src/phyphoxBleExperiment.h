@@ -55,6 +55,8 @@ public:
 
 		char STYLE[8] = "lines";
 
+		char WILD[100] = "";
+
 		void setUnitX(const char *);
 		void setUnitY(const char *);
 		void setLabelX(const char *);
@@ -64,6 +66,7 @@ public:
 		void setColor(const char *);
 		void setChannel(int, int);
 		void setStyle(const char *);
+		void setWild(const char *);
 
 		void phyphoxTimestamp();
 		void getBytes(char *);
@@ -82,8 +85,10 @@ public:
 		void setLabel(const char *);
 		void getBytes(char *, uint8_t);
 		void addElement(Element &);
+		void setWild(const char *);
 
 		char LABEL[50] = "Data";
+		char WILD[100] = "";
 		Element *ELEMENTS[phyphoxBleNElements] = {nullptr};
 
 	private:
@@ -99,9 +104,11 @@ public:
 
 		char NAME[50] = "Name";
 		char BUFFER[50] = "CH1";
+		char WILD[100] = "";
 
 		void setName(const char *);
 		void setDatachannel(int);
+		void setWild(const char *);
 
 		void getBytes(char *);
 
@@ -119,8 +126,10 @@ public:
 		void setName(const char *);
 		void getBytes(char *);
 		void addElement(Element &);
+		void setWild(const char *);
 
 		char NAME[50] = "Name";
+		char WILD[100] = "";
 		Element *ELEMENTS[phyphoxBleNExportSets] = {nullptr};
 
 	private:
@@ -136,10 +145,13 @@ public:
 
 		void setInfo(const char *);
 		void setColor(const char *);
+		void setWild(const char *);
 		void getBytes(char *);
 
 		char INFO[250] = "Info";
 		char COLOR[8] = "ffffff";
+		char NAME[50] = "Name";
+		char WILD[100] = "";
 
 	private:
 	};
@@ -154,10 +166,13 @@ public:
 
 		void setHeight(float);
 		void setColor(const char *);
+		void setWild(const char *);
 		void getBytes(char *);
 
 		char COLOR[8] = "404040";
 		char HEIGHT[6] = "0.1";
+		char NAME[50] = "Name";
+		char WILD[100] = "";
 
 	private:
 	};
@@ -176,12 +191,15 @@ public:
 		void setColor(const char *);
 		void getBytes(char *);
 		void setChannel(int);
+		void setWild(const char *);
 
 		char LABEL[50] = "Value";
 		char PRECISION[2] = "2";
 		char UNIT[10] = "Unit";
 		char COLOR[8] = "ffffff";
 		char INPUTVALUE[5] = "CH1";
+		char NAME[50] = "Name";
+		char WILD[100] = "";
 
 	private:
 	};
@@ -198,12 +216,15 @@ public:
 		void setUnit(const char *);
 		void setSigned(bool);
 		void setDecimal(bool);
+		void setWild(const char *);
 		void getBytes(char *);
 
 		char LABEL[50] = "Edit";
 		char UNIT[10] = "Unit";
 		char SIGNED[7] = "true";
 		char DECIMAL[7] = "true";
+		char NAME[50] = "Name";
+		char WILD[100] = "";
 
 	private:
 	};
@@ -220,6 +241,7 @@ public:
 	void getLastBytes(char *);
 	void addView(View &);
 	void addExportSet(ExportSet &);
+	void setWild(const char *);
 
 	char TITLE[50] = "Arduino-Experiment";
 	char CATEGORY[50] = "Arduino Experiments";

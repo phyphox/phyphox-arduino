@@ -25,6 +25,11 @@ void PhyphoxBleExperiment::Value::setChannel(int c)
 	printf(INPUTVALUE, "CH%i", c);
 }
 
+void PhyphoxBleExperiment::Value::setWild(const char *w){
+	memset(&WILD[0], 0, sizeof(WILD));
+	strcat(WILD, w);
+}
+
 void PhyphoxBleExperiment::Value::getBytes(char *buffArray)
 {
 
@@ -36,7 +41,9 @@ void PhyphoxBleExperiment::Value::getBytes(char *buffArray)
     strcat(buffArray, UNIT);
     strcat(buffArray,"\" facor=\"1\" color=\"");
     strcat(buffArray, COLOR);
-	strcat(buffArray,"\">\n");
+	strcat(buffArray,"\" ");
+	strcat(buffArray, WILD);
+	strcat(buffArray,">\n");
 
     strcat(buffArray, "\t\t\t<input>");
 	strcat(buffArray, INPUTVALUE);

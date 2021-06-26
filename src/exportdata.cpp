@@ -9,12 +9,19 @@ void PhyphoxBleExperiment::ExportData::setDatachannel(int d){
 	sprintf(BUFFER, "CH%d", d);
 }
 
+void PhyphoxBleExperiment::ExportData::setWild(const char *w){
+	memset(&WILD[0], 0, sizeof(WILD));
+	strcat(WILD, w);
+}
+
 void PhyphoxBleExperiment::ExportData::getBytes(char *buffArray)
 {
 	
 	strcat(buffArray,"\t\t<data name=\"");
     strcat(buffArray, NAME);
-    strcat(buffArray, "\">");
+    strcat(buffArray,"\" ");
+	strcat(buffArray, WILD);
+	strcat(buffArray,">");
     strcat(buffArray, BUFFER);
     strcat(buffArray, "</data>\n");
 	

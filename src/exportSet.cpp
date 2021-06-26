@@ -16,12 +16,19 @@ void PhyphoxBleExperiment::ExportSet::setName(const char *n){
 	strcat(NAME, n);
 }
 
+void PhyphoxBleExperiment::ExportSet::setWild(const char *w){
+	memset(&WILD[0], 0, sizeof(WILD));
+	strcat(WILD, w);
+}
+
 void PhyphoxBleExperiment::ExportSet::getBytes(char *buffArray)
 {
 	
 	strcat(buffArray, "\t<set name=\"");
 	strcat(buffArray, NAME);
-	strcat(buffArray, "\">\n");
+	strcat(buffArray,"\" ");
+	strcat(buffArray, WILD);
+	strcat(buffArray,">\n");
 
 	//loop over elements
 	for(int i=0; i<phyphoxBleNElements; i++){

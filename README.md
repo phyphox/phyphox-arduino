@@ -87,6 +87,7 @@ Here are some useful methods to create your own experiment:
 | ExportSet  | setName(char*)           | Sets a name for the exportSet (Used to export to Excel, etc.)     |
 | ExportData | setName(char*)           | Sets a name for the exportData                                    |
 | ExportData | setDatachannel(int)      | Defines which channel should be exported for this dataset (1-5)   |
+| Everything | setWild(char *)          | Custom property e.g. setWild("lineWidth=\"3\"") for a graph       |
 
 ### getDataFromSmartphone.ino
 

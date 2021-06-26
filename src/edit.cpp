@@ -22,6 +22,11 @@ void PhyphoxBleExperiment::Edit::setDecimal(bool d)
     else sprintf(SIGNED, "false");
 }
 
+void PhyphoxBleExperiment::Edit::setWild(const char *w){
+	memset(&WILD[0], 0, sizeof(WILD));
+	strcat(WILD, w);
+}
+
 void PhyphoxBleExperiment::Edit::getBytes(char *buffArray)
 {
 	strcat(buffArray,"\t\t<edit label=\"");
@@ -32,7 +37,9 @@ void PhyphoxBleExperiment::Edit::getBytes(char *buffArray)
     strcat(buffArray, DECIMAL);
     strcat(buffArray,"\" unit=\"");
     strcat(buffArray, UNIT);
-	strcat(buffArray,"\" facor=\"1\" default=\"0\">\n");
+    strcat(buffArray,"\" ");
+	strcat(buffArray, WILD);
+	strcat(buffArray," facor=\"1\" default=\"0\">\n");
     strcat(buffArray,"\t\t<output>CH3</output>\n");
 	strcat(buffArray, "\t\t</edit>\n");	
 }
