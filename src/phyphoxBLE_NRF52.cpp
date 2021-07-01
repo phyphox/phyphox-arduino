@@ -267,6 +267,7 @@ void PhyphoxBLE::start(uint8_t* exp_pointer, size_t len) {
 
 void PhyphoxBLE::start(const char* DEVICE_NAME) {
     start(DEVICE_NAME, nullptr, 0);
+	deviceName = DEVICE_NAME;
 }
 
 void PhyphoxBLE::start() {
@@ -376,7 +377,7 @@ void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
   char buffer[2000] ="";
   uint16_t length = 0;
 
-	exp.getFirstBytes(buffer);
+	exp.getFirstBytes(buffer, deviceName);
 	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
   length += strlen(buffer);
   memset(&(buffer[0]), NULL, strlen(buffer));
