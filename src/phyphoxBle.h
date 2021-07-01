@@ -9,6 +9,8 @@ static const char *phyphoxBleDataServiceUUID = "cddf1001-30f7-4671-8b43-5e40ba53
 static const char *phyphoxBleDataCharacteristicUUID = "cddf1002-30f7-4671-8b43-5e40ba53514a";
 static const char *phyphoxBleConfigCharacteristicUUID = "cddf1003-30f7-4671-8b43-5e40ba53514a";
 
+static const char *deviceName = "phyphox-Arduino";
+
 
 #ifndef CONFIGSIZE
 #define CONFIGSIZE 20

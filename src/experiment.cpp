@@ -31,11 +31,6 @@ void PhyphoxBleExperiment::setConfig(const char *t){
 	strcat(CONFIG, t);
 }
 
-void PhyphoxBleExperiment::setDeviceName(const char *d){
-	memset(&DEVICENAME[0], 0, sizeof(DEVICENAME));
-	strcat(DEVICENAME, d);
-}
-
 void PhyphoxBleExperiment::addExportSet(ExportSet& e)
 {
 	for(int i=0; i<phyphoxBleNExportSets; i++)
@@ -47,7 +42,7 @@ void PhyphoxBleExperiment::addExportSet(ExportSet& e)
 	}
 }
 
-void PhyphoxBleExperiment::getFirstBytes(char *buffArray){
+void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME){
 	//header
 	strcat(buffArray, "<phyphox version=\"1.10\">\n");
 	//build title
