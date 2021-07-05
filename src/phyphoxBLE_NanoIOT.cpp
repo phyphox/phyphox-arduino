@@ -39,6 +39,7 @@ void PhyphoxBLE::start(uint8_t* exp_pointer, size_t len){
 
 void PhyphoxBLE::start(const char* DEVICE_NAME)
 {
+  deviceName = DEVICE_NAME;
 
   controlCharacteristic.setEventHandler(BLEWritten, controlCharacteristicWritten);
   configCharacteristic.setEventHandler(BLEWritten, configCharacteristicWritten);
@@ -112,12 +113,30 @@ void PhyphoxBLE::read(float& f)
 
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
-  char buffer[4000] =""; //this should be reworked 
-  exp.getBytes(buffer);
-  memcpy(&EXPARRAY[0],&buffer[0],strlen(buffer));
-  p_exp = &EXPARRAY[0];
-  expLen = strlen(buffer);
+  char buffer[2000] ="";
+  uint16_t length = 0;
+
+	exp.getFirstBytes(buffer, deviceName);
+	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
+  length += strlen(buffer);
+  memset(&(buffer[0]), NULL, strlen(buffer));
+
+  for(uint8_t i=0;i<phyphoxBleNViews; i++){
+    for(int j=0; j<phyphoxBleNElements; j++){
+      exp.getViewBytes(buffer,0,j);
+	    memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
+      length += strlen(buffer);
+      memset(&(buffer[0]), NULL, strlen(buffer));
+    }
+  }
+
+  exp.getLastBytes(buffer);
+	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
+  length += strlen(buffer);
+	p_exp = &EXPARRAY[0];
+	expLen = length;
 }
+
 
 
 void PhyphoxBLE::write(float& value)
