@@ -89,8 +89,8 @@ Here are some useful methods to create your own experiment:
 | Edit       | setSigned(bool)          | true = signed values allowed                                      |
 | Edit       | setDecimal(bool)         | true = decimal values allowed                                     |
 | Edit       | setChannel(int)          | As explained above, just with one parameter (1-5)                 |
-| ExportSet  | setName(char*)           | Sets a name for the exportSet (Used to export to Excel, etc.)     |
-| ExportData | setName(char*)           | Sets a name for the exportData                                    |
+| ExportSet  | setLabel(char*)          | Sets a label for the exportSet (Used to export to Excel, etc.)    |
+| ExportData | setLabel(char*)          | Sets a label for the exportData                                   |
 | ExportData | setDatachannel(int)      | Defines which channel should be exported for this dataset (1-5)   |
 | Everything | setXMLAttribute(char*)   | Custom property e.g. setXMLAttribute("lineWidth=\"3\"")           |
 
