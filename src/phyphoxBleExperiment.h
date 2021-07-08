@@ -26,7 +26,7 @@ public:
 
 		int typeID = 0;
 
-		char LABEL[50] = "Graph";
+		char LABEL[50] = "";
 
 		void setLabel(const char *);
 		virtual void getBytes(char *);
@@ -42,20 +42,20 @@ public:
 		Graph &operator=(const Graph &) = delete;
 		~Graph() = default;
 
-		char UNITX[50] = "s";
-		char UNITY[50] = "";
-		char LABELX[50] = "time";
-		char LABELY[50] = "value";
-		char COLOR[8] = "ff7e22";
-		char XPRECISION[5] = "3";
-		char YPRECISION[5] = "3";
+		char UNITX[30] = "";
+		char UNITY[30] = "";
+		char LABELX[50] = "";
+		char LABELY[50] = "";
+		char COLOR[17] = "";
+		char XPRECISION[20] = "";
+		char YPRECISION[20] = "";
 
 		char INPUTX[5] = "CH0";
 		char INPUTY[5] = "CH1";
 
-		char STYLE[8] = "lines";
+		char STYLE[17] = "";
 
-		char WILD[100] = "";
+		char XMLAttribute[100] = "";
 
 		void setUnitX(const char *);
 		void setUnitY(const char *);
@@ -66,7 +66,7 @@ public:
 		void setColor(const char *);
 		void setChannel(int, int);
 		void setStyle(const char *);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 
 		void phyphoxTimestamp();
 		void getBytes(char *);
@@ -85,10 +85,10 @@ public:
 		void setLabel(const char *);
 		void getBytes(char *, uint8_t);
 		void addElement(Element &);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 
-		char LABEL[50] = "Data";
-		char WILD[100] = "";
+		char LABEL[50] = "";
+		char XMLAttribute[100] = "";
 		Element *ELEMENTS[phyphoxBleNElements] = {nullptr};
 
 	private:
@@ -102,13 +102,11 @@ public:
 		ExportData &operator=(const ExportData &) = delete;
 		~ExportData() = default;
 
-		char NAME[50] = "Name";
-		char BUFFER[50] = "CH1";
-		char WILD[100] = "";
+		char BUFFER[5] = "CH1";
+		char XMLAttribute[100] = "";
 
-		void setName(const char *);
 		void setDatachannel(int);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 
 		void getBytes(char *);
 
@@ -123,13 +121,13 @@ public:
 		ExportSet &operator=(const ExportSet &) = delete;
 		~ExportSet() = default;
 
-		void setName(const char *);
+		void setLabel(const char *);
 		void getBytes(char *);
 		void addElement(Element &);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 
-		char NAME[50] = "Name";
-		char WILD[100] = "";
+		char LABEL[50] = "";
+		char XMLAttribute[100] = "";
 		Element *ELEMENTS[phyphoxBleNExportSets] = {nullptr};
 
 	private:
@@ -145,13 +143,12 @@ public:
 
 		void setInfo(const char *);
 		void setColor(const char *);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 		void getBytes(char *);
 
-		char INFO[250] = "Info";
-		char COLOR[8] = "ffffff";
-		char NAME[50] = "Name";
-		char WILD[100] = "";
+		char INFO[200] = "";
+		char COLOR[17] = "";
+		char XMLAttribute[100] = "";
 
 	private:
 	};
@@ -166,13 +163,12 @@ public:
 
 		void setHeight(float);
 		void setColor(const char *);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 		void getBytes(char *);
 
-		char COLOR[8] = "404040";
-		char HEIGHT[6] = "0.1";
-		char NAME[50] = "Name";
-		char WILD[100] = "";
+		char COLOR[17] = "";
+		char HEIGHT[20] = " height=\"0.1\"";
+		char XMLAttribute[100] = "";
 
 	private:
 	};
@@ -185,21 +181,18 @@ public:
 		Value &operator=(const Value &) = delete;
 		~Value() = default;
 
-		void setLabel(const char *);
 		void setPrecision(int);
 		void setUnit(const char *);
 		void setColor(const char *);
 		void getBytes(char *);
 		void setChannel(int);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 
-		char LABEL[50] = "Value";
-		char PRECISION[2] = "2";
-		char UNIT[10] = "Unit";
-		char COLOR[8] = "ffffff";
+		char PRECISION[15] = "";
+		char UNIT[20] = "";
+		char COLOR[17] = "";
 		char INPUTVALUE[5] = "CH3";
-		char NAME[50] = "Name";
-		char WILD[100] = "";
+		char XMLAttribute[100] = "";
 
 	private:
 	};
@@ -212,20 +205,17 @@ public:
 		Edit &operator=(const Edit &) = delete;
 		~Edit() = default;
 
-		void setLabel(const char *);
 		void setUnit(const char *);
 		void setSigned(bool);
 		void setDecimal(bool);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 		void setChannel(int);
 		void getBytes(char *);
 
-		char LABEL[50] = "Edit";
-		char UNIT[10] = "Unit";
-		char SIGNED[7] = "true";
-		char DECIMAL[7] = "true";
-		char NAME[50] = "Name";
-		char WILD[100] = "";
+		char UNIT[18] = "";
+		char SIGNED[17] = "";
+		char DECIMAL[17] = "";
+		char XMLAttribute[100] = "";
 		char BUFFER[5] = "CH5";
 
 	private:

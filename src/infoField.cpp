@@ -2,28 +2,33 @@
 
 void PhyphoxBleExperiment::InfoField::setInfo(const char *i)
 {
-	sprintf(INFO, i);
+	memset(&INFO[0], 0, sizeof(INFO));
+	strcat(INFO, " label=\"");
+	strcat(INFO, i);
+	strcat(INFO, "\"");
 }
 
 void PhyphoxBleExperiment::InfoField::setColor(const char *c)
 {
-	sprintf(COLOR, c);
+	memset(&COLOR[0], 0, sizeof(COLOR));
+	strcat(COLOR, " color=\"");
+	strcat(COLOR, c);
+	strcat(COLOR, "\"");
 } 
 
-void PhyphoxBleExperiment::InfoField::setWild(const char *w){
-	memset(&WILD[0], 0, sizeof(WILD));
-	strcat(WILD, w);
+void PhyphoxBleExperiment::InfoField::setXMLAttribute(const char *w){
+	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
+	strcat(XMLAttribute, " ");
+	strcat(XMLAttribute, w);
 }
 
 void PhyphoxBleExperiment::InfoField::getBytes(char *buffArray)
 {
 
-	strcat(buffArray,"\t\t<info label=\"");
+	strcat(buffArray,"\t\t<info");
 	strcat(buffArray, INFO);
-    strcat(buffArray,"\" color=\"");
     strcat(buffArray, COLOR);
-	strcat(buffArray,"\" ");
-	strcat(buffArray, WILD);
+	strcat(buffArray, XMLAttribute);
 	strcat(buffArray,">\n");
 	strcat(buffArray,"\t\t</info>\n");
 	
