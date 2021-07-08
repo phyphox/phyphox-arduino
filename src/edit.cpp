@@ -27,7 +27,7 @@ void PhyphoxBleExperiment::Edit::setXMLAttribute(const char *xml){
 }
 
 void PhyphoxBleExperiment::Edit::setChannel(int b){
-	sprintf(BUFFER, "CH%i", b);
+	sprintf(BUFFER, "CB%i", b);
 }
 
 void PhyphoxBleExperiment::Edit::getBytes(char *buffArray)
