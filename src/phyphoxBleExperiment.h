@@ -143,13 +143,12 @@ public:
 
 		void setInfo(const char *);
 		void setColor(const char *);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 		void getBytes(char *);
 
-		char INFO[250] = "Info";
-		char COLOR[8] = "ffffff";
-		char NAME[50] = "Name";
-		char WILD[100] = "";
+		char INFO[200] = "Info";
+		char COLOR[17] = "ffffff";
+		char XMLAttribute[100] = "";
 
 	private:
 	};
