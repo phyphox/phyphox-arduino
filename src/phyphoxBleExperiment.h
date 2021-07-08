@@ -181,21 +181,18 @@ public:
 		Value &operator=(const Value &) = delete;
 		~Value() = default;
 
-		void setLabel(const char *);
 		void setPrecision(int);
 		void setUnit(const char *);
 		void setColor(const char *);
 		void getBytes(char *);
 		void setChannel(int);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 
-		char LABEL[50] = "Value";
-		char PRECISION[2] = "2";
-		char UNIT[10] = "Unit";
-		char COLOR[8] = "ffffff";
+		char PRECISION[15] = "";
+		char UNIT[20] = "";
+		char COLOR[17] = "";
 		char INPUTVALUE[5] = "CH3";
-		char NAME[50] = "Name";
-		char WILD[100] = "";
+		char XMLAttribute[100] = "";
 
 	private:
 	};
