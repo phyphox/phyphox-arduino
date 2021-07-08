@@ -205,20 +205,17 @@ public:
 		Edit &operator=(const Edit &) = delete;
 		~Edit() = default;
 
-		void setLabel(const char *);
 		void setUnit(const char *);
 		void setSigned(bool);
 		void setDecimal(bool);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 		void setChannel(int);
 		void getBytes(char *);
 
-		char LABEL[50] = "Edit";
-		char UNIT[10] = "Unit";
-		char SIGNED[7] = "true";
-		char DECIMAL[7] = "true";
-		char NAME[50] = "Name";
-		char WILD[100] = "";
+		char UNIT[18] = "";
+		char SIGNED[17] = "";
+		char DECIMAL[17] = "";
+		char XMLAttribute[100] = "";
 		char BUFFER[5] = "CH5";
 
 	private:

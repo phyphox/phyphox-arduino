@@ -1,30 +1,29 @@
 #include "phyphoxBleExperiment.h"
 
-void PhyphoxBleExperiment::Edit::setLabel(const char *l)
-{
-	sprintf(LABEL, l);
-}
-
 void PhyphoxBleExperiment::Edit::setUnit(const char *u)
 {
-	sprintf(UNIT, u);
+    memset(&UNIT[0], 0, sizeof(UNIT));
+	strcat(UNIT, " unitX=\"");
+	strcat(UNIT, u);
+	strcat(UNIT, "\"");
 } 
 
 void PhyphoxBleExperiment::Edit::setSigned(bool s)
 {
-    if(s) sprintf(SIGNED, "true");
-    else sprintf(SIGNED, "false");
+    if(s) sprintf(SIGNED, " signed=\"true\"");
+    else sprintf(SIGNED, " signed=\"false\"");
 }
 
 void PhyphoxBleExperiment::Edit::setDecimal(bool d)
 {
-	if(d) sprintf(SIGNED, "true");
-    else sprintf(SIGNED, "false");
+	if(d) sprintf(SIGNED, " decimal=\"true\"");
+    else sprintf(SIGNED, " decimal=\"false\"");
 }
 
-void PhyphoxBleExperiment::Edit::setWild(const char *w){
-	memset(&WILD[0], 0, sizeof(WILD));
-	strcat(WILD, w);
+void PhyphoxBleExperiment::Edit::setXMLAttribute(const char *xml){
+	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
+    strcat(XMLAttribute, " ");
+	strcat(XMLAttribute, xml);
 }
 
 void PhyphoxBleExperiment::Edit::setChannel(int b){
@@ -33,17 +32,13 @@ void PhyphoxBleExperiment::Edit::setChannel(int b){
 
 void PhyphoxBleExperiment::Edit::getBytes(char *buffArray)
 {
-	strcat(buffArray,"\t\t<edit label=\"");
+	strcat(buffArray,"\t\t<edit");
 	strcat(buffArray, LABEL);
-    strcat(buffArray,"\" size=\"1\" signed=\"");
     strcat(buffArray, SIGNED);
-    strcat(buffArray,"\" decimal=\"");
     strcat(buffArray, DECIMAL);
-    strcat(buffArray,"\" unit=\"");
     strcat(buffArray, UNIT);
-    strcat(buffArray,"\" ");
-	strcat(buffArray, WILD);
-	strcat(buffArray," facor=\"1\" default=\"0\">\n");
+	strcat(buffArray, XMLAttribute);
+    strcat(buffArray,">\n");
     strcat(buffArray,"\t\t<output>");
     strcat(buffArray, BUFFER);
     strcat(buffArray,"</output>\n");
