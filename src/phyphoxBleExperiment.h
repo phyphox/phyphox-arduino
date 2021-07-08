@@ -26,7 +26,7 @@ public:
 
 		int typeID = 0;
 
-		char LABEL[50] = "Graph";
+		char LABEL[50] = "";
 
 		void setLabel(const char *);
 		virtual void getBytes(char *);
@@ -42,20 +42,20 @@ public:
 		Graph &operator=(const Graph &) = delete;
 		~Graph() = default;
 
-		char UNITX[50] = "s";
+		char UNITX[50] = "";
 		char UNITY[50] = "";
-		char LABELX[50] = "time";
-		char LABELY[50] = "value";
-		char COLOR[8] = "ff7e22";
-		char XPRECISION[5] = "3";
-		char YPRECISION[5] = "3";
+		char LABELX[50] = "";
+		char LABELY[50] = "";
+		char COLOR[17] = "";
+		char XPRECISION[20] = "";
+		char YPRECISION[20] = "";
 
 		char INPUTX[5] = "CH0";
 		char INPUTY[5] = "CH1";
 
-		char STYLE[8] = "lines";
+		char STYLE[17] = "";
 
-		char WILD[100] = "";
+		char XMLAttribute[100] = "";
 
 		void setUnitX(const char *);
 		void setUnitY(const char *);
@@ -66,7 +66,7 @@ public:
 		void setColor(const char *);
 		void setChannel(int, int);
 		void setStyle(const char *);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 
 		void phyphoxTimestamp();
 		void getBytes(char *);
