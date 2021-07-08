@@ -42,8 +42,8 @@ public:
 		Graph &operator=(const Graph &) = delete;
 		~Graph() = default;
 
-		char UNITX[50] = "";
-		char UNITY[50] = "";
+		char UNITX[30] = "";
+		char UNITY[30] = "";
 		char LABELX[50] = "";
 		char LABELY[50] = "";
 		char COLOR[17] = "";
@@ -146,8 +146,8 @@ public:
 		void setXMLAttribute(const char *);
 		void getBytes(char *);
 
-		char INFO[200] = "Info";
-		char COLOR[17] = "ffffff";
+		char INFO[200] = "";
+		char COLOR[17] = "";
 		char XMLAttribute[100] = "";
 
 	private:
@@ -163,13 +163,12 @@ public:
 
 		void setHeight(float);
 		void setColor(const char *);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 		void getBytes(char *);
 
-		char COLOR[8] = "404040";
-		char HEIGHT[6] = "0.1";
-		char NAME[50] = "Name";
-		char WILD[100] = "";
+		char COLOR[17] = "";
+		char HEIGHT[20] = " height=\"0.1\"";
+		char XMLAttribute[100] = "";
 
 	private:
 	};

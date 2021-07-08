@@ -2,22 +2,31 @@
 
 void PhyphoxBleExperiment::Separator::setHeight(float h)
 {
-	sprintf(HEIGHT, "%.2f", h);
+	sprintf(HEIGHT, " height=\"%.2f\"", h);
 }
 
 void PhyphoxBleExperiment::Separator::setColor(const char *c)
 {
-	sprintf(COLOR, c);
+	memset(&COLOR[0], 0, sizeof(COLOR));
+	strcat(COLOR, " color=\"");
+	strcat(COLOR, c);
+	strcat(COLOR, "\"");
 } 
+
+void PhyphoxBleExperiment::Separator::setXMLAttribute(const char * xml) {
+	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
+	strcat(XMLAttribute, " ");
+	strcat(XMLAttribute, xml);
+}
 
 void PhyphoxBleExperiment::Separator::getBytes(char *buffArray)
 {
 
-	strcat(buffArray,"\t\t<separator height=\"");
+	strcat(buffArray,"\t\t<separator");
 	strcat(buffArray, HEIGHT);
-    strcat(buffArray,"\" color=\"");
 	strcat(buffArray, COLOR);
-	strcat(buffArray,"\">\n");
+	strcat(buffArray,XMLAttribute);
+	strcat(buffArray,">\n");
 	strcat(buffArray, "\t\t</separator>\n");
 
 }
