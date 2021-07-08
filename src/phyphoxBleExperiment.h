@@ -232,7 +232,6 @@ public:
 	void getLastBytes(char *);
 	void addView(View &);
 	void addExportSet(ExportSet &);
-	void setWild(const char *);
 
 	char TITLE[50] = "Arduino-Experiment";
 	char CATEGORY[50] = "Arduino Experiments";

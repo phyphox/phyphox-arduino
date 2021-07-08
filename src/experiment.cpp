@@ -62,7 +62,10 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 
 	//build container
 	strcat(buffArray, "<data-containers>\n");
-	strcat(buffArray, "\t<container size=\"0\" static=\"false\">CH1</container>\n\t<container size=\"0\" static=\"false\">CH2</container>\n\t<container size=\"0\" static=\"false\">CH3</container>\n\t<container size=\"0\" static=\"false\">CH4</container>\n\t<container size=\"0\" static=\"false\">CH5</container>\n\t<container size=\"0\" static=\"false\">CH0</container>\n");
+	strcat(buffArray, "\t<container size=\"0\" static=\"false\">CH1</container>\n\t<container size=\"0\" \
+		static=\"false\">CH2</container>\n\t<container size=\"0\" static=\"false\">CH3</container>\n\t<container size=\"0\" \
+		static=\"false\">CH4</container>\n\t<container size=\"0\" static=\"false\">CH5</container>\n\t<container size=\"0\" \
+		static=\"false\">CH0</container>\n\t<container size=\"0\" static=\"false\">CB1</container>\n");
 	strcat(buffArray, "</data-containers>\n");
 
 	//build input
@@ -90,7 +93,23 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 	strcat(buffArray, "</input>\n");
 
 	//build output
-	strcat(buffArray, "<output></output>\n");
+	strcat(buffArray, "<output>\n");
+	strcat(buffArray, "\t<bluetooth name=\"");
+	strcat(buffArray, DEVICENAME);
+	strcat(buffArray, "\">\n");
+
+	// for(int i=1; i<=1;i++){
+	// 	strcat(buffArray, "<input char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" ");
+	// 	char add[20];
+	// 	int k = (i-1)*4;
+	// 	sprintf(add, "offset=\"%i\" >CB%i", k,i);
+	// 	strcat(buffArray, add);
+	// 	strcat(buffArray,"</input>\n\t\t");
+	// }
+	strcat(buffArray, "<input char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\">CB1</input>\n");
+
+	strcat(buffArray, "\t</bluetooth>\n");
+	strcat(buffArray, "</output>\n");
 
 	//build analysis
 	strcat(buffArray, "<analysis sleep=\"0\"  onUserInput=\"false\"></analysis>\n");
