@@ -11,23 +11,25 @@ void PhyphoxBleExperiment::ExportSet::addElement(Element& e)
 
 }
 
-void PhyphoxBleExperiment::ExportSet::setName(const char *n){
-	memset(&NAME[0], 0, sizeof(NAME));
-	strcat(NAME, n);
+void PhyphoxBleExperiment::ExportSet::setLabel(const char *l){
+	memset(&LABEL[0], 0, sizeof(LABEL));
+	strcat(LABEL, " label=\"");
+	strcat(LABEL, l);
+	strcat(LABEL, "\"");
 }
 
-void PhyphoxBleExperiment::ExportSet::setWild(const char *w){
-	memset(&WILD[0], 0, sizeof(WILD));
-	strcat(WILD, w);
+void PhyphoxBleExperiment::ExportSet::setXMLAttribute(const char *xml){
+	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
+	strcat(XMLAttribute, " ");
+	strcat(XMLAttribute, xml);
 }
 
 void PhyphoxBleExperiment::ExportSet::getBytes(char *buffArray)
 {
 	
-	strcat(buffArray, "\t<set name=\"");
-	strcat(buffArray, NAME);
-	strcat(buffArray,"\" ");
-	strcat(buffArray, WILD);
+	strcat(buffArray, "\t<set");
+	strcat(buffArray, LABEL);
+	strcat(buffArray, XMLAttribute);
 	strcat(buffArray,">\n");
 
 	//loop over elements

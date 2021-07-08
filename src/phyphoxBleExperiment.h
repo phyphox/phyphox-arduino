@@ -85,10 +85,10 @@ public:
 		void setLabel(const char *);
 		void getBytes(char *, uint8_t);
 		void addElement(Element &);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 
-		char LABEL[50] = "Data";
-		char WILD[100] = "";
+		char LABEL[50] = "";
+		char XMLAttribute[100] = "";
 		Element *ELEMENTS[phyphoxBleNElements] = {nullptr};
 
 	private:
@@ -102,13 +102,11 @@ public:
 		ExportData &operator=(const ExportData &) = delete;
 		~ExportData() = default;
 
-		char NAME[50] = "Name";
-		char BUFFER[50] = "CH1";
-		char WILD[100] = "";
+		char BUFFER[5] = "CH1";
+		char XMLAttribute[100] = "";
 
-		void setName(const char *);
 		void setDatachannel(int);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 
 		void getBytes(char *);
 
@@ -123,13 +121,13 @@ public:
 		ExportSet &operator=(const ExportSet &) = delete;
 		~ExportSet() = default;
 
-		void setName(const char *);
+		void setLabel(const char *);
 		void getBytes(char *);
 		void addElement(Element &);
-		void setWild(const char *);
+		void setXMLAttribute(const char *);
 
-		char NAME[50] = "Name";
-		char WILD[100] = "";
+		char LABEL[50] = "";
+		char XMLAttribute[100] = "";
 		Element *ELEMENTS[phyphoxBleNExportSets] = {nullptr};
 
 	private:

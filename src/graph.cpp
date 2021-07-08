@@ -58,6 +58,7 @@ void PhyphoxBleExperiment::Graph::setStyle(const char *s){
 
 void PhyphoxBleExperiment::Graph::setXMLAttribute(const char *xml){
 	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
+	strcat(XMLAttribute, " ");
 	strcat(XMLAttribute, xml);
 }
 
@@ -77,7 +78,7 @@ void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 	strcat(buffArray,YPRECISION);
 	strcat(buffArray,STYLE);
 	strcat(buffArray,COLOR);
-	strcat(buffArray, XMLAttribute);
+	strcat(buffArray,XMLAttribute);
 	strcat(buffArray,">\n");
 
 	strcat(buffArray, "\t\t\t<input axis=\"x\">");
