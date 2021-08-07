@@ -16,7 +16,21 @@ public:
 	PhyphoxBleExperiment &operator=(const PhyphoxBleExperiment &) = delete;
 	~PhyphoxBleExperiment() = default;
 
-	class Element
+	class Errorhandler
+	{
+	public:
+		Errorhandler(){};
+		Errorhandler(const Errorhandler &) = delete;
+		Errorhandler &operator=(const Errorhandler &) = delete;
+		~Errorhandler() = default;
+
+		const char* err_checkLength(const char *, int);
+		int err_checkUpper(int, int);
+		const char* err_checkHex(const char *);
+		const char* err_checkStyle(const char *);
+	};
+
+	class Element : public Errorhandler
 	{
 	public:
 		Element(){};
