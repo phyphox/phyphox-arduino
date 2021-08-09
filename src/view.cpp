@@ -33,9 +33,13 @@ void PhyphoxBleExperiment::View::getBytes(char *buffArray, uint8_t elem)
 		strcat(buffArray, XMLAttribute);
 		strcat(buffArray,">\n");
 	}
-	
+
 	if(ELEMENTS[elem]!=nullptr){
-		ELEMENTS[elem]->getBytes(buffArray);
+		if(strcmp(ELEMENTS[elem]->ERROR.MESSAGE, "") != 0) {
+			ELEMENTS[elem]->ERROR.getBytes(buffArray);
+		} else {
+			ELEMENTS[elem]->getBytes(buffArray);
+		}
 	}
 
 	if(elem == phyphoxBleNElements-1) {

@@ -2,11 +2,15 @@
 
 void PhyphoxBleExperiment::Separator::setHeight(float h)
 {
+	char tmp[10];
+	sprintf(tmp, "%f", h);;
+	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(tmp, 10, "setHeight") : ERROR;
 	sprintf(HEIGHT, " height=\"%.2f\"", h);
 }
 
 void PhyphoxBleExperiment::Separator::setColor(const char *c)
 {
+	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkHex(c, "setColor") : ERROR;
 	memset(&COLOR[0], 0, sizeof(COLOR));
 	strcat(COLOR, " color=\"");
 	strcat(COLOR, c);
@@ -14,6 +18,7 @@ void PhyphoxBleExperiment::Separator::setColor(const char *c)
 } 
 
 void PhyphoxBleExperiment::Separator::setXMLAttribute(const char * xml) {
+	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(xml, 98, "setXMLAttribute") : ERROR;
 	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
 	strcat(XMLAttribute, " ");
 	strcat(XMLAttribute, xml);
