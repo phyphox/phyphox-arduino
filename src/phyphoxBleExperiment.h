@@ -16,18 +16,22 @@ public:
 	PhyphoxBleExperiment &operator=(const PhyphoxBleExperiment &) = delete;
 	~PhyphoxBleExperiment() = default;
 
+
+	class Error
+	{
+	public:
+		char MESSAGE[35] = "";
+		void getBytes(char *);
+	};
+
+
 	class Errorhandler
 	{
 	public:
-		Errorhandler(){};
-		Errorhandler(const Errorhandler &) = delete;
-		Errorhandler &operator=(const Errorhandler &) = delete;
-		~Errorhandler() = default;
-
-		const char* err_checkLength(const char *, int);
-		int err_checkUpper(int, int);
-		const char* err_checkHex(const char *);
-		const char* err_checkStyle(const char *);
+		virtual Error err_checkLength(const char *, int, const char *);
+		virtual Error err_checkUpper(int, int, const char *);
+		virtual Error err_checkHex(const char *, const char *);
+		virtual Error err_checkStyle(const char *, const char *);
 	};
 
 	class Element : public Errorhandler
@@ -42,8 +46,10 @@ public:
 
 		char LABEL[50] = "";
 
+		Error ERROR;
+
 		void setLabel(const char *);
-		virtual void getBytes(char *);
+		virtual void getBytes(char *)=0;
 
 	private:
 	};
@@ -56,10 +62,10 @@ public:
 		Graph &operator=(const Graph &) = delete;
 		~Graph() = default;
 
-		char UNITX[30] = "";
-		char UNITY[30] = "";
-		char LABELX[50] = "";
-		char LABELY[50] = "";
+		char UNITX[14] = "";
+		char UNITY[14] = "";
+		char LABELX[30] = "";
+		char LABELY[30] = "";
 		char COLOR[17] = "";
 		char XPRECISION[20] = "";
 		char YPRECISION[20] = "";
@@ -103,6 +109,7 @@ public:
 
 		char LABEL[50] = "";
 		char XMLAttribute[100] = "";
+
 		Element *ELEMENTS[phyphoxBleNElements] = {nullptr};
 
 	private:
@@ -226,7 +233,7 @@ public:
 		void setChannel(int);
 		void getBytes(char *);
 
-		char UNIT[18] = "";
+		char UNIT[20] = "";
 		char SIGNED[17] = "";
 		char DECIMAL[17] = "";
 		char XMLAttribute[100] = "";

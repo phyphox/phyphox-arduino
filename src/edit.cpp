@@ -2,8 +2,9 @@
 
 void PhyphoxBleExperiment::Edit::setUnit(const char *u)
 {
+    ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(u, 12, "setUnit") : ERROR;
     memset(&UNIT[0], 0, sizeof(UNIT));
-	strcat(UNIT, " unitX=\"");
+	strcat(UNIT, " unit=\"");
 	strcat(UNIT, u);
 	strcat(UNIT, "\"");
 } 
@@ -21,12 +22,14 @@ void PhyphoxBleExperiment::Edit::setDecimal(bool d)
 }
 
 void PhyphoxBleExperiment::Edit::setXMLAttribute(const char *xml){
+    ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(xml, 98, "setXMLAttribute") : ERROR;
 	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
     strcat(XMLAttribute, " ");
 	strcat(XMLAttribute, xml);
 }
 
 void PhyphoxBleExperiment::Edit::setChannel(int b){
+    ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkUpper(b, 1, "setChannel") : ERROR;
 	sprintf(BUFFER, "CB%i", b);
 }
 

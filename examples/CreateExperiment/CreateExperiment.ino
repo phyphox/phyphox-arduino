@@ -1,4 +1,4 @@
-#include <phyphoxBle.h>
+    #include <phyphoxBle.h>
 
 float editValue = 0;
 
@@ -136,5 +136,4 @@ void receivedData() {           // get data from PhyPhox app
   float readInput;
   PhyphoxBLE::read(readInput);
   editValue = readInput;
-  Serial.println("Im in");
 }
