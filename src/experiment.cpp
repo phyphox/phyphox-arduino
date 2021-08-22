@@ -44,7 +44,7 @@ void PhyphoxBleExperiment::addExportSet(ExportSet& e)
 
 void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME){
 
-	bool errorFound = false;
+	int errors = 0;
 
 	//header
 	strcat(buffArray, "<phyphox version=\"1.10\">\n");
@@ -123,18 +123,26 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 	//errorhandling
 	for(int i=0;i<phyphoxBleNViews;i++) {
 		for(int j=0;j<phyphoxBleNElements;j++) {
-			if(VIEWS[i]->ELEMENTS[j]!=nullptr){
-				if(strcmp(VIEWS[i]->ELEMENTS[j]->ERROR.MESSAGE, "") != 0) {
-					if(!errorFound) {
-						errorFound = true;
-						strcat(buffArray, "\t<view label=\"ERRORS\" \n");
+			if(VIEWS[i]!= nullptr && errors<=2){
+				if(VIEWS[i]->ELEMENTS[j]!=nullptr){
+					if(strcmp(VIEWS[i]->ELEMENTS[j]->ERROR.MESSAGE, "") != 0) {
+						if(errors == 0) {
+							strcat(buffArray, "\t<view label=\"ERRORS\"> \n");
+						}
+						VIEWS[i]->ELEMENTS[j]->ERROR.getBytes(buffArray);
+						errors++;
 					}
-					VIEWS[i]->ELEMENTS[j]->ERROR.getBytes(buffArray);
 				}
 			}
 		}
 	}
-	if(errorFound) {
+	if(errors>0) {
+		strcat(buffArray,"\t\t<info  label=\"DE: Siehe Dokumentation für mehr Informationen zu Fehlern.\">\n");
+		//strcat(buffArray,"\" color=\"ff0000\">\n");
+		strcat(buffArray,"\t\t</info>\n");
+		strcat(buffArray,"\t\t<info  label=\"EN: Please check the documentation for more information about errors.\">\n");
+		//strcat(buffArray,"\" color=\"ff0000\">\n");
+		strcat(buffArray,"\t\t</info>\n");
 		strcat(buffArray,"\t</view>\n");
 	}
 }
