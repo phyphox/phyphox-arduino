@@ -43,6 +43,9 @@ void PhyphoxBleExperiment::addExportSet(ExportSet& e)
 }
 
 void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME){
+
+	bool errorFound = false;
+
 	//header
 	strcat(buffArray, "<phyphox version=\"1.10\">\n");
 	//build title
@@ -116,6 +119,24 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 
 	//build views
 	strcat(buffArray, "<views>\n");
+
+	//errorhandling
+	for(int i=0;i<phyphoxBleNViews;i++) {
+		for(int j=0;j<phyphoxBleNElements;j++) {
+			if(VIEWS[i]->ELEMENTS[j]!=nullptr){
+				if(strcmp(VIEWS[i]->ELEMENTS[j]->ERROR.MESSAGE, "") != 0) {
+					if(!errorFound) {
+						errorFound = true;
+						strcat(buffArray, "\t<view label=\"ERRORS\" \n");
+					}
+					VIEWS[i]->ELEMENTS[j]->ERROR.getBytes(buffArray);
+				}
+			}
+		}
+	}
+	if(errorFound) {
+		strcat(buffArray,"\t</view>\n");
+	}
 }
 
 void PhyphoxBleExperiment::getViewBytes(char *buffArray, uint8_t view, uint8_t element){
