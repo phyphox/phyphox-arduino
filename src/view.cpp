@@ -14,26 +14,30 @@ void PhyphoxBleExperiment::View::addElement(Element& e)
 
 void PhyphoxBleExperiment::View::setLabel(const char *l){
 	memset(&LABEL[0], 0, sizeof(LABEL));
+	strcat(LABEL, " label=\"");
 	strcat(LABEL, l);
+	strcat(LABEL, "\"");
 }
 
-void PhyphoxBleExperiment::View::setWild(const char *w){
-	memset(&WILD[0], 0, sizeof(WILD));
-	strcat(WILD, w);
+void PhyphoxBleExperiment::View::setXMLAttribute(const char *xml){
+	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
+	strcat(XMLAttribute, " ");
+	strcat(XMLAttribute, xml);
 }
 
 void PhyphoxBleExperiment::View::getBytes(char *buffArray, uint8_t elem)
 {
 	if(elem == 0) {
-		strcat(buffArray, "\t<view label=\"");
+		strcat(buffArray, "\t<view");
 		strcat(buffArray, LABEL);
-		strcat(buffArray,"\" ");
-		strcat(buffArray, WILD);
+		strcat(buffArray, XMLAttribute);
 		strcat(buffArray,">\n");
 	}
-	
+
 	if(ELEMENTS[elem]!=nullptr){
-		ELEMENTS[elem]->getBytes(buffArray);
+		if(strcmp(ELEMENTS[elem]->ERROR.MESSAGE, "") == 0) {
+			ELEMENTS[elem]->getBytes(buffArray);
+		}
 	}
 
 	if(elem == phyphoxBleNElements-1) {

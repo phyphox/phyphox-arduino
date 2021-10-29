@@ -63,7 +63,6 @@ Here are some useful methods to create your own experiment:
 | Experiment | setTitle(char*)          | Sets a title for the experiment                                   |
 | Experiment | setCategory(char*)       | Sets a category for the experiment                                |
 | Experiment | setDescription(char*)    | Sets a description for the experiment                             |
-| Experiment | setConfig(char*)         | Sets a config (use a 6 digit hexadecimal code as input)           |
 | Experiment | addView(View&)           | Adds a view to the corresponding experiment                       |
 | Experiment | addExportSet(ExportSet&) | Adds an exportSet to the corresponding experiment                 |
 | View       | addElement(Element&)     | Adds an element to the corresponding view                         |
@@ -89,10 +88,18 @@ Here are some useful methods to create your own experiment:
 | Edit       | setSigned(bool)          | true = signed values allowed                                      |
 | Edit       | setDecimal(bool)         | true = decimal values allowed                                     |
 | Edit       | setChannel(int)          | As explained above, just with one parameter (1-5)                 |
-| ExportSet  | setName(char*)           | Sets a name for the exportSet (Used to export to Excel, etc.)     |
-| ExportData | setName(char*)           | Sets a name for the exportData                                    |
+| ExportSet  | setLabel(char*)          | Sets a label for the exportSet (Used to export to Excel, etc.)    |
+| ExportData | setLabel(char*)          | Sets a label for the exportData                                   |
 | ExportData | setDatachannel(int)      | Defines which channel should be exported for this dataset (1-5)   |
-| Everything | setWild(char *)          | Custom property e.g. setWild("lineWidth=\"3\"") for a graph       |
+| Everything | setXMLAttribute(char*)   | Custom property e.g. setXMLAttribute("lineWidth=\"3\"")           |
+
+If for some reason the app shows you an error in form of "ERROR FOUND: ERR_X", with different values for X, this could be the reason:
+* ERR_01: The input was too long
+* ERR_02: The value exceeds the upper limit
+* ERR_03: The input was not a 6-digit hexadecimal code
+* ERR_04: The input does not match with a valid value
+
+If you realize that the microcontroller is continiously rebooting, you maybe added too many elements.
 
 ### getDataFromSmartphone.ino
 
