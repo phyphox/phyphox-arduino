@@ -32,6 +32,9 @@ uint16_t PhyphoxBLE::maxConInterval = 24; //30ms
 uint16_t PhyphoxBLE::slaveLatency = 0;
 uint16_t PhyphoxBLE::timeout = 50;
 
+uint16_t PhyphoxBLE::MTU = 20;
+uint16_t PhyphoxBleExperiment::MTU = 20;
+
 class MyExpCallback: public BLEDescriptorCallbacks {
 
     public:
@@ -80,6 +83,13 @@ void PhyphoxBLE::configHandlerDebug(){
   }
   
   
+}
+
+void PhyphoxBLE::setMTU(uint16_t mtuSize) {
+    BLEDevice::setMTU(mtuSize+3); //user mtu size + 3 for overhead
+    PhyphoxBLE::MTU = mtuSize;
+    PhyphoxBleExperiment::MTU = mtuSize;
+    
 }
 
 void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len){
@@ -235,6 +245,15 @@ void PhyphoxBLE::write(uint8_t *arrayPointer, unsigned int arraySize)
   dataCharacteristic->setValue(arrayPointer,arraySize);
   dataCharacteristic->notify();
 }
+void PhyphoxBLE::write(float *arrayPointer, unsigned int arrayLength)
+{
+  uint8_t dataBuffer[arrayLength*4];
+  memcpy(&dataBuffer[0], &arrayPointer[0],arrayLength*4);
+  dataCharacteristic->setValue(&dataBuffer[0],arrayLength*4);
+  dataCharacteristic->notify();
+}
+
+
 void PhyphoxBLE::read(uint8_t *arrayPointer, unsigned int arraySize)
 {
   uint8_t* data = configCharacteristic->getData();
@@ -305,7 +324,7 @@ void PhyphoxBLE::when_subscription_received()
 }
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
-  char buffer[2000] ="";
+  char buffer[2500] ="";
   uint16_t length = 0;
 
 	exp.getFirstBytes(buffer, deviceName);
@@ -323,10 +342,19 @@ void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
   }
 
   exp.getLastBytes(buffer);
+  
 	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
   length += strlen(buffer);
 	p_exp = &EXPARRAY[0];
 	expLen = length;
+
+  if(printer){
+    for(int i =0; i<length;i++){
+      char test = EXPARRAY[i];
+      Serial.print(test);
+    }
+  }
+
 }
 
 void PhyphoxBLE::disconnected(){

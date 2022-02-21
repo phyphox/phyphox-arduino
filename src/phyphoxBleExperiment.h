@@ -16,6 +16,7 @@ public:
 	PhyphoxBleExperiment &operator=(const PhyphoxBleExperiment &) = delete;
 	~PhyphoxBleExperiment() = default;
 
+	static uint16_t MTU;
 
 	class Error
 	{
@@ -44,7 +45,7 @@ public:
 
 		int typeID = 0;
 
-		char LABEL[50] = "";
+		char LABEL[50] = " label=\"label\"";
 
 		Error ERROR;
 
@@ -64,8 +65,8 @@ public:
 
 		char UNITX[14] = "";
 		char UNITY[14] = "";
-		char LABELX[30] = "";
-		char LABELY[30] = "";
+		char LABELX[30] = " labelX=\"label x\"";
+		char LABELY[30] = " labelY=\"label y\"";
 		char COLOR[17] = "";
 		char XPRECISION[20] = "";
 		char YPRECISION[20] = "";
@@ -107,7 +108,7 @@ public:
 		void addElement(Element &);
 		void setXMLAttribute(const char *);
 
-		char LABEL[50] = "";
+		char LABEL[50] = " label=\"label\"";
 		char XMLAttribute[100] = "";
 
 		Element *ELEMENTS[phyphoxBleNElements] = {nullptr};
@@ -237,7 +238,7 @@ public:
 		char DECIMAL[17] = "";
 		char XMLAttribute[100] = "";
 		char BUFFER[5] = "CH5";
-
+	
 	private:
 	};
 
@@ -260,6 +261,11 @@ public:
 
 	View *VIEWS[phyphoxBleNViews] = {nullptr};
 	ExportSet *EXPORTSETS[phyphoxBleNExportSets] = {nullptr};
+
+	int numberOfChannels = 5;
+	int repeating = 0;
+
+	
 };
 
 #endif

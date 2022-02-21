@@ -65,39 +65,66 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 
 	//build container
 	strcat(buffArray, "<data-containers>\n");
-	strcat(buffArray, "\t<container size=\"0\" static=\"false\">CH1</container>\n\t<container size=\"0\" \
-		static=\"false\">CH2</container>\n\t<container size=\"0\" static=\"false\">CH3</container>\n\t<container size=\"0\" \
-		static=\"false\">CH4</container>\n\t<container size=\"0\" static=\"false\">CH5</container>\n\t<container size=\"0\" \
-		static=\"false\">CH0</container>\n\t<container size=\"0\" static=\"false\">CB1</container>\n");
+	strcat(buffArray, "\t<container size=\"0\" static=\"false\">CH0</container>\n");
+	strcat(buffArray, "\t<container size=\"0\" static=\"false\">CB1</container>\n");
+	for(int i=0; i<numberOfChannels;i++){
+		strcat(buffArray, "\t<container size=\"0\" static=\"false\">CH");
+		char add[20];
+		sprintf(add, "%i", i+1);
+		strcat(buffArray, add);
+		strcat(buffArray, "</container>\n");
+	}
 	strcat(buffArray, "</data-containers>\n");
 
 	//build input
 	strcat(buffArray, "<input>\n");
 	strcat(buffArray, "\t<bluetooth name=\"");
 	strcat(buffArray, DEVICENAME);
-	strcat(buffArray, "\" mode=\"notification\" rate=\"1\" subscribeOnStart=\"false\">\n");
+	
+	if(MTU!=20){
+		char add[0];
+		sprintf(add, "\" mtu=\"%i", MTU);
+		strcat(buffArray, add);
+	}
+	strcat(buffArray, "\" id=\"phyphoxBLE\" mode=\"notification\" rate=\"1\" subscribeOnStart=\"false\">\n");
+	
+	
+	
 
 	//build config
-	strcat(buffArray,"\t\t<config char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"hexadecimal\">");
-	strcat(buffArray, CONFIG);
-    strcat(buffArray,"</config>\n\t\t");
+	//strcat(buffArray,"\t\t<config char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"hexadecimal\">");
+	//strcat(buffArray, CONFIG);
+    //strcat(buffArray,"</config>\n\t\t");
 
-	for(int i=1; i<=5;i++){
-		strcat(buffArray, "<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" ");
-		char add[20];
-		int k = (i-1)*4;
-		sprintf(add, "offset=\"%i\" >CH%i", k,i);
-		strcat(buffArray, add);
-		strcat(buffArray,"</output>\n\t\t");
+
+	if(repeating <= 0){
+		for(int i=1; i<=numberOfChannels;i++){
+			strcat(buffArray, "<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" ");
+			char add[20];
+			int k = (i-1)*4;
+			sprintf(add, "offset=\"%i\" >CH%i", k,i);
+			strcat(buffArray, add);
+			strcat(buffArray,"</output>\n\t\t");
+		}
+	}else{
+		for(int i=1; i<=numberOfChannels;i++){
+			strcat(buffArray, "<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" ");
+			char add[40];
+			int k = (i-1)*4;
+			sprintf(add, "offset=\"%i\" repeating=\"%i\" >CH%i", k,repeating,i);
+			strcat(buffArray, add);
+			strcat(buffArray,"</output>\n\t\t");
+		}
 	}
+	
 	strcat(buffArray,"<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" extra=\"time\">CH0</output>");
 
-	strcat(buffArray, "\t</bluetooth>\n");
+	strcat(buffArray, "\n\t</bluetooth>\n");
 	strcat(buffArray, "</input>\n");
 
 	//build output
 	strcat(buffArray, "<output>\n");
-	strcat(buffArray, "\t<bluetooth name=\"");
+	strcat(buffArray, "\t<bluetooth id=\"phyphoxBLE\" name=\"");
 	strcat(buffArray, DEVICENAME);
 	strcat(buffArray, "\">\n");
 
@@ -109,13 +136,13 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 	// 	strcat(buffArray, add);
 	// 	strcat(buffArray,"</input>\n\t\t");
 	// }
-	strcat(buffArray, "<input char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\">CB1</input>\n");
+	strcat(buffArray, "\t\t<input char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\">CB1</input>\n");
 
 	strcat(buffArray, "\t</bluetooth>\n");
 	strcat(buffArray, "</output>\n");
 
 	//build analysis
-	strcat(buffArray, "<analysis sleep=\"0\"  onUserInput=\"false\"></analysis>\n");
+	strcat(buffArray, "<analysis sleep=\"0.1\"  onUserInput=\"false\"></analysis>\n");
 
 	//build views
 	strcat(buffArray, "<views>\n");
@@ -170,11 +197,14 @@ void PhyphoxBleExperiment::getLastBytes(char *buffArray){
 	}
 	if(noExports) {
 		strcat(buffArray,"\t<set name=\"mySet\">\n");
-    	strcat(buffArray,"\t\t<data name=\"myData1\">CH1</data>\n");
-    	strcat(buffArray,"\t\t<data name=\"myData2\">CH2</data>\n");
-    	strcat(buffArray,"\t\t<data name=\"myData3\">CH3</data>\n");
-    	strcat(buffArray,"\t\t<data name=\"myData4\">CH4</data>\n");
-    	strcat(buffArray,"\t\t<data name=\"myData5\">CH5</data>\n");
+
+		for(int i=0;i<numberOfChannels+1;i++){
+			strcat(buffArray,"\t\t<data name=\"myData");	
+			char add[20];
+			sprintf(add, "%i\">CH%i", i,i);
+			strcat(buffArray, add);
+			strcat(buffArray,"</data>\n");	
+		}
 		strcat(buffArray,"\t</set>\n");
 	}
 	strcat(buffArray, "</export>\n");
@@ -182,4 +212,6 @@ void PhyphoxBleExperiment::getLastBytes(char *buffArray){
 	//close
 	strcat(buffArray, "</phyphox>");
 }
+
+
 

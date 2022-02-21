@@ -1,4 +1,4 @@
-    #include <phyphoxBle.h>
+#include <phyphoxBle.h>
 
 float editValue = 0;
 
@@ -14,7 +14,6 @@ void setup()
   plotRandomValues.setTitle("Random Number Plotter");
   plotRandomValues.setCategory("Arduino Experiments");
   plotRandomValues.setDescription("Random numbers are generated on Arduino and visualized with phyphox afterwards");
-  plotRandomValues.setConfig("F0F0F0");
 
   //View
   PhyphoxBleExperiment::View firstView;
