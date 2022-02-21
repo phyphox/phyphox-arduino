@@ -48,7 +48,7 @@ public:
 
 		Error ERROR;
 
-		void setLabel(const char *);
+		virtual void setLabel(const char *);
 		virtual void getBytes(char *)=0;
 
 	private:
@@ -125,10 +125,9 @@ public:
 
 		char BUFFER[5] = "CH1";
 		char XMLAttribute[100] = "";
-
 		void setDatachannel(int);
 		void setXMLAttribute(const char *);
-
+		void setLabel(const char *);
 		void getBytes(char *);
 
 	private:

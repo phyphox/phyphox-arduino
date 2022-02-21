@@ -13,7 +13,7 @@ void PhyphoxBleExperiment::ExportSet::addElement(Element& e)
 
 void PhyphoxBleExperiment::ExportSet::setLabel(const char *l){
 	memset(&LABEL[0], 0, sizeof(LABEL));
-	strcat(LABEL, " label=\"");
+	strcat(LABEL, " name=\"");
 	strcat(LABEL, l);
 	strcat(LABEL, "\"");
 }

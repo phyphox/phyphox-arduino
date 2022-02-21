@@ -79,7 +79,7 @@ void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 	strcat(buffArray,LABEL);
 	strcat(buffArray,LABELX);
 	strcat(buffArray,LABELY);
-	strcat(buffArray,"labelZ=\"\"");
+	strcat(buffArray," labelZ=\"\"");
 	strcat(buffArray,UNITX);
 	strcat(buffArray,UNITY);
 	strcat(buffArray,XPRECISION);
