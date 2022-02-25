@@ -7,7 +7,8 @@
 //init statics
 uint8_t PhyphoxBLE::data_package[20] = {0};
 void (*PhyphoxBLE::configHandler)() = nullptr;
-uint8_t storage[4000];
+uint8_t storage[64000];
+//uint8_t *storage = (uint8_t*) malloc(8000 * sizeof(char));
 uint8_t *PhyphoxBLE::EXPARRAY=storage;
 uint8_t* PhyphoxBLE::p_exp = nullptr;
 size_t PhyphoxBLE::expLen = 0;
@@ -30,6 +31,9 @@ uint16_t PhyphoxBLE::minConInterval = 6;  //7.5ms
 uint16_t PhyphoxBLE::maxConInterval = 24; //30ms
 uint16_t PhyphoxBLE::slaveLatency = 0;
 uint16_t PhyphoxBLE::timeout = 50;
+
+uint16_t PhyphoxBLE::MTU = 20;
+uint16_t PhyphoxBleExperiment::MTU = 20;
 
 class MyExpCallback: public BLEDescriptorCallbacks {
 
@@ -81,6 +85,13 @@ void PhyphoxBLE::configHandlerDebug(){
   
 }
 
+void PhyphoxBLE::setMTU(uint16_t mtuSize) {
+    BLEDevice::setMTU(mtuSize+3); //user mtu size + 3 for overhead
+    PhyphoxBLE::MTU = mtuSize;
+    PhyphoxBleExperiment::MTU = mtuSize;
+    
+}
+
 void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len){
   p_exp = exp_pointer;
   expLen = len;
@@ -95,6 +106,7 @@ void PhyphoxBLE::start(uint8_t* exp_pointer, size_t len){
 
 void PhyphoxBLE::start(const char * DEVICE_NAME)
 {
+  deviceName = DEVICE_NAME;
   if(printer){
     printer -> println("starting server");
   }
@@ -233,6 +245,15 @@ void PhyphoxBLE::write(uint8_t *arrayPointer, unsigned int arraySize)
   dataCharacteristic->setValue(arrayPointer,arraySize);
   dataCharacteristic->notify();
 }
+void PhyphoxBLE::write(float *arrayPointer, unsigned int arrayLength)
+{
+  uint8_t dataBuffer[arrayLength*4];
+  memcpy(&dataBuffer[0], &arrayPointer[0],arrayLength*4);
+  dataCharacteristic->setValue(&dataBuffer[0],arrayLength*4);
+  dataCharacteristic->notify();
+}
+
+
 void PhyphoxBLE::read(uint8_t *arrayPointer, unsigned int arraySize)
 {
   uint8_t* data = configCharacteristic->getData();
@@ -303,11 +324,37 @@ void PhyphoxBLE::when_subscription_received()
 }
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
-	char buffer[4000] =""; //this should be reworked 
-	exp.getBytes(buffer);
-	memcpy(&EXPARRAY[0],&buffer[0],strlen(buffer));
+  char buffer[2500] ="";
+  uint16_t length = 0;
+
+	exp.getFirstBytes(buffer, deviceName);
+	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
+  length += strlen(buffer);
+  memset(&(buffer[0]), NULL, strlen(buffer));
+
+  for(uint8_t i=0;i<phyphoxBleNViews; i++){
+    for(int j=0; j<phyphoxBleNElements; j++){
+      exp.getViewBytes(buffer,i,j);
+	    memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
+      length += strlen(buffer);
+      memset(&(buffer[0]), NULL, strlen(buffer));
+    }
+  }
+
+  exp.getLastBytes(buffer);
+  
+	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
+  length += strlen(buffer);
 	p_exp = &EXPARRAY[0];
-	expLen = strlen(buffer);
+	expLen = length;
+
+  if(printer){
+    for(int i =0; i<length;i++){
+      char test = EXPARRAY[i];
+      Serial.print(test);
+    }
+  }
+
 }
 
 void PhyphoxBLE::disconnected(){

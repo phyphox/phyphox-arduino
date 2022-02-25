@@ -56,6 +56,51 @@ For each graph you need to call `setChannel(x, y)` with x and y being an index o
 
 For example, let's assume you have the float values `foo` and `bar`. You can then call server.write(foo, bar) to send a set with both values. If you call `setChannel(0,1)`, your graph would plot `foo` on the y axis over time on the x axis. If you call `setChannel(2,1)`, your graph would plot `foo` on the y axis and `bar` on the x axis.
 
+Here are some useful methods to create your own experiment:
+
+| Target     | Method                   | Explanation                                                       |
+| ---------- | ------------------------ | ----------------------------------------------------------------- |
+| Experiment | setTitle(char*)          | Sets a title for the experiment                                   |
+| Experiment | setCategory(char*)       | Sets a category for the experiment                                |
+| Experiment | setDescription(char*)    | Sets a description for the experiment                             |
+| Experiment | addView(View&)           | Adds a view to the corresponding experiment                       |
+| Experiment | addExportSet(ExportSet&) | Adds an exportSet to the corresponding experiment                 |
+| View       | addElement(Element&)     | Adds an element to the corresponding view                         |
+| View       | setLabel(char*)          | Sets a label for the view                                         |
+| Graph      | setLabel(char*)          | Sets a label for the graph                                        |
+| Graph      | setUnitX(char*)          | Sets the unit for x (similar with y)                              |
+| Graph      | setLabelX(char*)         | Sets a label for x (similar with y)                               |
+| Graph      | setXPrecision(int)       | Sets the amount of digits after the decimal point (similar with y)|
+| Graph      | setChannel(int, int)     | As explained above (1-5)                                          |
+| Graph      | setStyle(char*)          | Sets the style. For more possibilities check the wiki             |
+| Graph      | setColor(char*)          | Sets the line color of the graph (use a 6 digit hexadecimal code) |
+| Separator  | setHeight(float)         | Creates a line to separate parts of the experiment                |
+| Separator  | setColor(char*)          | Sets the color of the line (use a 6 digit hexadecimal code)       |
+| Info       | setInfo(char*)           | Sets the infotext                                                 |
+| Info       | setColor(char*)          | Sets the font color (use a 6 digit hexadecimal code)              |
+| Value      | setLabel(char*)          | Sets a label for the displayed value                              |
+| Value      | setPrecision(int)        | Sets the amount of digits after the decimal point                 |
+| Value      | setUnit(char*)           | Sets a unit for the displayed value                               |
+| Value      | setColor(char*)          | Sets the font color (use a 6 digit hexadecimal code)              |
+| Value      | setChannel(int)          | As explained above, just with one parameter (1-5)                 |
+| Edit       | setLabel(char*)          | Sets label for the editfield                                      |
+| Edit       | setUnit(char*)           | Sets unit                                                         |
+| Edit       | setSigned(bool)          | true = signed values allowed                                      |
+| Edit       | setDecimal(bool)         | true = decimal values allowed                                     |
+| Edit       | setChannel(int)          | As explained above, just with one parameter (1-5)                 |
+| ExportSet  | setLabel(char*)          | Sets a label for the exportSet (Used to export to Excel, etc.)    |
+| ExportData | setLabel(char*)          | Sets a label for the exportData                                   |
+| ExportData | setDatachannel(int)      | Defines which channel should be exported for this dataset (1-5)   |
+| Everything | setXMLAttribute(char*)   | Custom property e.g. setXMLAttribute("lineWidth=\"3\"")           |
+
+If for some reason the app shows you an error in form of "ERROR FOUND: ERR_X", with different values for X, this could be the reason:
+* ERR_01: The input was too long
+* ERR_02: The value exceeds the upper limit
+* ERR_03: The input was not a 6-digit hexadecimal code
+* ERR_04: The input does not match with a valid value
+
+If you realize that the microcontroller is continiously rebooting, you maybe added too many elements.
+
 ### getDataFromSmartphone.ino
 
 The phyphox file format is much more powerful than what is offered by this library's interface. In the example `getDataFromSmartphone.ino` you can see how a phyphox-file can be used to set up a sensor on the phone and retrieve its data on the Arduino. In contrast to other examples, the phyphox-file is not generated by the library but instead loaded in phyphox with a QR code. You can also convert your manually created phyphox file into a header file and provide it to this library so it is submitted via Bluetooth.

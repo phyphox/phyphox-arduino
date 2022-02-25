@@ -61,12 +61,16 @@ class PhyphoxBLE
         static void write(float&, float&, float&, float&);
         static void write(float&, float&, float&, float&, float&);
 		static void write(uint8_t *, unsigned int );
+        static void write(float *,unsigned int);
 
 
         static void read(uint8_t*, unsigned int);
         static void read(float&);
         static void configHandlerDebug();
         static void (*configHandler)();
+
+        static void setMTU(uint16_t);
+        static uint16_t MTU;
 
         static void startTask();
         static void staticStartTask(void*);
