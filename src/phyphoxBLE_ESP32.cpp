@@ -31,6 +31,7 @@ uint16_t PhyphoxBLE::minConInterval = 6;  //7.5ms
 uint16_t PhyphoxBLE::maxConInterval = 24; //30ms
 uint16_t PhyphoxBLE::slaveLatency = 0;
 uint16_t PhyphoxBLE::timeout = 50;
+uint16_t PhyphoxBLE::currentConnections=0;
 
 uint16_t PhyphoxBLE::MTU = 20;
 uint16_t PhyphoxBleExperiment::MTU = 20;
@@ -69,10 +70,12 @@ class MyCharCallback: public BLECharacteristicCallbacks {
 class MyServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {
       pServer->updateConnParams(param->connect.remote_bda,PhyphoxBLE::minConInterval,PhyphoxBLE::maxConInterval,PhyphoxBLE::slaveLatency,PhyphoxBLE::timeout);
+      PhyphoxBLE::currentConnections+=1;
     };
 
     void onDisconnect(BLEServer* pServer) {
       PhyphoxBLE::disconnected();
+      PhyphoxBLE::currentConnections-=1;
     }
 };
 
