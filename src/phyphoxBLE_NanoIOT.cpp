@@ -17,6 +17,9 @@ uint16_t PhyphoxBLE::maxConInterval = 24; //30ms
 uint16_t PhyphoxBLE::slaveLatency = 0;
 uint16_t PhyphoxBLE::timeout = 50;
 
+uint16_t PhyphoxBLE::MTU = 20;
+uint16_t PhyphoxBleExperiment::MTU = 20;
+
 uint8_t* PhyphoxBLE::data = nullptr; //this pointer points to the data the user wants to write in the characteristic
 uint8_t* PhyphoxBLE::p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
 

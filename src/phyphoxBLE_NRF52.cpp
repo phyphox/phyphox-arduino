@@ -8,6 +8,8 @@ const UUID PhyphoxBLE::phyphoxDataServiceUUID = UUID(phyphoxBleDataServiceUUID);
 const UUID PhyphoxBLE::dataCharacteristicUUID = UUID(phyphoxBleDataCharacteristicUUID);
 const UUID PhyphoxBLE::configCharacteristicUUID = UUID(phyphoxBleConfigCharacteristicUUID);
 
+uint16_t PhyphoxBleExperiment::MTU = 20;
+
 char PhyphoxBLE::name[50] = "";
 
 Thread PhyphoxBLE::bleEventThread;
@@ -193,8 +195,7 @@ void PhyphoxBLE::bleInitComplete(BLE::InitializationCompleteCallbackContext* par
 	ble::AdvertisingParameters adv_parameters(ble::advertising_type_t::CONNECTABLE_UNDIRECTED, ble::adv_interval_t(ble::millisecond_t(100)));
 	adv_data_builder.setFlags();
     adv_data_builder.setLocalServiceList(mbed::make_Span(&phyphoxExperimentServiceUUID, 1));
-    ble_error_t error = adv_data_builder.setName(name);
-
+    
   	#ifndef NDEBUG
     if(error == BLE_ERROR_BUFFER_OVERFLOW){
 		output("BLE_ERROR_BUFFER_OVERFLOW");
@@ -207,6 +208,9 @@ void PhyphoxBLE::bleInitComplete(BLE::InitializationCompleteCallbackContext* par
 
     ble.gap().setAdvertisingParameters(ble::LEGACY_ADVERTISING_HANDLE, adv_parameters);
     ble.gap().setAdvertisingPayload(ble::LEGACY_ADVERTISING_HANDLE,adv_data_builder.getAdvertisingData());
+	adv_data_builder.clear();
+    adv_data_builder.setName(name);
+    ble.gap().setAdvertisingScanResponse(ble::LEGACY_ADVERTISING_HANDLE,adv_data_builder.getAdvertisingData());
     ble.gattServer().addService(phyphoxService);
     ble.gattServer().addService(phyphoxDataService);
  

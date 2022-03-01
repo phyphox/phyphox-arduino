@@ -108,7 +108,7 @@ class PhyphoxBLE
 	static inline uint16_t maxConInterval = 24; //30ms
 	static inline uint16_t slaveLatency = 0;
 	static inline uint16_t timeout = 50;
-
+	static inline uint16_t MTU = 20;
 	static inline uint16_t currentConnections = 0;	
 
 	static void (*configHandler)();

@@ -90,6 +90,7 @@ void PhyphoxBLE::configHandlerDebug(){
 
 void PhyphoxBLE::setMTU(uint16_t mtuSize) {
     BLEDevice::setMTU(mtuSize+3); //user mtu size + 3 for overhead
+    
     PhyphoxBLE::MTU = mtuSize;
     PhyphoxBleExperiment::MTU = mtuSize;
     
@@ -110,9 +111,11 @@ void PhyphoxBLE::start(uint8_t* exp_pointer, size_t len){
 void PhyphoxBLE::start(const char * DEVICE_NAME)
 {
   deviceName = DEVICE_NAME;
-  if(printer){
-    printer -> println("starting server");
-  }
+  #ifdef DEBUG
+    if(printer){
+      printer->println("starting server");
+    }
+  #endif
 	if(p_exp == nullptr){
           PhyphoxBleExperiment defaultExperiment;
 
@@ -350,31 +353,33 @@ void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
   length += strlen(buffer);
 	p_exp = &EXPARRAY[0];
 	expLen = length;
-
-  if(printer){
+  #ifdef DEBUG
+  if(printer != nullptr){
     for(int i =0; i<length;i++){
       char test = EXPARRAY[i];
-      Serial.print(test);
+      
     }
   }
-
+  #endif
 }
 
 void PhyphoxBLE::disconnected(){
-  if(printer){
+  #ifdef DEBUG
+  if(printer != nullptr){
     printer -> println("device disconnected");
   }
+  #endif
   myAdvertising->start();
 }
 
 
 void PhyphoxBLE::begin(HardwareSerial* hwPrint)
 {
-  
-	 printer = hwPrint;
-   if(printer)
+  #ifdef DEBUG
+	printer = hwPrint;
+  if(printer)
 	   printer->begin(115200);       
-  
+  #endif  
 }
 
 #endif

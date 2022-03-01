@@ -56,7 +56,7 @@ class PhyphoxBLE
         static uint16_t maxConInterval;
         static uint16_t slaveLatency;
         static uint16_t timeout;
-        
+        static uint16_t MTU;
 };
 
 

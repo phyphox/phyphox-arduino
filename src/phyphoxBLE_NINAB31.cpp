@@ -18,6 +18,8 @@ uint16_t PhyphoxBLE::maxConInterval = 48; //30ms
 uint16_t PhyphoxBLE::slaveLatency = 0;
 uint16_t PhyphoxBLE::timeout = 50;
 
+uint16_t PhyphoxBLE::MTU = 20;
+uint16_t PhyphoxBleExperiment::MTU = 20;
 
 int PhyphoxBLE::h_phyphoxExperimentService=0;
 int PhyphoxBLE::h_experimentCharacteristic=0;
@@ -37,6 +39,7 @@ uint8_t PhyphoxBLE::EXPARRAY[4000] = {0};// block some storage
 
 uint8_t PhyphoxBLE::controlCharValue[21]={0};
 uint8_t PhyphoxBLE::configCharValue[21]={0};
+
 
 
 void(*PhyphoxBLE::configHandler)() = nullptr;
@@ -126,11 +129,28 @@ void PhyphoxBLE::read(float& f)
 
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
-  char buffer[4000] =""; //this should be reworked 
-  exp.getBytes(buffer);
-  memcpy(&EXPARRAY[0],&buffer[0],strlen(buffer));
-  p_exp = &EXPARRAY[0];
-  expLen = strlen(buffer);
+  char buffer[2500] ="";
+  uint16_t length = 0;
+
+	exp.getFirstBytes(buffer, deviceName);
+	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
+  length += strlen(buffer);
+  memset(&(buffer[0]), NULL, strlen(buffer));
+
+  for(uint8_t i=0;i<phyphoxBleNViews; i++){
+    for(int j=0; j<phyphoxBleNElements; j++){
+      exp.getViewBytes(buffer,i,j);
+	    memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
+      length += strlen(buffer);
+      memset(&(buffer[0]), NULL, strlen(buffer));
+    }
+  }
+  exp.getLastBytes(buffer);
+  
+	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
+  length += strlen(buffer);
+	p_exp = &EXPARRAY[0];
+	expLen = length;
 }
 
 
