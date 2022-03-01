@@ -15,8 +15,9 @@ static const char *deviceName = "phyphox-Arduino";
 #ifndef CONFIGSIZE
 #define CONFIGSIZE 20
 #endif
-
-#if defined(ARDUINO_ARCH_MBED)
+#if defined(ARDUINO_SAMD_MKR1000)
+    #include "phyphoxBLE_NINAB31.h"
+#elif defined(ARDUINO_ARCH_MBED)
     #include "phyphoxBLE_NRF52.h"
 
 
