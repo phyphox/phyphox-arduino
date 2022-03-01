@@ -7,27 +7,25 @@
 
 #include <Arduino.h>
 
-class PhyphoxBleExperiment
-{
+class PhyphoxBleExperiment {
 
-public:
-	PhyphoxBleExperiment(){};
-	PhyphoxBleExperiment(const PhyphoxBleExperiment &) = delete;
+	public:
+
+	PhyphoxBleExperiment() = default;                     
+	PhyphoxBleExperiment(const PhyphoxBleExperiment&) = delete;         
 	PhyphoxBleExperiment &operator=(const PhyphoxBleExperiment &) = delete;
 	~PhyphoxBleExperiment() = default;
 
 	static uint16_t MTU;
 
-	class Error
-	{
+	class Error {
 	public:
 		char MESSAGE[35] = "";
 		void getBytes(char *);
 	};
 
 
-	class Errorhandler
-	{
+	class Errorhandler {
 	public:
 		virtual Error err_checkLength(const char *, int, const char *);
 		virtual Error err_checkUpper(int, int, const char *);
@@ -35,10 +33,9 @@ public:
 		virtual Error err_checkStyle(const char *, const char *);
 	};
 
-	class Element : public Errorhandler
-	{
+	class Element : public Errorhandler {
 	public:
-		Element(){};
+		Element() = default;
 		Element(const Element &) = delete;
 		Element &operator=(const Element &) = delete;
 		~Element() = default;
@@ -58,7 +55,7 @@ public:
 	class Graph : public Element
 	{
 	public:
-		Graph(){};
+		Graph() = default;
 		Graph(const Graph &) = delete;
 		Graph &operator=(const Graph &) = delete;
 		~Graph() = default;
@@ -98,7 +95,7 @@ public:
 	class View
 	{
 	public:
-		View(){};
+		View() = default;
 		View(const View &) = delete;
 		View &operator=(const View &) = delete;
 		~View() = default;

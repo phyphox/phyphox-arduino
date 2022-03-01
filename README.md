@@ -7,9 +7,12 @@ The purpose of this library is to use the phyphox app (see www.phyphox.org) to p
 - Arduino Nano 33 Ble
 - Arduino Nano Sense
 - Arduino Nano 33 IoT (see note below)
+- senseBox MCU with NINA-B31 module
 - ESP 32
 
-Note: The Arduino Nano 33 IoT is somewhat unusual. You will need to install the ArduinoBLE library to use it and you will need to call "PhyphoxBLE.poll()" periodically for it to work. See the "randomNumbers-IoT" example.
+Note: The Arduino Nano 33 IoT is somewhat unusual. You will need to install the ArduinoBLE library to use it and you will need to call "PhyphoxBLE::poll()" periodically for it to work. See the "randomNumbers-IoT" example.
+
+Note: When using the NINA-B31 module you must call PhyphoxBLE::poll() periodically (in loop() ) or the library will not work.
 
 ## Concept of phyphox
 
@@ -42,6 +45,8 @@ void setup() {
 }
 
 void loop() {
+    //uncomment next line if using senseBox MCU or Arduino Nano 33 IoT
+    //PhyphoxBLE::poll();
     float randomNumber = random(0,100); //Generate random number in the range 0 to 100
     PhyphoxBLE::write(randomNumber);    //Send value to phyphox
     delay(50);                          //Shortly pause before repeating
