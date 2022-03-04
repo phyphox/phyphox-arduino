@@ -1,5 +1,6 @@
 #include "phyphoxBleExperiment.h"
 
+int PhyphoxBleExperiment::numberOfChannels = 5;
 void PhyphoxBleExperiment::addView(View& v)
 {
 	for(int i=0; i<phyphoxBleNViews; i++)

@@ -52,8 +52,8 @@ void PhyphoxBleExperiment::Graph::setYPrecision(int py){
 
 void PhyphoxBleExperiment::Graph::setChannel(int x, int y)
 {
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkUpper(x, 5, "setChannel") : ERROR;
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkUpper(y, 5, "setChannel") : ERROR;
+	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkUpper(x, numberOfChannels, "setChannel") : ERROR;
+	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkUpper(y, numberOfChannels, "setChannel") : ERROR;
 	sprintf(INPUTX, "CH%i", x);
 	sprintf(INPUTY, "CH%i", y);
 }

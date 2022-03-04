@@ -26,7 +26,7 @@ void PhyphoxBleExperiment::Value::setUnit(const char* u)
 
 void PhyphoxBleExperiment::Value::setChannel(int c)
 {
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkUpper(c, 5, "setChannel") : ERROR;
+	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkUpper(c, numberOfChannels, "setChannel") : ERROR;
 	sprintf(INPUTVALUE, "CH%i", c);
 }
 

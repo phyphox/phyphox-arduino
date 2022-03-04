@@ -2,7 +2,7 @@
 #define PHYPHOX_BLE_EXPERIMENT
 
 #define phyphoxBleNViews 5
-#define phyphoxBleNElements 5
+#define phyphoxBleNElements 20
 #define phyphoxBleNExportSets 5
 
 #include <Arduino.h>
@@ -73,7 +73,7 @@ class PhyphoxBleExperiment {
 
 		char STYLE[17] = "";
 
-		char XMLAttribute[100] = "";
+		char XMLAttribute[25] = "";
 
 		void setUnitX(const char *);
 		void setUnitY(const char *);
@@ -106,7 +106,7 @@ class PhyphoxBleExperiment {
 		void setXMLAttribute(const char *);
 
 		char LABEL[50] = " label=\"label\"";
-		char XMLAttribute[100] = "";
+		char XMLAttribute[25] = "";
 
 		Element *ELEMENTS[phyphoxBleNElements] = {nullptr};
 
@@ -122,7 +122,7 @@ class PhyphoxBleExperiment {
 		~ExportData() = default;
 
 		char BUFFER[5] = "CH1";
-		char XMLAttribute[100] = "";
+		char XMLAttribute[1] = "";
 		void setDatachannel(int);
 		void setXMLAttribute(const char *);
 		void setLabel(const char *);
@@ -145,7 +145,7 @@ class PhyphoxBleExperiment {
 		void setXMLAttribute(const char *);
 
 		char LABEL[50] = "";
-		char XMLAttribute[100] = "";
+		char XMLAttribute[25] = "";
 		Element *ELEMENTS[phyphoxBleNExportSets] = {nullptr};
 
 	private:
@@ -166,7 +166,7 @@ class PhyphoxBleExperiment {
 
 		char INFO[200] = "";
 		char COLOR[17] = "";
-		char XMLAttribute[100] = "";
+		char XMLAttribute[25] = "";
 
 	private:
 	};
@@ -186,7 +186,7 @@ class PhyphoxBleExperiment {
 
 		char COLOR[17] = "";
 		char HEIGHT[20] = " height=\"0.1\"";
-		char XMLAttribute[100] = "";
+		char XMLAttribute[25] = "";
 
 	private:
 	};
@@ -210,7 +210,7 @@ class PhyphoxBleExperiment {
 		char UNIT[20] = "";
 		char COLOR[17] = "";
 		char INPUTVALUE[5] = "CH3";
-		char XMLAttribute[100] = "";
+		char XMLAttribute[25] = "";
 
 	private:
 	};
@@ -233,7 +233,7 @@ class PhyphoxBleExperiment {
 		char UNIT[20] = "";
 		char SIGNED[17] = "";
 		char DECIMAL[17] = "";
-		char XMLAttribute[100] = "";
+		char XMLAttribute[25] = "";
 		char BUFFER[5] = "CH5";
 	
 	private:
@@ -259,7 +259,7 @@ class PhyphoxBleExperiment {
 	View *VIEWS[phyphoxBleNViews] = {nullptr};
 	ExportSet *EXPORTSETS[phyphoxBleNExportSets] = {nullptr};
 
-	int numberOfChannels = 5;
+	static int numberOfChannels;
 	int repeating = 0;
 
 	

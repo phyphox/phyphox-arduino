@@ -33,7 +33,7 @@ void PhyphoxBleExperiment::ExportSet::getBytes(char *buffArray)
 	strcat(buffArray,">\n");
 
 	//loop over elements
-	for(int i=0; i<phyphoxBleNElements; i++){
+	for(int i=0; i<phyphoxBleNExportSets; i++){
 		if(ELEMENTS[i]!=nullptr){
 			ELEMENTS[i]->getBytes(buffArray);
 		}

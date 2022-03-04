@@ -3,7 +3,7 @@
 #include "Arduino.h"
 #include <stdio.h>
 #include "esp_system.h"
-
+//#define DEBUG
 //init statics
 uint8_t PhyphoxBLE::data_package[20] = {0};
 void (*PhyphoxBLE::configHandler)() = nullptr;
@@ -356,8 +356,8 @@ void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
   #ifdef DEBUG
   if(printer != nullptr){
     for(int i =0; i<length;i++){
-      char test = EXPARRAY[i];
-      
+      char CHAR = EXPARRAY[i];
+      printer->print(CHAR);
     }
   }
   #endif
