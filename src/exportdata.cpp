@@ -1,13 +1,13 @@
 #include "phyphoxBleExperiment.h"
 
 void PhyphoxBleExperiment::ExportData::setDatachannel(int d){
-	sprintf(BUFFER, "CH%d", d);
+	char tmp[20];
+	sprintf(tmp, "CH%d", d);
+	copyToMem(&BUFFER, tmp);
 }
 
 void PhyphoxBleExperiment::ExportData::setXMLAttribute(const char *xml){
-	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
-	strcat(XMLAttribute," ");
-	strcat(XMLAttribute, xml);
+		copyToMem(&XMLAttribute, (" " + std::string(xml)).c_str());
 }
 
 void PhyphoxBleExperiment::ExportData::getBytes(char *buffArray)

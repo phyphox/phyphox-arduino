@@ -7,3 +7,11 @@ void PhyphoxBleExperiment::Element::setLabel(const char *l){
 	strcat(LABEL, l);
 	strcat(LABEL, "\"");
 }
+
+void PhyphoxBleExperiment::Element::copyToMem(char **target, const char *data) {
+  if (*target != NULL) {
+    //free(*target);										//TODO: Change
+  }
+  *target = (char*) malloc(sizeof(char) * strlen(data));
+  strcpy(*target, data);
+}

@@ -20,13 +20,15 @@ class PhyphoxBleExperiment {
 
 	class Error {
 	public:
-		char MESSAGE[35] = "";
+		char* MESSAGE = "";
 		void getBytes(char *);
 	};
 
 
 	class Errorhandler {
 	public:
+		virtual void copyToMem(char **, const char *);
+		
 		virtual Error err_checkLength(const char *, int, const char *);
 		virtual Error err_checkUpper(int, int, const char *);
 		virtual Error err_checkHex(const char *, const char *);
@@ -48,6 +50,7 @@ class PhyphoxBleExperiment {
 
 		virtual void setLabel(const char *);
 		virtual void getBytes(char *)=0;
+		virtual void copyToMem(char **, const char *);
 
 	private:
 	};
@@ -60,20 +63,20 @@ class PhyphoxBleExperiment {
 		Graph &operator=(const Graph &) = delete;
 		~Graph() = default;
 
-		char UNITX[14] = "";
-		char UNITY[14] = "";
-		char LABELX[30] = " labelX=\"label x\"";
-		char LABELY[30] = " labelY=\"label y\"";
-		char COLOR[17] = "";
-		char XPRECISION[20] = "";
-		char YPRECISION[20] = "";
+		char* UNITX = "";
+		char* UNITY = "";
+		char* LABELX = " labelX=\"label x\"";
+		char* LABELY = " labelY=\"label y\"";
+		char* COLOR = "";
+		char* XPRECISION = "";
+		char* YPRECISION = "";
 
-		char INPUTX[5] = "CH0";
-		char INPUTY[5] = "CH1";
+		char* INPUTX = "CH0";
+		char* INPUTY = "CH1";
 
-		char STYLE[17] = "";
+		char* STYLE = "";
 
-		char XMLAttribute[25] = "";
+		char* XMLAttribute = "";
 
 		void setUnitX(const char *);
 		void setUnitY(const char *);
@@ -100,13 +103,15 @@ class PhyphoxBleExperiment {
 		View &operator=(const View &) = delete;
 		~View() = default;
 
+		void copyToMem(char **, const char *);
+
 		void setLabel(const char *);
 		void getBytes(char *, uint8_t);
 		void addElement(Element &);
 		void setXMLAttribute(const char *);
 
-		char LABEL[50] = " label=\"label\"";
-		char XMLAttribute[25] = "";
+		char* LABEL = " label=\"label\"";
+		char* XMLAttribute = "";
 
 		Element *ELEMENTS[phyphoxBleNElements] = {nullptr};
 
@@ -121,8 +126,8 @@ class PhyphoxBleExperiment {
 		ExportData &operator=(const ExportData &) = delete;
 		~ExportData() = default;
 
-		char BUFFER[5] = "CH1";
-		char XMLAttribute[1] = "";
+		char* BUFFER = "CH1";
+		char* XMLAttribute = "";
 		void setDatachannel(int);
 		void setXMLAttribute(const char *);
 		void setLabel(const char *);
@@ -139,13 +144,15 @@ class PhyphoxBleExperiment {
 		ExportSet &operator=(const ExportSet &) = delete;
 		~ExportSet() = default;
 
+		void copyToMem(char **, const char *);
+
 		void setLabel(const char *);
 		void getBytes(char *);
 		void addElement(Element &);
 		void setXMLAttribute(const char *);
 
-		char LABEL[50] = "";
-		char XMLAttribute[25] = "";
+		char* LABEL = "";
+		char* XMLAttribute = "";
 		Element *ELEMENTS[phyphoxBleNExportSets] = {nullptr};
 
 	private:
@@ -164,9 +171,9 @@ class PhyphoxBleExperiment {
 		void setXMLAttribute(const char *);
 		void getBytes(char *);
 
-		char INFO[200] = "";
-		char COLOR[17] = "";
-		char XMLAttribute[25] = "";
+		char* INFO = "";
+		char* COLOR = "";
+		char* XMLAttribute = "";
 
 	private:
 	};
@@ -184,9 +191,9 @@ class PhyphoxBleExperiment {
 		void setXMLAttribute(const char *);
 		void getBytes(char *);
 
-		char COLOR[17] = "";
-		char HEIGHT[20] = " height=\"0.1\"";
-		char XMLAttribute[25] = "";
+		char* COLOR = "";
+		char* HEIGHT = " height=\"0.1\"";
+		char* XMLAttribute = "";
 
 	private:
 	};
@@ -206,11 +213,11 @@ class PhyphoxBleExperiment {
 		void setChannel(int);
 		void setXMLAttribute(const char *);
 
-		char PRECISION[15] = "";
-		char UNIT[20] = "";
-		char COLOR[17] = "";
-		char INPUTVALUE[5] = "CH3";
-		char XMLAttribute[25] = "";
+		char* PRECISION = "";
+		char* UNIT = "";
+		char* COLOR = "";
+		char* INPUTVALUE = "CH3";
+		char* XMLAttribute = "";
 
 	private:
 	};
@@ -230,14 +237,16 @@ class PhyphoxBleExperiment {
 		void setChannel(int);
 		void getBytes(char *);
 
-		char UNIT[20] = "";
-		char SIGNED[17] = "";
-		char DECIMAL[17] = "";
-		char XMLAttribute[25] = "";
-		char BUFFER[5] = "CH5";
+		char* UNIT = "";
+		char* SIGNED = "";
+		char* DECIMAL = "";
+		char* XMLAttribute = "";
+		char* BUFFER = "CH5";
 	
 	private:
 	};
+
+	void copyToMem(char **, const char *);
 
 	void setTitle(const char *);
 	void setCategory(const char *);
@@ -251,10 +260,10 @@ class PhyphoxBleExperiment {
 	void addView(View &);
 	void addExportSet(ExportSet &);
 
-	char TITLE[50] = "Arduino-Experiment";
-	char CATEGORY[50] = "Arduino Experiments";
-	char DESCRIPTION[500] = "An experiment created with the phyphox BLE library for Arduino-compatible micro controllers.";
-	char CONFIG[8] = "000000";
+	char* TITLE = "Arduino-Experiment";
+	char* CATEGORY = "Arduino Experiments";
+	char* DESCRIPTION = "An experiment created with the phyphox BLE library for Arduino-compatible micro controllers.";
+	char* CONFIG = "000000";
 
 	View *VIEWS[phyphoxBleNViews] = {nullptr};
 	ExportSet *EXPORTSETS[phyphoxBleNExportSets] = {nullptr};

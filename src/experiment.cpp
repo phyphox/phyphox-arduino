@@ -1,6 +1,15 @@
 #include "phyphoxBleExperiment.h"
 
 int PhyphoxBleExperiment::numberOfChannels = 5;
+
+void PhyphoxBleExperiment::copyToMem(char **target, const char *data) {
+  if (*target != NULL) {
+    //free(*target);										//TODO: Change
+  }
+  *target = (char*) malloc(sizeof(char) * strlen(data));
+  strcpy(*target, data);
+}
+
 void PhyphoxBleExperiment::addView(View& v)
 {
 	for(int i=0; i<phyphoxBleNViews; i++)
@@ -13,23 +22,19 @@ void PhyphoxBleExperiment::addView(View& v)
 }
 
 void PhyphoxBleExperiment::setTitle(const char *t){
-	memset(&TITLE[0], 0, sizeof(TITLE));
-	strcat(TITLE, t);
+	copyToMem(&TITLE, t);
 }
 
 void PhyphoxBleExperiment::setCategory(const char *c){
-	memset(&CATEGORY[0], 0, sizeof(CATEGORY));	
-	strcat(CATEGORY, c);
+	copyToMem(&CATEGORY, c);
 }
 
 void PhyphoxBleExperiment::setDescription(const char *d){
-	memset(&DESCRIPTION[0], 0, sizeof(DESCRIPTION));
-	strcat(DESCRIPTION, d);
+	copyToMem(&DESCRIPTION, d);
 }
 
-void PhyphoxBleExperiment::setConfig(const char *t){
-	memset(&CONFIG[0], 0, sizeof(CONFIG));
-	strcat(CONFIG, t);
+void PhyphoxBleExperiment::setConfig(const char *c){
+	copyToMem(&CONFIG, c);
 }
 
 void PhyphoxBleExperiment::addExportSet(ExportSet& e)

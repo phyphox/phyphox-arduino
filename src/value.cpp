@@ -3,38 +3,34 @@
 void PhyphoxBleExperiment::Value::setColor(const char *c)
 {
 	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkHex(c, "setColor") : ERROR;
-	memset(&COLOR[0], 0, sizeof(COLOR));
-	strcat(COLOR, " color=\"");
-	strcat(COLOR, c);
-	strcat(COLOR, "\"");
+	copyToMem(&COLOR, (" color=\"" + std::string(c) + "\"").c_str());
 } 
 
 void PhyphoxBleExperiment::Value::setPrecision(int p)
 {
 	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkUpper(p, 999, "setPrecision") : ERROR;
-	sprintf(PRECISION, " precision=\"%d\"", p);
+	char tmp[20];
+	sprintf(tmp, " precision=\"%i\"", p);
+	copyToMem(&PRECISION, tmp);
 }
 
 void PhyphoxBleExperiment::Value::setUnit(const char* u)
 {
 	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(u, 12, "setUnit") : ERROR;
-	memset(&UNIT[0], 0, sizeof(UNIT));
-	strcat(UNIT, " unit=\"");
-	strcat(UNIT, u);
-	strcat(UNIT, "\"");
+	copyToMem(&UNIT, (" unit=\"" + std::string(u) + "\"").c_str());
 }
 
 void PhyphoxBleExperiment::Value::setChannel(int c)
 {
 	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkUpper(c, numberOfChannels, "setChannel") : ERROR;
-	sprintf(INPUTVALUE, "CH%i", c);
+	char tmp[20];
+	sprintf(tmp, "CH%i", c);
+	copyToMem(&INPUTVALUE, tmp);
 }
 
 void PhyphoxBleExperiment::Value::setXMLAttribute(const char *xml){
 	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(xml, 98, "setXMLAttribute") : ERROR;
-	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
-	strcat(XMLAttribute, " ");
-	strcat(XMLAttribute, xml);
+	copyToMem(&XMLAttribute, (" " + std::string(xml)).c_str());
 }
 
 void PhyphoxBleExperiment::Value::getBytes(char *buffArray)

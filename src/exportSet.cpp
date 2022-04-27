@@ -1,5 +1,13 @@
 #include "phyphoxBleExperiment.h"
 
+void PhyphoxBleExperiment::ExportSet::copyToMem(char **target, const char *data) {
+  if (*target != NULL) {
+    //free(*target);										//TODO: Change
+  }
+  *target = (char*) malloc(sizeof(char) * strlen(data));
+  strcpy(*target, data);
+}
+
 void PhyphoxBleExperiment::ExportSet::addElement(Element& e)
 {
 	for(int i=0; i<phyphoxBleNElements; i++){
@@ -12,16 +20,11 @@ void PhyphoxBleExperiment::ExportSet::addElement(Element& e)
 }
 
 void PhyphoxBleExperiment::ExportSet::setLabel(const char *l){
-	memset(&LABEL[0], 0, sizeof(LABEL));
-	strcat(LABEL, " name=\"");
-	strcat(LABEL, l);
-	strcat(LABEL, "\"");
+	copyToMem(&LABEL, (" name=\"" + std::string(l) + "\"").c_str());
 }
 
 void PhyphoxBleExperiment::ExportSet::setXMLAttribute(const char *xml){
-	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
-	strcat(XMLAttribute, " ");
-	strcat(XMLAttribute, xml);
+	copyToMem(&XMLAttribute, (" " + std::string(xml)).c_str());
 }
 
 void PhyphoxBleExperiment::ExportSet::getBytes(char *buffArray)
