@@ -1,4 +1,5 @@
 #include "phyphoxBleExperiment.h"
+#include "copyToMem.h"
 
 void PhyphoxBleExperiment::Separator::setHeight(float h)
 {

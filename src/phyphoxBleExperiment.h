@@ -6,6 +6,7 @@
 #define phyphoxBleNExportSets 5
 
 #include <Arduino.h>
+#include "copyToMem.h"
 
 class PhyphoxBleExperiment {
 
@@ -27,8 +28,6 @@ class PhyphoxBleExperiment {
 
 	class Errorhandler {
 	public:
-		virtual void copyToMem(char **, const char *);
-		
 		virtual Error err_checkLength(const char *, int, const char *);
 		virtual Error err_checkUpper(int, int, const char *);
 		virtual Error err_checkHex(const char *, const char *);
@@ -50,7 +49,6 @@ class PhyphoxBleExperiment {
 
 		virtual void setLabel(const char *);
 		virtual void getBytes(char *)=0;
-		virtual void copyToMem(char **, const char *);
 
 	private:
 	};
@@ -103,8 +101,6 @@ class PhyphoxBleExperiment {
 		View &operator=(const View &) = delete;
 		~View() = default;
 
-		void copyToMem(char **, const char *);
-
 		void setLabel(const char *);
 		void getBytes(char *, uint8_t);
 		void addElement(Element &);
@@ -143,8 +139,6 @@ class PhyphoxBleExperiment {
 		ExportSet(const ExportSet &) = delete;
 		ExportSet &operator=(const ExportSet &) = delete;
 		~ExportSet() = default;
-
-		void copyToMem(char **, const char *);
 
 		void setLabel(const char *);
 		void getBytes(char *);
@@ -245,8 +239,6 @@ class PhyphoxBleExperiment {
 	
 	private:
 	};
-
-	void copyToMem(char **, const char *);
 
 	void setTitle(const char *);
 	void setCategory(const char *);

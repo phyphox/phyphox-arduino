@@ -1,12 +1,5 @@
 #include "phyphoxBleExperiment.h"
-
-void PhyphoxBleExperiment::ExportSet::copyToMem(char **target, const char *data) {
-  if (*target != NULL) {
-    //free(*target);										//TODO: Change
-  }
-  *target = (char*) malloc(sizeof(char) * strlen(data));
-  strcpy(*target, data);
-}
+#include "copyToMem.h"
 
 void PhyphoxBleExperiment::ExportSet::addElement(Element& e)
 {

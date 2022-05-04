@@ -1,4 +1,5 @@
 #include "phyphoxBleExperiment.h"
+#include "copyToMem.h"
 
 void PhyphoxBleExperiment::ExportData::setDatachannel(int d){
 	char tmp[20];

@@ -1,4 +1,5 @@
 #include "phyphoxBleExperiment.h"
+#include "copyToMem.h"
 
 void PhyphoxBleExperiment::Edit::setUnit(const char *u)
 {

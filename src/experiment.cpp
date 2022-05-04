@@ -1,14 +1,8 @@
 #include "phyphoxBleExperiment.h"
+#include "copyToMem.h"
 
 int PhyphoxBleExperiment::numberOfChannels = 5;
 
-void PhyphoxBleExperiment::copyToMem(char **target, const char *data) {
-  if (*target != NULL) {
-    //free(*target);										//TODO: Change
-  }
-  *target = (char*) malloc(sizeof(char) * strlen(data));
-  strcpy(*target, data);
-}
 
 void PhyphoxBleExperiment::addView(View& v)
 {

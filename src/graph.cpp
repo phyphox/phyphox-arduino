@@ -1,4 +1,5 @@
 #include "phyphoxBleExperiment.h"
+#include "copyToMem.h"
 #include <sstream>
 
 void PhyphoxBleExperiment::Graph::setUnitX(const char *ux){

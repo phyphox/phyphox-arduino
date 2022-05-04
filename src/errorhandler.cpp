@@ -1,12 +1,6 @@
 #include "phyphoxBleExperiment.h"
+#include "copyToMem.h"
 
-void PhyphoxBleExperiment::Errorhandler::copyToMem(char **target, const char *data) {
-  if (*target != NULL) {
-    //free(*target);										//TODO: Change
-  }
-  *target = (char*) malloc(sizeof(char) * strlen(data));
-  strcpy(*target, data);
-}
 
 PhyphoxBleExperiment::Error PhyphoxBleExperiment::Errorhandler::err_checkLength(const char *input, int maxLength, const char *origin) {
     Error ret;
