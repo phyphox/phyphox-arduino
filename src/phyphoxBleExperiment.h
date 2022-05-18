@@ -1,9 +1,9 @@
 #ifndef PHYPHOX_BLE_EXPERIMENT
 #define PHYPHOX_BLE_EXPERIMENT
 
-#define phyphoxBleNViews 5
+#define phyphoxBleNViews 15
 #define phyphoxBleNElements 20
-#define phyphoxBleNExportSets 5
+#define phyphoxBleNExportSets 10
 
 #include <Arduino.h>
 #include "copyToMem.h"
@@ -21,7 +21,7 @@ class PhyphoxBleExperiment {
 
 	class Error {
 	public:
-		char* MESSAGE = "";
+		char MESSAGE[50] = "";
 		void getBytes(char *);
 	};
 
@@ -61,20 +61,20 @@ class PhyphoxBleExperiment {
 		Graph &operator=(const Graph &) = delete;
 		~Graph() = default;
 
-		char* UNITX = "";
-		char* UNITY = "";
-		char* LABELX = " labelX=\"label x\"";
-		char* LABELY = " labelY=\"label y\"";
-		char* COLOR = "";
-		char* XPRECISION = "";
-		char* YPRECISION = "";
+		char* UNITX = NULL;
+		char* UNITY = NULL;
+		char* LABELX = NULL;
+		char* LABELY = NULL;
+		char* COLOR = NULL;
+		char* XPRECISION = NULL;
+		char* YPRECISION = NULL;
 
-		char* INPUTX = "CH0";
-		char* INPUTY = "CH1";
+		char* INPUTX = NULL;
+		char* INPUTY = NULL;
 
-		char* STYLE = "";
+		char* STYLE = NULL;
 
-		char* XMLAttribute = "";
+		char* XMLAttribute = NULL;
 
 		void setUnitX(const char *);
 		void setUnitY(const char *);
@@ -106,8 +106,8 @@ class PhyphoxBleExperiment {
 		void addElement(Element &);
 		void setXMLAttribute(const char *);
 
-		char* LABEL = " label=\"label\"";
-		char* XMLAttribute = "";
+		char* LABEL = NULL;
+		char* XMLAttribute = NULL;
 
 		Element *ELEMENTS[phyphoxBleNElements] = {nullptr};
 
@@ -122,8 +122,8 @@ class PhyphoxBleExperiment {
 		ExportData &operator=(const ExportData &) = delete;
 		~ExportData() = default;
 
-		char* BUFFER = "CH1";
-		char* XMLAttribute = "";
+		char* BUFFER = NULL;
+		char* XMLAttribute = NULL;
 		void setDatachannel(int);
 		void setXMLAttribute(const char *);
 		void setLabel(const char *);
@@ -145,8 +145,8 @@ class PhyphoxBleExperiment {
 		void addElement(Element &);
 		void setXMLAttribute(const char *);
 
-		char* LABEL = "";
-		char* XMLAttribute = "";
+		char* LABEL = NULL;
+		char* XMLAttribute = NULL;
 		Element *ELEMENTS[phyphoxBleNExportSets] = {nullptr};
 
 	private:
@@ -165,9 +165,9 @@ class PhyphoxBleExperiment {
 		void setXMLAttribute(const char *);
 		void getBytes(char *);
 
-		char* INFO = "";
-		char* COLOR = "";
-		char* XMLAttribute = "";
+		char* INFO = NULL;
+		char* COLOR = NULL;
+		char* XMLAttribute = NULL;
 
 	private:
 	};
@@ -185,9 +185,9 @@ class PhyphoxBleExperiment {
 		void setXMLAttribute(const char *);
 		void getBytes(char *);
 
-		char* COLOR = "";
-		char* HEIGHT = " height=\"0.1\"";
-		char* XMLAttribute = "";
+		char* COLOR = NULL;
+		char* HEIGHT = NULL;
+		char* XMLAttribute = NULL;
 
 	private:
 	};
@@ -207,11 +207,11 @@ class PhyphoxBleExperiment {
 		void setChannel(int);
 		void setXMLAttribute(const char *);
 
-		char* PRECISION = "";
-		char* UNIT = "";
-		char* COLOR = "";
-		char* INPUTVALUE = "CH3";
-		char* XMLAttribute = "";
+		char* PRECISION = NULL;
+		char* UNIT = NULL;
+		char* COLOR = NULL;
+		char* INPUTVALUE = NULL;
+		char* XMLAttribute = NULL;
 
 	private:
 	};
@@ -231,11 +231,11 @@ class PhyphoxBleExperiment {
 		void setChannel(int);
 		void getBytes(char *);
 
-		char* UNIT = "";
-		char* SIGNED = "";
-		char* DECIMAL = "";
-		char* XMLAttribute = "";
-		char* BUFFER = "CH5";
+		char* UNIT = NULL;
+		char* SIGNED = NULL;
+		char* DECIMAL = NULL;
+		char* XMLAttribute = NULL;
+		char* BUFFER = NULL;
 	
 	private:
 	};
@@ -243,7 +243,7 @@ class PhyphoxBleExperiment {
 	void setTitle(const char *);
 	void setCategory(const char *);
 	void setDescription(const char *);
-	void setConfig(const char *);
+	// void setConfig(const char *);
 
 	void getBytes(char *);
 	void getFirstBytes(char *, const char *);
@@ -252,10 +252,10 @@ class PhyphoxBleExperiment {
 	void addView(View &);
 	void addExportSet(ExportSet &);
 
-	char* TITLE = "Arduino-Experiment";
-	char* CATEGORY = "Arduino Experiments";
-	char* DESCRIPTION = "An experiment created with the phyphox BLE library for Arduino-compatible micro controllers.";
-	char* CONFIG = "000000";
+	char* TITLE = NULL;
+	char* CATEGORY = NULL;
+	char* DESCRIPTION = NULL;
+	// char* CONFIG = NULL;
 
 	View *VIEWS[phyphoxBleNViews] = {nullptr};
 	ExportSet *EXPORTSETS[phyphoxBleNExportSets] = {nullptr};

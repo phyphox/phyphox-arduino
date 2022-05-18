@@ -25,9 +25,9 @@ void PhyphoxBleExperiment::Separator::getBytes(char *buffArray)
 {
 
 	strcat(buffArray,"\t\t<separator");
-	strcat(buffArray, HEIGHT);
-	strcat(buffArray, COLOR);
-	strcat(buffArray,XMLAttribute);
+	if (!HEIGHT)  {strcat(buffArray," height=\"0.1\"");} else {strcat(buffArray,HEIGHT);}
+	if (COLOR) {strcat(buffArray,COLOR);}
+	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
 	strcat(buffArray,">\n");
 	strcat(buffArray, "\t\t</separator>\n");
 

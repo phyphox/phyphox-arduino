@@ -38,16 +38,16 @@ void PhyphoxBleExperiment::Value::getBytes(char *buffArray)
 {
 
 	strcat(buffArray,"\t\t<value");
-	strcat(buffArray, LABEL);
-    strcat(buffArray, PRECISION);
-    strcat(buffArray, UNIT);
+	if (!LABEL)  {strcat(buffArray," label=\"label\"");} else {strcat(buffArray,LABEL);}
+	if (PRECISION) {strcat(buffArray,PRECISION);}
+	if (UNIT) {strcat(buffArray,UNIT);}
     strcat(buffArray," facor=\"1\"");
-    strcat(buffArray, COLOR);
-	strcat(buffArray, XMLAttribute);
+	if (COLOR) {strcat(buffArray,COLOR);}
+	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
 	strcat(buffArray,">\n");
 
     strcat(buffArray, "\t\t\t<input>");
-	strcat(buffArray, INPUTVALUE);
+	if (!INPUTVALUE)  {strcat(buffArray,"CH3");} else {strcat(buffArray,INPUTVALUE);}
 	strcat(buffArray, "</input>\n\t\t</value>\n");
 	
 }

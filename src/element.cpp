@@ -8,3 +8,7 @@ void PhyphoxBleExperiment::Element::setLabel(const char *l){
 	strcat(LABEL, l);
 	strcat(LABEL, "\"");
 }
+
+// void PhyphoxBleExperiment::Element::setLabel(const char *l){
+// 	copyToMem(&LABEL, (" label=\"" + std::string(l) + "\"").c_str());
+// }

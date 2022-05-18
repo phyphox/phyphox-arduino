@@ -24,8 +24,8 @@ void PhyphoxBleExperiment::View::getBytes(char *buffArray, uint8_t elem)
 {
 	if(elem == 0) {
 		strcat(buffArray, "\t<view");
-		strcat(buffArray, LABEL);
-		strcat(buffArray, XMLAttribute);
+		if (!LABEL)  {strcat(buffArray," label=\"label\"");} else {strcat(buffArray,LABEL);}
+		if (XMLAttribute) {strcat(buffArray, XMLAttribute);}
 		strcat(buffArray,">\n");
 	}
 

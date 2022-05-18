@@ -34,14 +34,14 @@ void PhyphoxBleExperiment::Edit::setChannel(int b){
 void PhyphoxBleExperiment::Edit::getBytes(char *buffArray)
 {
 	strcat(buffArray,"\t\t<edit");
-	strcat(buffArray, LABEL);
-    strcat(buffArray, SIGNED);
-    strcat(buffArray, DECIMAL);
-    strcat(buffArray, UNIT);
-	strcat(buffArray, XMLAttribute);
+	if (!LABEL)  {strcat(buffArray," label=\"label\"");} else {strcat(buffArray,LABEL);}
+    if (SIGNED) {strcat(buffArray,SIGNED);}
+    if (DECIMAL) {strcat(buffArray,DECIMAL);}
+    if (UNIT) {strcat(buffArray,UNIT);}
+    if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
     strcat(buffArray,">\n");
     strcat(buffArray,"\t\t<output>");
-    strcat(buffArray, BUFFER);
+    if (!BUFFER)  {strcat(buffArray,"CH5");} else {strcat(buffArray,BUFFER);}
     strcat(buffArray,"</output>\n");
 	strcat(buffArray, "\t\t</edit>\n");	
 }

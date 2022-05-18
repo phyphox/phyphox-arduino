@@ -32,7 +32,6 @@ void PhyphoxBleExperiment::Graph::setXPrecision(int px){
 	char tmp[20];
 	sprintf(tmp, " xPrecision=\"%i\"", px);
 	copyToMem(&XPRECISION, tmp);
-	//sprintf(XPRECISION, " xPrecision=\"%i\"", px);
 }
 
 void PhyphoxBleExperiment::Graph::setYPrecision(int py){
@@ -67,22 +66,22 @@ void PhyphoxBleExperiment::Graph::setXMLAttribute(const char *xml){
 void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 {
 	strcat(buffArray,"\t\t<graph");
-	strcat(buffArray,LABEL);
-	strcat(buffArray,LABELX);
-	strcat(buffArray,LABELY);
-	//strcat(buffArray," labelZ=\"\"");
-	strcat(buffArray,UNITX);
-	strcat(buffArray,UNITY);
-	strcat(buffArray,XPRECISION);
-	strcat(buffArray,YPRECISION);
-	strcat(buffArray,STYLE);
-	strcat(buffArray,COLOR);
-	strcat(buffArray,XMLAttribute);
+	if (!LABEL)  {strcat(buffArray," label=\"label\"");} else {strcat(buffArray,LABEL);}
+	if (!LABELX) {strcat(buffArray, " labelX=\"label x\"");} else {strcat(buffArray,LABELX);}
+	if (!LABELY) {strcat(buffArray, " labelY=\"label y\"");} else {strcat(buffArray,LABELY);}
+	if (UNITX) {strcat(buffArray,UNITX);}
+	if (UNITY) {strcat(buffArray,UNITY);}
+	if (XPRECISION) {strcat(buffArray,XPRECISION);}
+	if (YPRECISION) {strcat(buffArray,YPRECISION);}
+	if (STYLE) {strcat(buffArray,STYLE);}
+	if (COLOR) {strcat(buffArray,COLOR);}
+	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
+
 	strcat(buffArray,">\n");
 
 	strcat(buffArray, "\t\t\t<input axis=\"x\">");
-	strcat(buffArray, INPUTX);
+	if (!INPUTX) {strcat(buffArray, "CH0");} else {strcat(buffArray, INPUTX);}
 	strcat(buffArray, "</input>\n\t\t\t<input axis=\"y\">");
-	strcat(buffArray, INPUTY);
+	if (!INPUTY) {strcat(buffArray, "CH1");} else {strcat(buffArray, INPUTY);}
 	strcat(buffArray, "</input>\n\t\t</graph>\n");	
 }

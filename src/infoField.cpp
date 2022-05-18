@@ -22,9 +22,9 @@ void PhyphoxBleExperiment::InfoField::getBytes(char *buffArray)
 {
 
 	strcat(buffArray,"\t\t<info");
-	strcat(buffArray, INFO);
-    strcat(buffArray, COLOR);
-	strcat(buffArray, XMLAttribute);
+	if (!INFO)  {strcat(buffArray," label=\"infotext\"");} else {strcat(buffArray,INFO);}
+	if (COLOR) {strcat(buffArray,COLOR);}
+	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
 	strcat(buffArray,">\n");
 	strcat(buffArray,"\t\t</info>\n");
 	

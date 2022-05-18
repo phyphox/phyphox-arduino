@@ -24,8 +24,8 @@ void PhyphoxBleExperiment::ExportSet::getBytes(char *buffArray)
 {
 	
 	strcat(buffArray, "\t<set");
-	strcat(buffArray, LABEL);
-	strcat(buffArray, XMLAttribute);
+	if (!LABEL)  {strcat(buffArray," label=\"label\"");} else {strcat(buffArray,LABEL);}
+	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
 	strcat(buffArray,">\n");
 
 	//loop over elements

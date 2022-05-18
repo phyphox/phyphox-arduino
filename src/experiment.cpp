@@ -27,9 +27,9 @@ void PhyphoxBleExperiment::setDescription(const char *d){
 	copyToMem(&DESCRIPTION, d);
 }
 
-void PhyphoxBleExperiment::setConfig(const char *c){
-	copyToMem(&CONFIG, c);
-}
+// void PhyphoxBleExperiment::setConfig(const char *c){
+// 	copyToMem(&CONFIG, c);
+// }
 
 void PhyphoxBleExperiment::addExportSet(ExportSet& e)
 {
@@ -50,17 +50,18 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 	strcat(buffArray, "<phyphox version=\"1.10\">\n");
 	//build title
 	strcat(buffArray,"<title>");
-	strcat(buffArray, TITLE);
+	if (!TITLE)  {strcat(buffArray,"Arduino-Experiment");} else {strcat(buffArray,TITLE);}
 	strcat(buffArray,"</title>\n");
 	
 	//build category
 	strcat(buffArray, "<category>");
-	strcat(buffArray, CATEGORY);
+	if (!CATEGORY)  {strcat(buffArray,"Arduino Experiments");} else {strcat(buffArray,CATEGORY);}
 	strcat(buffArray, "</category>\n");	
 
 	//build description
 	strcat(buffArray, "<description>");
-	strcat(buffArray, DESCRIPTION);
+	if (!DESCRIPTION)  {strcat(buffArray,"An experiment created with the phyphox BLE library for Arduino-compatible micro controllers.");}
+	else {strcat(buffArray,DESCRIPTION);}
 	strcat(buffArray, "</description>\n");
 
 	//build container
@@ -93,7 +94,7 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 
 	//build config
 	//strcat(buffArray,"\t\t<config char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"hexadecimal\">");
-	//strcat(buffArray, CONFIG);
+	// if (!CONFIG)  {strcat(buffArray,"000000");} else {strcat(buffArray,CONFIG);}
     //strcat(buffArray,"</config>\n\t\t");
 
 
