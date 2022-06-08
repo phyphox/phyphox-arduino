@@ -3,7 +3,7 @@
 
 void PhyphoxBleExperiment::Edit::setUnit(const char *u)
 {
-    ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(u, 12, "setUnit") : ERROR;
+    ERROR = ERROR.MESSAGE == NULL ? err_checkLength(u, 12, "setUnit") : ERROR;
     copyToMem(&UNIT, (" unit=\"" + std::string(u) + "\"").c_str());
 } 
 
@@ -15,17 +15,17 @@ void PhyphoxBleExperiment::Edit::setSigned(bool s)
 
 void PhyphoxBleExperiment::Edit::setDecimal(bool d)
 {
-    if(d) copyToMem(&SIGNED, " decimal=\"true\"");
-    else copyToMem(&SIGNED, " decimal=\"false\"");
+    if(d) copyToMem(&DECIMAL, " decimal=\"true\"");
+    else copyToMem(&DECIMAL, " decimal=\"false\"");
 }
 
 void PhyphoxBleExperiment::Edit::setXMLAttribute(const char *xml){
-    ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(xml, 98, "setXMLAttribute") : ERROR;
+    ERROR = ERROR.MESSAGE == NULL ? err_checkLength(xml, 98, "setXMLAttribute") : ERROR;
 	copyToMem(&XMLAttribute, (" " + std::string(xml)).c_str());
 }
 
 void PhyphoxBleExperiment::Edit::setChannel(int b){
-    ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkUpper(b, 1, "setChannel") : ERROR;
+    ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(b, 1, "setChannel") : ERROR;
     char tmp[20];
 	sprintf(tmp, "CB%i", b);
 	copyToMem(&BUFFER, tmp);

@@ -30,7 +30,7 @@ void PhyphoxBleExperiment::View::getBytes(char *buffArray, uint8_t elem)
 	}
 
 	if(ELEMENTS[elem]!=nullptr){
-		if(strcmp(ELEMENTS[elem]->ERROR.MESSAGE, "") == 0) {
+		if(ELEMENTS[elem]->ERROR.MESSAGE == NULL) {
 			ELEMENTS[elem]->getBytes(buffArray);
 		}
 	}

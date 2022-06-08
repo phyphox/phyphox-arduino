@@ -12,12 +12,12 @@ void PhyphoxBleExperiment::Separator::setHeight(float h)
 
 void PhyphoxBleExperiment::Separator::setColor(const char *c)
 {
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkHex(c, "setColor") : ERROR;
+	ERROR = ERROR.MESSAGE == NULL ? err_checkHex(c, "setColor") : ERROR;
 	copyToMem(&COLOR, (" color=\"" + std::string(c) + "\"").c_str());
 } 
 
 void PhyphoxBleExperiment::Separator::setXMLAttribute(const char * xml) {
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(xml, 98, "setXMLAttribute") : ERROR;
+	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(xml, 98, "setXMLAttribute") : ERROR;
 	copyToMem(&XMLAttribute, (" " + std::string(xml)).c_str());
 }
 

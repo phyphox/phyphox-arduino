@@ -153,7 +153,8 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 		for(int j=0;j<phyphoxBleNElements;j++) {
 			if(VIEWS[i]!= nullptr && errors<=2){
 				if(VIEWS[i]->ELEMENTS[j]!=nullptr){
-					if(strcmp(VIEWS[i]->ELEMENTS[j]->ERROR.MESSAGE, "") != 0) {
+					if(VIEWS[i]->ELEMENTS[j]->ERROR.MESSAGE != NULL) {
+					// if(strcmp(VIEWS[i]->ELEMENTS[j]->ERROR.MESSAGE, "") != 0) {
 						if(errors == 0) {
 							strcat(buffArray, "\t<view label=\"ERRORS\"> \n");
 						}

@@ -4,6 +4,7 @@
 #define phyphoxBleNViews 15
 #define phyphoxBleNElements 20
 #define phyphoxBleNExportSets 10
+#define phyphoxBleNChannel 5
 
 #include <Arduino.h>
 #include "copyToMem.h"
@@ -21,7 +22,7 @@ class PhyphoxBleExperiment {
 
 	class Error {
 	public:
-		char MESSAGE[50] = "";
+		char* MESSAGE = NULL;
 		void getBytes(char *);
 	};
 
@@ -53,6 +54,23 @@ class PhyphoxBleExperiment {
 	private:
 	};
 
+	class Channel
+	{
+	public:
+		Channel() = default;
+		Channel(const Channel &) = delete;
+		Channel &operator=(const Channel &) = delete;
+		~Channel() = default;
+
+		char* CHANNELX = NULL;
+		char* CHANNELY = NULL;
+		char* COLOR   = NULL;
+		bool isActive = false;
+
+		void getBytes(char *);
+	private:
+	};
+
 	class Graph : public Element
 	{
 	public:
@@ -72,6 +90,8 @@ class PhyphoxBleExperiment {
 		char* INPUTX = NULL;
 		char* INPUTY = NULL;
 
+		Channel CHANNEL[phyphoxBleNChannel];
+
 		char* STYLE = NULL;
 
 		char* XMLAttribute = NULL;
@@ -84,6 +104,7 @@ class PhyphoxBleExperiment {
 		void setYPrecision(int);
 		void setColor(const char *);
 		void setChannel(int, int);
+		void addChannel(int, int, const char*);
 		void setStyle(const char *);
 		void setXMLAttribute(const char *);
 
