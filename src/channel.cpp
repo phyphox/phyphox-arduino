@@ -7,7 +7,7 @@ void PhyphoxBleExperiment::Channel::getBytes(char *buffArray)
     strcat(buffArray, "\t\t\t<input axis=\"x\" color=\"");
     strcat(buffArray, COLOR);
     strcat(buffArray, "\">");
-    if (!CHANNELX)  {strcat(buffArray,"Channel x not set");} else {strcat(buffArray,CHANNELX);}
+    if (!CHANNELX)  {strcat(buffArray,"CH0");} else {strcat(buffArray,CHANNELX);}
     strcat(buffArray, "</input>\n\t\t\t<input axis=\"y\">");
     if (!CHANNELY)  {strcat(buffArray,"CH1");} else {strcat(buffArray,CHANNELY);}
 }
