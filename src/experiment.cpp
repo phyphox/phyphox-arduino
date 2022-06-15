@@ -27,6 +27,11 @@ void PhyphoxBleExperiment::setDescription(const char *d){
 	copyToMem(&DESCRIPTION, d);
 }
 
+void PhyphoxBleExperiment::setSubscribeOnStart(bool b) {
+	if(b) copyToMem(&SUBSCRIBEONSTART, "true");
+    else copyToMem(&SUBSCRIBEONSTART, "false");
+}
+
 // void PhyphoxBleExperiment::setConfig(const char *c){
 // 	copyToMem(&CONFIG, c);
 // }
@@ -87,7 +92,9 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 		sprintf(add, "\" mtu=\"%i", MTU);
 		strcat(buffArray, add);
 	}
-	strcat(buffArray, "\" id=\"phyphoxBLE\" mode=\"notification\" rate=\"1\" subscribeOnStart=\"false\">\n");
+	strcat(buffArray, "\" id=\"phyphoxBLE\" mode=\"notification\" rate=\"1\" subscribeOnStart=\"");
+	if (!SUBSCRIBEONSTART)  {strcat(buffArray, "false");} else {strcat(buffArray, SUBSCRIBEONSTART);}
+	strcat(buffArray, "\">\n");
 	
 	
 	

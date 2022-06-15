@@ -56,6 +56,25 @@ class MyExpCallback: public BLEDescriptorCallbacks {
     };
   };
 
+class MyDataCallback: public BLEDescriptorCallbacks {
+
+    public:
+      MyDataCallback(){};
+
+    private:
+
+    void onWrite(BLEDescriptor* pDescriptor){
+      uint8_t* rxValue = pDescriptor->getValue();
+
+      if(pDescriptor->getLength() > 0){
+        // Send a bool which indicates that the play button was pressed
+        if (rxValue[0] == 1) {
+    	      		// delay(10000);
+    		}
+      }
+    };
+  };
+
 class MyCharCallback: public BLECharacteristicCallbacks {
   public:
     MyCharCallback(){};
@@ -167,6 +186,7 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
 
 
   myExperimentDescriptor->setCallbacks(new MyExpCallback());
+  myDataDescriptor->setCallbacks(new MyDataCallback());
 
   dataCharacteristic->addDescriptor(myDataDescriptor);
   experimentCharacteristic->addDescriptor(myExperimentDescriptor);

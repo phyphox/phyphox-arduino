@@ -265,6 +265,7 @@ class PhyphoxBleExperiment {
 	void setCategory(const char *);
 	void setDescription(const char *);
 	// void setConfig(const char *);
+	void setSubscribeOnStart(bool);
 
 	void getBytes(char *);
 	void getFirstBytes(char *, const char *);
@@ -277,6 +278,7 @@ class PhyphoxBleExperiment {
 	char* CATEGORY = NULL;
 	char* DESCRIPTION = NULL;
 	// char* CONFIG = NULL;
+	char* SUBSCRIBEONSTART = NULL;
 
 	View *VIEWS[phyphoxBleNViews] = {nullptr};
 	ExportSet *EXPORTSETS[phyphoxBleNExportSets] = {nullptr};
