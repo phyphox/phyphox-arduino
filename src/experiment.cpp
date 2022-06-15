@@ -1,5 +1,6 @@
 #include "phyphoxBleExperiment.h"
 #include "copyToMem.h"
+#include "phyphoxBle.h"
 
 int PhyphoxBleExperiment::numberOfChannels = 5;
 
@@ -221,6 +222,3 @@ void PhyphoxBleExperiment::getLastBytes(char *buffArray){
 	//close
 	strcat(buffArray, "</phyphox>");
 }
-
-
-

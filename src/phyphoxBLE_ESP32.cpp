@@ -32,6 +32,7 @@ uint16_t PhyphoxBLE::maxConInterval = 24; //30ms
 uint16_t PhyphoxBLE::slaveLatency = 0;
 uint16_t PhyphoxBLE::timeout = 50;
 uint16_t PhyphoxBLE::currentConnections=0;
+bool     PhyphoxBLE::isSubscribed=false;
 
 uint16_t PhyphoxBLE::MTU = 20;
 uint16_t PhyphoxBleExperiment::MTU = 20;
@@ -67,10 +68,7 @@ class MyDataCallback: public BLEDescriptorCallbacks {
       uint8_t* rxValue = pDescriptor->getValue();
 
       if(pDescriptor->getLength() > 0){
-        // Send a bool which indicates that the play button was pressed
-        if (rxValue[0] == 1) {
-    	      		// delay(10000);
-    		}
+        PhyphoxBLE::isSubscribed=true;
       }
     };
   };
