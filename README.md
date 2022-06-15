@@ -77,7 +77,7 @@ Here are some useful methods to create your own experiment:
 | Graph      | setLabelX(char*)         | Sets a label for x (similar with y)                               |
 | Graph      | setXPrecision(int)       | Sets the amount of digits after the decimal point (similar with y)|
 | Graph      | setChannel(int, int)     | As explained above (1-5)                                          |
-| Graph      | addChannel(int,int,char*)| Adds channel for multiple graphs in one co-system. char* for color|
+| Graph      | addChannel(int, int, String)| Adds channel for multiple graphs in one co-system. 3rd parameter is used for the color|
 | Graph      | setStyle(char*)          | Sets the style. For more possibilities check the wiki             |
 | Graph      | setColor(char*)          | Sets the line color of the graph (use a 6 digit hexadecimal code) |
 | Separator  | setHeight(float)         | Creates a line to separate parts of the experiment                |
