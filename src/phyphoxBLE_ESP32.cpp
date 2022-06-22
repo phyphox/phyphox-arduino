@@ -143,7 +143,12 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
           PhyphoxBleExperiment::Graph firstGraph;      //Create graph which will plot random numbers over time     
           firstGraph.setChannel(0,1);    
 
-          firstView.addElement(firstGraph);       
+          //Value
+          PhyphoxBleExperiment::Value valueField;
+          valueField.setChannel(1);
+
+          firstView.addElement(firstGraph);
+          firstView.addElement(valueField);    
           defaultExperiment.addView(firstView);
           
           addExperiment(defaultExperiment);  
