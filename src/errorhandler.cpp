@@ -53,3 +53,12 @@ PhyphoxBleExperiment::Error PhyphoxBleExperiment::Errorhandler::err_checkStyle(c
     }
     return ret;
 }
+
+PhyphoxBleExperiment::Error PhyphoxBleExperiment::Errorhandler::err_checkLayout(const char *input, const char *origin) {
+    Error ret;
+    copyToMem(&ret.MESSAGE, ("ERR_05, in " + std::string(origin) + "(). \n").c_str());
+    // strcat(ret.MESSAGE, "ERR_04, in ");
+    // strcat(ret.MESSAGE, origin);
+    // strcat(ret.MESSAGE, "(). \n");
+    return ret;
+}

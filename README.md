@@ -80,6 +80,10 @@ Here are some useful methods to create your own experiment:
 | Graph      | addChannel(int, int, String)| Adds channel for multiple graphs in one co-system. 3rd parameter is used for the color|
 | Graph      | setStyle(char*)          | Sets the style. For more possibilities check the wiki             |
 | Graph      | setColor(char*)          | Sets the line color of the graph (use a 6 digit hexadecimal code) |
+| Graph      | setMinX(int, const char *)| Sets the min x value of the co-system and a layout (auto, extend and fixed) |
+| Graph      | setMaxX(int, const char *)| Sets the max x value of the co-system and a layout (auto, extend and fixed) |
+| Graph      | setMinY(int, const char *)| Sets the min y value of the co-system and a layout (auto, extend and fixed) |
+| Graph      | setMaxY(int, const char *)| Sets the max y value of the co-system and a layout (auto, extend and fixed) |
 | Separator  | setHeight(float)         | Creates a line to separate parts of the experiment                |
 | Separator  | setColor(char*)          | Sets the color of the line (use a 6 digit hexadecimal code)       |
 | Info       | setInfo(char*)           | Sets the infotext                                                 |
@@ -100,10 +104,11 @@ Here are some useful methods to create your own experiment:
 | Everything | setXMLAttribute(char*)   | Custom property e.g. setXMLAttribute("lineWidth=\"3\"")           |
 
 If for some reason the app shows you an error in form of "ERROR FOUND: ERR_X", with different values for X, this could be the reason:
-* ERR_01: The input was too long
-* ERR_02: The value exceeds the upper limit
-* ERR_03: The input was not a 6-digit hexadecimal code
-* ERR_04: The input does not match with a valid value
+* ERR_01: The input was too long.
+* ERR_02: The value exceeds the upper limit.
+* ERR_03: The input was not a 6-digit hexadecimal code.
+* ERR_04: The input does not match with a valid value.
+* ERR_05: The layout must be auto, extend or fixed.
 
 If you realize that the microcontroller is continiously rebooting, you maybe added too many elements.
 

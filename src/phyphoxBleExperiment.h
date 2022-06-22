@@ -33,6 +33,7 @@ class PhyphoxBleExperiment {
 		virtual Error err_checkUpper(int, int, const char *);
 		virtual Error err_checkHex(const char *, const char *);
 		virtual Error err_checkStyle(const char *, const char *);
+		virtual Error err_checkLayout(const char *, const char *);
 	};
 
 	class Element : public Errorhandler {
@@ -86,6 +87,10 @@ class PhyphoxBleExperiment {
 		char* COLOR = NULL;
 		char* XPRECISION = NULL;
 		char* YPRECISION = NULL;
+		char* MINX = NULL;
+		char* MAXX = NULL;
+		char* MINY = NULL;
+		char* MAXY = NULL;
 
 		char* INPUTX = NULL;
 		char* INPUTY = NULL;
@@ -106,6 +111,10 @@ class PhyphoxBleExperiment {
 		void setChannel(int, int);
 		void addChannel(int, int, const char*);
 		void setStyle(const char *);
+		void setMinX(float, const char *);
+		void setMaxX(float, const char *);
+		void setMinY(float, const char *);
+		void setMaxY(float, const char *);
 		void setXMLAttribute(const char *);
 
 		void phyphoxTimestamp();

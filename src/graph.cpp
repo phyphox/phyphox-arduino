@@ -73,6 +73,77 @@ void PhyphoxBleExperiment::Graph::setStyle(const char *s){
 	copyToMem(&STYLE, (" style=\"" + std::string(s) + "\"").c_str());
 }
 
+void PhyphoxBleExperiment::Graph::setMinX(float value, const char * layout) {
+	/**
+     * Sets the min x value for the co-system.
+     *
+     * @param value The min x value.
+	 * @param layout Choose between auto, extend and fixed.
+     */
+	std::string layoutString;
+	layoutString.assign(layout);
+	std::ostringstream valueStringStream;
+	valueStringStream << value;
+	if(strcmp(layout, "auto") == 0 || strcmp(layout, "extend") == 0 || strcmp(layout, "fixed") == 0) {
+		copyToMem(&MINX, (" scaleMinX=\"" + layoutString + "\"" + " minX=\"" + valueStringStream.str() + "\"").c_str());
+	} else {
+		ERROR = ERROR.MESSAGE == NULL ? err_checkLayout(layout, "setMinX") : ERROR;
+	}
+}
+
+void PhyphoxBleExperiment::Graph::setMaxX(float value, const char * layout) {
+	/**
+     * Sets the min x value for the co-system.
+     *
+     * @param value The max x value.
+	 * @param layout Choose between auto, extend and fixed.
+     */
+	std::string layoutString;
+	layoutString.assign(layout);
+	std::ostringstream valueStringStream;
+	valueStringStream << value;
+	if(strcmp(layout, "auto") == 0 || strcmp(layout, "extend") == 0 || strcmp(layout, "fixed") == 0) {
+		copyToMem(&MAXX, (" scaleMaxX=\"" + layoutString + "\"" + " maxX=\"" + valueStringStream.str() + "\"").c_str());
+	} else {
+		ERROR = ERROR.MESSAGE == NULL ? err_checkLayout(layout, "setMaxX") : ERROR;
+	}
+}
+
+void PhyphoxBleExperiment::Graph::setMinY(float value, const char * layout) {
+	/**
+     * Sets the min x value for the co-system.
+     *
+     * @param value The min y value.
+	 * @param layout Choose between auto, extend and fixed.
+     */
+	std::string layoutString;
+	layoutString.assign(layout);
+	std::ostringstream valueStringStream;
+	valueStringStream << value;
+	if(strcmp(layout, "auto") == 0 || strcmp(layout, "extend") == 0 || strcmp(layout, "fixed") == 0) {
+		copyToMem(&MINY, (" scaleMinY=\"" + layoutString + "\"" + " minY=\"" + valueStringStream.str() + "\"").c_str());
+	} else {
+		ERROR = ERROR.MESSAGE == NULL ? err_checkLayout(layout, "setMinY") : ERROR;
+	}
+}
+void PhyphoxBleExperiment::Graph::setMaxY(float value, const char * layout) {
+	/**
+     * Sets the min x value for the co-system.
+     *
+     * @param value The max y value.
+	 * @param layout Choose between auto, extend and fixed.
+     */
+	std::string layoutString;
+	layoutString.assign(layout);
+	std::ostringstream valueStringStream;
+	valueStringStream << value;
+	if(strcmp(layout, "auto") == 0 || strcmp(layout, "extend") == 0 || strcmp(layout, "fixed") == 0) {
+		copyToMem(&MAXY, (" scaleMaxY=\"" + layoutString + "\"" + " maxY=\"" + valueStringStream.str() + "\"").c_str());
+	} else {
+		ERROR = ERROR.MESSAGE == NULL ? err_checkLayout(layout, "setMaxY") : ERROR;
+	}
+}
+
 void PhyphoxBleExperiment::Graph::setXMLAttribute(const char *xml){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(xml, 98, "setXMLAttribute") : ERROR;
 	copyToMem(&XMLAttribute, (" " + std::string(xml)).c_str());
@@ -90,6 +161,10 @@ void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 	if (YPRECISION) {strcat(buffArray,YPRECISION);}
 	if (STYLE) {strcat(buffArray,STYLE);}
 	if (COLOR) {strcat(buffArray,COLOR);}
+	if (MINX) {strcat(buffArray,MINX);}
+	if (MAXX) {strcat(buffArray,MAXX);}
+	if (MINY) {strcat(buffArray,MINY);}
+	if (MAXY) {strcat(buffArray,MAXY);}
 	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
 
 	strcat(buffArray,">\n");
