@@ -103,6 +103,14 @@ Here are some useful methods to create your own experiment:
 | ExportData | setDatachannel(int)      | Defines which channel should be exported for this dataset (1-5)   |
 | Everything | setXMLAttribute(char*)   | Custom property e.g. setXMLAttribute("lineWidth=\"3\"")           |
 
+
+#### Style and Layout oprtions for setStyle and setMax/setMin
+STYLE_LINES, STYLE_DOTS, STYLE_VBARS, STYLE_HBARS, STYLE_MAP
+
+LAYOUT_AUTO, LAYOUT_EXTEND, LAYOUT_FIXED
+
+#### Error messages
+
 If for some reason the app shows you an error in form of "ERROR FOUND: ERR_X", with different values for X, this could be the reason:
 * ERR_01: The input was too long.
 * ERR_02: The value exceeds the upper limit.
