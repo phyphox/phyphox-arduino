@@ -3,9 +3,8 @@
 
 void PhyphoxBleExperiment::Separator::setHeight(float h)
 {
+	ERROR =  ERROR.MESSAGE == NULL ? err_checkUpper((int) h, 10, "setHeight") : ERROR;
 	char tmp[20];
-	sprintf(tmp, "%f", h);;
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(tmp, 10, "setHeight") : ERROR;
 	sprintf(tmp, " height=\"%.2f\"", h);
 	copyToMem(&HEIGHT, tmp);
 }
@@ -23,12 +22,10 @@ void PhyphoxBleExperiment::Separator::setXMLAttribute(const char * xml) {
 
 void PhyphoxBleExperiment::Separator::getBytes(char *buffArray)
 {
-
 	strcat(buffArray,"\t\t<separator");
 	if (!HEIGHT)  {strcat(buffArray," height=\"0.1\"");} else {strcat(buffArray,HEIGHT);}
 	if (COLOR) {strcat(buffArray,COLOR);}
 	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
 	strcat(buffArray,">\n");
 	strcat(buffArray, "\t\t</separator>\n");
-
 }

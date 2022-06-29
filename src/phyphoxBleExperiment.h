@@ -1,11 +1,6 @@
 #ifndef PHYPHOX_BLE_EXPERIMENT
 #define PHYPHOX_BLE_EXPERIMENT
 
-#define phyphoxBleNViews 15
-#define phyphoxBleNElements 20
-#define phyphoxBleNExportSets 10
-#define phyphoxBleNChannel 5
-
 #include <Arduino.h>
 #include "copyToMem.h"
 #include "defines.h"
