@@ -84,7 +84,7 @@ void PhyphoxBleExperiment::Graph::setMinX(float value, const char * layout) {
 	layoutString.assign(layout);
 	std::ostringstream valueStringStream;
 	valueStringStream << value;
-	if(strcmp(layout, "auto") == 0 || strcmp(layout, "extend") == 0 || strcmp(layout, "fixed") == 0) {
+	if(strcmp(layout, LAYOUT_AUTO) == 0 || strcmp(layout, LAYOUT_EXTEND) == 0 || strcmp(layout, LAYOUT_FIXED) == 0) {
 		copyToMem(&MINX, (" scaleMinX=\"" + layoutString + "\"" + " minX=\"" + valueStringStream.str() + "\"").c_str());
 	} else {
 		ERROR = ERROR.MESSAGE == NULL ? err_checkLayout(layout, "setMinX") : ERROR;

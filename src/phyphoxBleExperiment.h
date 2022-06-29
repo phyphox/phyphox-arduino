@@ -8,6 +8,7 @@
 
 #include <Arduino.h>
 #include "copyToMem.h"
+#include "defines.h"
 
 class PhyphoxBleExperiment {
 
