@@ -1,37 +1,30 @@
 #include "phyphoxBleExperiment.h"
+#include "copyToMem.h"
 
 void PhyphoxBleExperiment::InfoField::setInfo(const char *i)
 {
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(i, 191, "setInfo") : ERROR;
-	memset(&INFO[0], 0, sizeof(INFO));
-	strcat(INFO, " label=\"");
-	strcat(INFO, i);
-	strcat(INFO, "\"");
+	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(i, 191, "setInfo") : ERROR;
+	copyToMem(&INFO, (" label=\"" + std::string(i) + "\"").c_str());
 }
 
 void PhyphoxBleExperiment::InfoField::setColor(const char *c)
 {
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkHex(c, "setColor") : ERROR;
-	memset(&COLOR[0], 0, sizeof(COLOR));
-	strcat(COLOR, " color=\"");
-	strcat(COLOR, c);
-	strcat(COLOR, "\"");
+	ERROR = ERROR.MESSAGE == NULL ? err_checkHex(c, "setColor") : ERROR;
+	copyToMem(&COLOR, (" color=\"" + std::string(c) + "\"").c_str());
 } 
 
-void PhyphoxBleExperiment::InfoField::setXMLAttribute(const char *w){
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(w, 98, "setXMLAttribute") : ERROR;
-	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
-	strcat(XMLAttribute, " ");
-	strcat(XMLAttribute, w);
+void PhyphoxBleExperiment::InfoField::setXMLAttribute(const char *xml){
+	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(xml, 98, "setXMLAttribute") : ERROR;
+	copyToMem(&XMLAttribute, (" " + std::string(xml)).c_str());
 }
 
 void PhyphoxBleExperiment::InfoField::getBytes(char *buffArray)
 {
 
 	strcat(buffArray,"\t\t<info");
-	strcat(buffArray, INFO);
-    strcat(buffArray, COLOR);
-	strcat(buffArray, XMLAttribute);
+	if (!INFO)  {strcat(buffArray," label=\"infotext\"");} else {strcat(buffArray,INFO);}
+	if (COLOR) {strcat(buffArray,COLOR);}
+	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
 	strcat(buffArray,">\n");
 	strcat(buffArray,"\t\t</info>\n");
 	

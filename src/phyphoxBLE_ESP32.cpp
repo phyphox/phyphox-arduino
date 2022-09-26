@@ -32,6 +32,7 @@ uint16_t PhyphoxBLE::maxConInterval = 24; //30ms
 uint16_t PhyphoxBLE::slaveLatency = 0;
 uint16_t PhyphoxBLE::timeout = 50;
 uint16_t PhyphoxBLE::currentConnections=0;
+bool     PhyphoxBLE::isSubscribed=false;
 
 uint16_t PhyphoxBLE::MTU = 20;
 uint16_t PhyphoxBleExperiment::MTU = 20;
@@ -53,6 +54,22 @@ class MyExpCallback: public BLEDescriptorCallbacks {
     	      		PhyphoxBLE::startTask();
     		}
     	}
+    };
+  };
+
+class MyDataCallback: public BLEDescriptorCallbacks {
+
+    public:
+      MyDataCallback(){};
+
+    private:
+
+    void onWrite(BLEDescriptor* pDescriptor){
+      uint8_t* rxValue = pDescriptor->getValue();
+
+      if(pDescriptor->getLength() > 0){
+        PhyphoxBLE::isSubscribed=true;
+      }
     };
   };
 
@@ -126,7 +143,12 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
           PhyphoxBleExperiment::Graph firstGraph;      //Create graph which will plot random numbers over time     
           firstGraph.setChannel(0,1);    
 
-          firstView.addElement(firstGraph);       
+          //Value
+          PhyphoxBleExperiment::Value valueField;
+          valueField.setChannel(1);
+
+          firstView.addElement(firstGraph);
+          firstView.addElement(valueField);    
           defaultExperiment.addView(firstView);
           
           addExperiment(defaultExperiment);  
@@ -167,6 +189,7 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
 
 
   myExperimentDescriptor->setCallbacks(new MyExpCallback());
+  myDataDescriptor->setCallbacks(new MyDataCallback());
 
   dataCharacteristic->addDescriptor(myDataDescriptor);
   experimentCharacteristic->addDescriptor(myExperimentDescriptor);
