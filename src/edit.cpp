@@ -25,7 +25,7 @@ void PhyphoxBleExperiment::Edit::setXMLAttribute(const char *xml){
 }
 
 void PhyphoxBleExperiment::Edit::setChannel(int b){
-    ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(b, 1, "setChannel") : ERROR;
+    ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(b, 5, "setChannel") : ERROR;
     char tmp[20];
 	sprintf(tmp, "CB%i", b);
 	copyToMem(&BUFFER, tmp);

@@ -3,7 +3,7 @@
 #include "Arduino.h"
 #include <stdio.h>
 #include "esp_system.h"
-//#define DEBUG
+#define DEBUG
 //init statics
 uint8_t PhyphoxBLE::data_package[20] = {0};
 void (*PhyphoxBLE::configHandler)() = nullptr;
@@ -293,6 +293,36 @@ void PhyphoxBLE::read(float& f)
 {
   uint8_t* data = configCharacteristic->getData();
   memcpy(&f,data,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2)
+{
+  uint8_t* data = configCharacteristic->getData();
+  memcpy(&f1,data,4);
+  memcpy(&f2,data+4,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2, float& f3)
+{
+  uint8_t* data = configCharacteristic->getData();
+  memcpy(&f1,data,4);
+  memcpy(&f2,data+4,4);
+  memcpy(&f3,data+8,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2, float& f3, float& f4)
+{
+  uint8_t* data = configCharacteristic->getData();
+  memcpy(&f1,data,4);
+  memcpy(&f2,data+4,4);
+  memcpy(&f3,data+8,4);
+  memcpy(&f4,data+12,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2, float& f3, float& f4, float& f5)
+{
+  uint8_t* data = configCharacteristic->getData();
+  memcpy(&f1,data,4);
+  memcpy(&f2,data+4,4);
+  memcpy(&f3,data+8,4);
+  memcpy(&f4,data+12,4);
+  memcpy(&f5,data+16,4);
 }
 
 

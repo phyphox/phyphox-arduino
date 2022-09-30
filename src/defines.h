@@ -1,5 +1,6 @@
 // Experiment constants
 #define phyphoxBleNViews 15
+#define phyphoxBleNSensors 5
 #define phyphoxBleNElements 20
 #define phyphoxBleNExportSets 10
 #define phyphoxBleNChannel 5

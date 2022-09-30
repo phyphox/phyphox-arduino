@@ -30,6 +30,8 @@ class PhyphoxBleExperiment {
 		virtual Error err_checkHex(const char *, const char *);
 		virtual Error err_checkStyle(const char *, const char *);
 		virtual Error err_checkLayout(const char *, const char *);
+		virtual Error err_checkComponent(const char *, const char *);
+		virtual Error err_checkSensor(const char *, const char *);
 	};
 
 	class Element : public Errorhandler {
@@ -178,6 +180,34 @@ class PhyphoxBleExperiment {
 	private:
 	};
 
+	class Sensor : public Errorhandler
+	{
+	public:
+		Sensor(){};
+		Sensor(const Sensor &) = delete;
+		Sensor &operator=(const Sensor &) = delete;
+		~Sensor() = default;
+
+		void setType(const char *);
+		void setComponent(const char *);
+		void setAverage(bool);
+		void setRate(int);
+		void routeData(const char *, int);
+		void setXMLAttribute(const char *);
+		void getBytes(char *);
+
+		char* TYPE = NULL;
+		char* CHANNEL[5] = {NULL};
+		char* COMPONENT[5] = {NULL};
+		char* RATE = NULL;
+		char* AVERAGE = NULL;
+		char* XMLAttribute = NULL;
+
+		Error ERROR;
+
+	private:
+	};
+
 	class InfoField : public Element
 	{
 	public:
@@ -277,6 +307,7 @@ class PhyphoxBleExperiment {
 	void getViewBytes(char *, uint8_t, uint8_t);
 	void getLastBytes(char *);
 	void addView(View &);
+	void addSensor(Sensor &);
 	void addExportSet(ExportSet &);
 
 	char* TITLE = NULL;
@@ -286,6 +317,7 @@ class PhyphoxBleExperiment {
 	char* SUBSCRIBEONSTART = NULL;
 
 	View *VIEWS[phyphoxBleNViews] = {nullptr};
+	Sensor *SENSORS[phyphoxBleNSensors] = {nullptr};
 	ExportSet *EXPORTSETS[phyphoxBleNExportSets] = {nullptr};
 
 	static int numberOfChannels;

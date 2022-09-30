@@ -16,6 +16,16 @@ void PhyphoxBleExperiment::addView(View& v)
 	}
 }
 
+void PhyphoxBleExperiment::addSensor(Sensor& s){
+	for(int i=0; i<phyphoxBleNSensors; i++)
+	{
+		if(SENSORS[i]==nullptr){
+			SENSORS[i] = &s;
+			break;
+		}
+	}
+}
+
 void PhyphoxBleExperiment::setTitle(const char *t){
 	copyToMem(&TITLE, t);
 }
@@ -74,6 +84,11 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 	strcat(buffArray, "<data-containers>\n");
 	strcat(buffArray, "\t<container size=\"0\" static=\"false\">CH0</container>\n");
 	strcat(buffArray, "\t<container size=\"0\" static=\"false\">CB1</container>\n");
+	strcat(buffArray, "\t<container size=\"0\" static=\"false\">CB2</container>\n");
+	strcat(buffArray, "\t<container size=\"0\" static=\"false\">CB3</container>\n");
+	strcat(buffArray, "\t<container size=\"0\" static=\"false\">CB4</container>\n");
+	strcat(buffArray, "\t<container size=\"0\" static=\"false\">CB5</container>\n");
+
 	for(int i=0; i<numberOfChannels;i++){
 		strcat(buffArray, "\t<container size=\"0\" static=\"false\">CH");
 		char add[20];
@@ -129,7 +144,17 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 	strcat(buffArray,"<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" extra=\"time\">CH0</output>");
 
 	strcat(buffArray, "\n\t</bluetooth>\n");
+	//build sensor input
+	
+	for (int i = 0; i < phyphoxBleNSensors; i++)
+	{
+		if(SENSORS[i] != nullptr){
+			//strcat(buffArray, "\n\t\t<sensor rate=\"0\" average=\"false\" type=\"accelerometer\">CB1</sensor>");
+			SENSORS[i]->getBytes(buffArray);
+		}
+	}
 	strcat(buffArray, "</input>\n");
+	
 
 	//build output
 	strcat(buffArray, "<output>\n");
@@ -146,6 +171,10 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 	// 	strcat(buffArray,"</input>\n\t\t");
 	// }
 	strcat(buffArray, "\t\t<input char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\">CB1</input>\n");
+	strcat(buffArray, "\t\t<input char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" offset=\"4\">CB2</input>\n");
+	strcat(buffArray, "\t\t<input char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" offset=\"8\">CB3</input>\n");
+	strcat(buffArray, "\t\t<input char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" offset=\"12\">CB4</input>\n");
+	strcat(buffArray, "\t\t<input char=\"cddf1003-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" offset=\"16\">CB5</input>\n");
 
 	strcat(buffArray, "\t</bluetooth>\n");
 	strcat(buffArray, "</output>\n");
@@ -173,6 +202,17 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 			}
 		}
 	}
+	/*
+	for(int i=0; i<phyphoxBleNSensors;i++){
+		if(SENSORS[i]!=nullptr && SENSORS[i]->ERROR.MESSAGE !=NULL){
+			if(errors == 0){
+				strcat(buffArray, "\t<view label=\"ERRORS\"> \n");
+			}
+			SENSORS[i]->ERROR.getBytes(buffArray);
+			errors++;
+		}
+	}
+	*/
 	if(errors>0) {
 		strcat(buffArray,"\t\t<info  label=\"DE: Siehe Dokumentation für mehr Informationen zu Fehlern.\">\n");
 		//strcat(buffArray,"\" color=\"ff0000\">\n");
