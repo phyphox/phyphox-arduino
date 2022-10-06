@@ -22,9 +22,17 @@ void PhyphoxBleExperiment::Graph::setLabelY(const char *ly){
 	copyToMem(&LABELY, (" labelY=\"" + std::string(ly) + "\"").c_str());
 }
 
+
 void PhyphoxBleExperiment::Graph::setColor(const char *c){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkHex(c, "setColor") : ERROR;
-	copyToMem(&COLOR, (" color=\"" + std::string(c) + "\"").c_str());
+	copyToMem(&FIRSTDATASTREAM.COLOR, (std::string(c)).c_str());
+}
+
+void PhyphoxBleExperiment::Graph::setLinewidth(float w){
+	ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(w, 10, "setLinewidth") : ERROR;
+	char tmp[10];
+	sprintf(tmp, "%.2f", w);
+	copyToMem(&FIRSTDATASTREAM.WIDTH, tmp);
 }
 
 void PhyphoxBleExperiment::Graph::setXPrecision(int px){
@@ -45,32 +53,27 @@ void PhyphoxBleExperiment::Graph::setChannel(int x, int y)
 {
 	ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(x, numberOfChannels, "setChannel") : ERROR;
 	ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(y, numberOfChannels, "setChannel") : ERROR;
+
 	char tmpX[20];
 	sprintf(tmpX, "CH%i", x);
-	copyToMem(&INPUTX, tmpX);
+	copyToMem(&FIRSTDATASTREAM.INPUTX, tmpX);
 	char tmpY[20];
 	sprintf(tmpY, "CH%i", y);
-	copyToMem(&INPUTY, tmpY);
+	copyToMem(&FIRSTDATASTREAM.INPUTY, tmpY);
+	DATASTREAMS[0]=&FIRSTDATASTREAM;
 }
-
-void PhyphoxBleExperiment::Graph::addChannel(int x, int y, const char* col) {
-	for(int i=0;i<phyphoxBleNChannel; i++) {
-		if(!CHANNEL[i].isActive){
-			char tmp[20];
-			sprintf(tmp, "CH%i", x);
-			copyToMem(&CHANNEL[i].CHANNELX, tmp);
-			sprintf(tmp, "CH%i", y);
-			copyToMem(&CHANNEL[i].CHANNELY, tmp);
-			copyToMem(&CHANNEL[i].COLOR, col);
-			CHANNEL[i].isActive = true;
-			return;
-		}
+void PhyphoxBleExperiment::Graph::addDatastream(Datastream& ds){
+	for (int i = 0; i < phyphoxBleNChannel; i++){
+		if(DATASTREAMS[i]==nullptr){
+			DATASTREAMS[i] = &ds;
+			break;
+		}			
 	}
 }
 
 void PhyphoxBleExperiment::Graph::setStyle(const char *s){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkStyle(s, "setStyle") : ERROR;
-	copyToMem(&STYLE, (" style=\"" + std::string(s) + "\"").c_str());
+	copyToMem(&FIRSTDATASTREAM.STYLE, ("" + std::string(s)).c_str());
 }
 
 void PhyphoxBleExperiment::Graph::setMinX(float value, const char * layout) {
@@ -159,27 +162,20 @@ void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 	if (UNITY) {strcat(buffArray,UNITY);}
 	if (XPRECISION) {strcat(buffArray,XPRECISION);}
 	if (YPRECISION) {strcat(buffArray,YPRECISION);}
-	if (STYLE) {strcat(buffArray,STYLE);}
-	if (COLOR) {strcat(buffArray,COLOR);}
 	if (MINX) {strcat(buffArray,MINX);}
 	if (MAXX) {strcat(buffArray,MAXX);}
 	if (MINY) {strcat(buffArray,MINY);}
 	if (MAXY) {strcat(buffArray,MAXY);}
 	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
 
-	strcat(buffArray,">\n");
-
-	strcat(buffArray, "\t\t\t<input axis=\"x\">");
-	if (!INPUTX) {strcat(buffArray, "CH0");} else {strcat(buffArray, INPUTX);}
-	strcat(buffArray, "</input>\n\t\t\t<input axis=\"y\">");
-	if (!INPUTY) {strcat(buffArray, "CH1");} else {strcat(buffArray, INPUTY);}
+	strcat(buffArray,">");
 
 	for(int i=0;i<phyphoxBleNChannel; i++) {
-		if(CHANNEL[i].isActive) {
-			CHANNEL[i].getBytes(buffArray);
+		if(DATASTREAMS[i]!=nullptr) {
+			DATASTREAMS[i]->getBytes(buffArray);
 		}
 	}
 
-	strcat(buffArray, "</input>\n\t\t</graph>\n");	
+	strcat(buffArray, "\n\t\t</graph>\n");	
 	
 }

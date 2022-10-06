@@ -53,20 +53,28 @@ class PhyphoxBleExperiment {
 	private:
 	};
 
-	class Channel
+	class Datastream : public Errorhandler
 	{
 	public:
-		Channel() = default;
-		Channel(const Channel &) = delete;
-		Channel &operator=(const Channel &) = delete;
-		~Channel() = default;
+		Datastream() = default;
+		Datastream(const Datastream &) = delete;
+		Datastream &operator=(const Datastream &) = delete;
+		~Datastream() = default;
 
-		char* CHANNELX = NULL;
-		char* CHANNELY = NULL;
+		char* INPUTX = NULL;
+		char* INPUTY = NULL;
 		char* COLOR   = NULL;
+		char* WIDTH   = NULL;
+		char* STYLE   = NULL;
 		bool isActive = false;
 
+		void setColor(const char *);
+		void setStyle(const char *);
+		void setLinewidth(float w);
+		void setChannel(int, int);
 		void getBytes(char *);
+
+		Error ERROR;
 	private:
 	};
 
@@ -82,7 +90,6 @@ class PhyphoxBleExperiment {
 		char* UNITY = NULL;
 		char* LABELX = NULL;
 		char* LABELY = NULL;
-		char* COLOR = NULL;
 		char* XPRECISION = NULL;
 		char* YPRECISION = NULL;
 		char* MINX = NULL;
@@ -93,9 +100,8 @@ class PhyphoxBleExperiment {
 		char* INPUTX = NULL;
 		char* INPUTY = NULL;
 
-		Channel CHANNEL[phyphoxBleNChannel];
-
-		char* STYLE = NULL;
+		Datastream *DATASTREAMS[phyphoxBleNChannel]={nullptr};
+		Datastream FIRSTDATASTREAM;
 
 		char* XMLAttribute = NULL;
 
@@ -105,10 +111,13 @@ class PhyphoxBleExperiment {
 		void setLabelY(const char *);
 		void setXPrecision(int);
 		void setYPrecision(int);
-		void setColor(const char *);
+
 		void setChannel(int, int);
+		void addDatastream(Datastream &);
 		void addChannel(int, int, const char*);
 		void setStyle(const char *);
+		void setColor(const char *);
+		void setLinewidth(float w);
 		void setMinX(float, const char *);
 		void setMaxX(float, const char *);
 		void setMinY(float, const char *);

@@ -3,7 +3,7 @@
 #define phyphoxBleNSensors 5
 #define phyphoxBleNElements 20
 #define phyphoxBleNExportSets 10
-#define phyphoxBleNChannel 5
+#define phyphoxBleNChannel 10
 
 // Graph style options
 #define STYLE_LINES "lines"
