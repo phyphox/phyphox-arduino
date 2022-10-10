@@ -24,9 +24,11 @@ class PhyphoxBLE
         static BLEService *phyphoxExperimentService;
         static BLEDescriptor *myExperimentDescriptor;
         static BLEDescriptor *myDataDescriptor;
+        static BLEDescriptor *myEventDescriptor;
         static BLEDescriptor *myConfigDescriptor;
         static BLECharacteristic *dataCharacteristic;
         static BLECharacteristic *experimentCharacteristic;
+        static BLECharacteristic *eventCharacteristic;
         static BLECharacteristic *configCharacteristic;
         static BLEAdvertising *myAdvertising;
 
@@ -73,6 +75,9 @@ class PhyphoxBLE
         static void configHandlerDebug();
         static void (*configHandler)();
 
+        static void eventCharacteristicHandler();
+        static void (*experimentEventHandler)();
+
         static void setMTU(uint16_t);
         static uint16_t MTU;
 
@@ -88,6 +93,11 @@ class PhyphoxBLE
         static uint16_t timeout;
         static uint16_t currentConnections;
         static bool     isSubscribed;
+        
+        static uint8_t eventData[17];
+        static int64_t experimentTime;
+        static int64_t systemTime;
+        static uint8_t eventType;
 };
 
 

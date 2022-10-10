@@ -7,6 +7,7 @@
 //init statics
 uint8_t PhyphoxBLE::data_package[20] = {0};
 void (*PhyphoxBLE::configHandler)() = nullptr;
+void (*PhyphoxBLE::experimentEventHandler)() = nullptr;
 uint8_t storage[64000];
 //uint8_t *storage = (uint8_t*) malloc(8000 * sizeof(char));
 uint8_t *PhyphoxBLE::EXPARRAY=storage;
@@ -19,8 +20,10 @@ BLEService *PhyphoxBLE::phyphoxExperimentService;
 BLEService *PhyphoxBLE::phyphoxDataService;
 BLEDescriptor *PhyphoxBLE::myExperimentDescriptor;
 BLEDescriptor *PhyphoxBLE::myDataDescriptor;
+BLEDescriptor *PhyphoxBLE::myEventDescriptor;
 BLEDescriptor *PhyphoxBLE::myConfigDescriptor;
 BLECharacteristic *PhyphoxBLE::dataCharacteristic;
+BLECharacteristic *PhyphoxBLE::eventCharacteristic;
 BLECharacteristic *PhyphoxBLE::experimentCharacteristic;
 BLECharacteristic *PhyphoxBLE::configCharacteristic;
 BLEAdvertising *PhyphoxBLE::myAdvertising;
@@ -34,6 +37,10 @@ uint16_t PhyphoxBLE::timeout = 50;
 uint16_t PhyphoxBLE::currentConnections=0;
 bool     PhyphoxBLE::isSubscribed=false;
 
+uint8_t PhyphoxBLE::eventData[17]={NULL};
+int64_t PhyphoxBLE::experimentTime = NULL;
+int64_t PhyphoxBLE::systemTime = NULL;
+uint8_t PhyphoxBLE::eventType = NULL;
 uint16_t PhyphoxBLE::MTU = 20;
 uint16_t PhyphoxBleExperiment::MTU = 20;
 
@@ -73,6 +80,18 @@ class MyDataCallback: public BLEDescriptorCallbacks {
     };
   };
 
+class MyEventCallback: public BLECharacteristicCallbacks {
+
+    public:
+      MyEventCallback(){};
+
+    private:
+
+    void onWrite(BLECharacteristic *pCharacteristic) {
+      PhyphoxBLE::eventCharacteristicHandler();
+    };
+  };
+
 class MyCharCallback: public BLECharacteristicCallbacks {
   public:
     MyCharCallback(){};
@@ -97,20 +116,30 @@ class MyServerCallbacks: public BLEServerCallbacks {
 };
 
 void PhyphoxBLE::configHandlerDebug(){
-  
   if(configHandler!=nullptr){
     (*configHandler)();
-  }
-  
-  
+  }  
+}
+
+void PhyphoxBLE::eventCharacteristicHandler(){
+  uint8_t* data = eventCharacteristic->getData();
+  memcpy(&eventData[0],data,17);
+  int64_t et,st;
+  memcpy(&et,data+1,8);
+  memcpy(&st,data+1+8,8);
+  PhyphoxBLE::eventType = eventData[0];
+  PhyphoxBLE::systemTime = swap_int64(st);
+  PhyphoxBLE::experimentTime = swap_int64(et);
+  if(experimentEventHandler!=nullptr){
+    (*experimentEventHandler)();
+  }  
 }
 
 void PhyphoxBLE::setMTU(uint16_t mtuSize) {
     BLEDevice::setMTU(mtuSize+3); //user mtu size + 3 for overhead
     
     PhyphoxBLE::MTU = mtuSize;
-    PhyphoxBleExperiment::MTU = mtuSize;
-    
+    PhyphoxBleExperiment::MTU = mtuSize;  
 }
 
 void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len){
@@ -165,6 +194,12 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
            BLECharacteristic::PROPERTY_WRITE |
            BLECharacteristic::PROPERTY_NOTIFY 
       );  
+  eventCharacteristic = phyphoxExperimentService->createCharacteristic(
+          phyphoxBleExperimentEventCharacteristicUUID,
+          BLECharacteristic::PROPERTY_READ   |
+          BLECharacteristic::PROPERTY_WRITE |
+          BLECharacteristic::PROPERTY_NOTIFY 
+      );      
 
   phyphoxDataService = myServer->createService(phyphoxBleDataServiceUUID);
 
@@ -185,16 +220,19 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
 
   myExperimentDescriptor = new BLE2902();
   myDataDescriptor = new BLE2902();
+  myEventDescriptor = new BLE2902();
   myConfigDescriptor = new BLE2902();
 
 
   myExperimentDescriptor->setCallbacks(new MyExpCallback());
   myDataDescriptor->setCallbacks(new MyDataCallback());
-
+  
   dataCharacteristic->addDescriptor(myDataDescriptor);
   experimentCharacteristic->addDescriptor(myExperimentDescriptor);
-  configCharacteristic->addDescriptor(myConfigDescriptor);
+  eventCharacteristic->addDescriptor(myEventDescriptor);
+  eventCharacteristic->setCallbacks(new MyEventCallback());
 
+  configCharacteristic->addDescriptor(myConfigDescriptor);
   configCharacteristic->setCallbacks(new MyCharCallback());
 
   phyphoxExperimentService->start();
