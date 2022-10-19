@@ -25,14 +25,14 @@ void PhyphoxBleExperiment::Graph::setLabelY(const char *ly){
 
 void PhyphoxBleExperiment::Graph::setColor(const char *c){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkHex(c, "setColor") : ERROR;
-	copyToMem(&FIRSTDATASTREAM.COLOR, (std::string(c)).c_str());
+	copyToMem(&FIRSTSUBGRAPH.COLOR, (std::string(c)).c_str());
 }
 
 void PhyphoxBleExperiment::Graph::setLinewidth(float w){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(w, 10, "setLinewidth") : ERROR;
 	char tmp[10];
 	sprintf(tmp, "%.2f", w);
-	copyToMem(&FIRSTDATASTREAM.WIDTH, tmp);
+	copyToMem(&FIRSTSUBGRAPH.WIDTH, tmp);
 }
 
 void PhyphoxBleExperiment::Graph::setXPrecision(int px){
@@ -56,16 +56,16 @@ void PhyphoxBleExperiment::Graph::setChannel(int x, int y)
 
 	char tmpX[20];
 	sprintf(tmpX, "CH%i", x);
-	copyToMem(&FIRSTDATASTREAM.INPUTX, tmpX);
+	copyToMem(&FIRSTSUBGRAPH.INPUTX, tmpX);
 	char tmpY[20];
 	sprintf(tmpY, "CH%i", y);
-	copyToMem(&FIRSTDATASTREAM.INPUTY, tmpY);
-	DATASTREAMS[0]=&FIRSTDATASTREAM;
+	copyToMem(&FIRSTSUBGRAPH.INPUTY, tmpY);
+	SUBGRAPHS[0]=&FIRSTSUBGRAPH;
 }
-void PhyphoxBleExperiment::Graph::addDatastream(Datastream& ds){
+void PhyphoxBleExperiment::Graph::addSubgraph(Subgraph& sg){
 	for (int i = 0; i < phyphoxBleNChannel; i++){
-		if(DATASTREAMS[i]==nullptr){
-			DATASTREAMS[i] = &ds;
+		if(SUBGRAPHS[i]==nullptr){
+			SUBGRAPHS[i] = &sg;
 			break;
 		}			
 	}
@@ -73,7 +73,7 @@ void PhyphoxBleExperiment::Graph::addDatastream(Datastream& ds){
 
 void PhyphoxBleExperiment::Graph::setStyle(const char *s){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkStyle(s, "setStyle") : ERROR;
-	copyToMem(&FIRSTDATASTREAM.STYLE, ("" + std::string(s)).c_str());
+	copyToMem(&FIRSTSUBGRAPH.STYLE, ("" + std::string(s)).c_str());
 }
 
 void PhyphoxBleExperiment::Graph::setMinX(float value, const char * layout) {
@@ -171,8 +171,8 @@ void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 	strcat(buffArray,">");
 
 	for(int i=0;i<phyphoxBleNChannel; i++) {
-		if(DATASTREAMS[i]!=nullptr) {
-			DATASTREAMS[i]->getBytes(buffArray);
+		if(SUBGRAPHS[i]!=nullptr) {
+			SUBGRAPHS[i]->getBytes(buffArray);
 		}
 	}
 

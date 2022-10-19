@@ -108,7 +108,7 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 		sprintf(add, "\" mtu=\"%i", MTU);
 		strcat(buffArray, add);
 	}
-	strcat(buffArray, "\" id=\"phyphoxBLE\" mode=\"notification\" rate=\"1\" subscribeOnStart=\"");
+	strcat(buffArray, "\" id=\"phyphoxBLE\" mode=\"notification\" subscribeOnStart=\"");
 	if (!SUBSCRIBEONSTART)  {strcat(buffArray, "false");} else {strcat(buffArray, SUBSCRIBEONSTART);}
 	strcat(buffArray, "\">\n");
 	
@@ -180,7 +180,7 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 	strcat(buffArray, "</output>\n");
 
 	//build analysis
-	strcat(buffArray, "<analysis sleep=\"0.1\"  onUserInput=\"false\"></analysis>\n");
+	strcat(buffArray, "<analysis sleep=\"0\"  onUserInput=\"false\"></analysis>\n");
 
 	//build views
 	strcat(buffArray, "<views>\n");

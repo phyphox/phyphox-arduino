@@ -53,34 +53,37 @@ class PhyphoxBleExperiment {
 	private:
 	};
 
-	class Datastream : public Errorhandler
-	{
-	public:
-		Datastream() = default;
-		Datastream(const Datastream &) = delete;
-		Datastream &operator=(const Datastream &) = delete;
-		~Datastream() = default;
-
-		char* INPUTX = NULL;
-		char* INPUTY = NULL;
-		char* COLOR   = NULL;
-		char* WIDTH   = NULL;
-		char* STYLE   = NULL;
-		bool isActive = false;
-
-		void setColor(const char *);
-		void setStyle(const char *);
-		void setLinewidth(float w);
-		void setChannel(int, int);
-		void getBytes(char *);
-
-		Error ERROR;
-	private:
-	};
+	
 
 	class Graph : public Element
 	{
 	public:
+
+		class Subgraph : public Errorhandler
+		{
+		public:
+			Subgraph() = default;
+			Subgraph(const Subgraph &) = delete;
+			Subgraph &operator=(const Subgraph &) = delete;
+			~Subgraph() = default;
+
+			char* INPUTX = NULL;
+			char* INPUTY = NULL;
+			char* COLOR   = NULL;
+			char* WIDTH   = NULL;
+			char* STYLE   = NULL;
+			bool isActive = false;
+
+			void setColor(const char *);
+			void setStyle(const char *);
+			void setLinewidth(float w);
+			void setChannel(int, int);
+			void getBytes(char *);
+
+			Error ERROR;
+		private:
+		};
+
 		Graph() = default;
 		Graph(const Graph &) = delete;
 		Graph &operator=(const Graph &) = delete;
@@ -100,8 +103,8 @@ class PhyphoxBleExperiment {
 		char* INPUTX = NULL;
 		char* INPUTY = NULL;
 
-		Datastream *DATASTREAMS[phyphoxBleNChannel]={nullptr};
-		Datastream FIRSTDATASTREAM;
+		Subgraph *SUBGRAPHS[phyphoxBleNChannel]={nullptr};
+		Subgraph FIRSTSUBGRAPH;
 
 		char* XMLAttribute = NULL;
 
@@ -113,7 +116,7 @@ class PhyphoxBleExperiment {
 		void setYPrecision(int);
 
 		void setChannel(int, int);
-		void addDatastream(Datastream &);
+		void addSubgraph(Subgraph &);
 		void addChannel(int, int, const char*);
 		void setStyle(const char *);
 		void setColor(const char *);

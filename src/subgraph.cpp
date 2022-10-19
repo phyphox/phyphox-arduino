@@ -1,7 +1,7 @@
 #include "phyphoxBleExperiment.h"
 #include "copyToMem.h"
 
-void PhyphoxBleExperiment::Datastream::getBytes(char *buffArray)
+void PhyphoxBleExperiment::Graph::Subgraph::getBytes(char *buffArray)
 {
     //strcat(buffArray, "</input>\n");
     strcat(buffArray, "\n\t\t\t<input axis=\"x\" ");
@@ -27,24 +27,24 @@ void PhyphoxBleExperiment::Datastream::getBytes(char *buffArray)
     strcat(buffArray, "</input>");
 }
 
-void PhyphoxBleExperiment::Datastream::setColor(const char *c){
+void PhyphoxBleExperiment::Graph::Subgraph::setColor(const char *c){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkHex(c, "setColor") : ERROR;
 	copyToMem(&COLOR, (std::string(c)).c_str());
 }
 
-void PhyphoxBleExperiment::Datastream::setLinewidth(float w){
+void PhyphoxBleExperiment::Graph::Subgraph::setLinewidth(float w){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(w, 10, "setLinewidth") : ERROR;
 	char tmp[10];
 	sprintf(tmp, "%.2f", w);
 	copyToMem(&WIDTH, tmp);
 }
 
-void PhyphoxBleExperiment::Datastream::setStyle(const char *s){
+void PhyphoxBleExperiment::Graph::Subgraph::setStyle(const char *s){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkStyle(s, "setStyle") : ERROR;
 	copyToMem(&STYLE, ("" + std::string(s)).c_str());
 }
 
-void PhyphoxBleExperiment::Datastream::setChannel(int x, int y)
+void PhyphoxBleExperiment::Graph::Subgraph::setChannel(int x, int y)
 {
 	ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(x, numberOfChannels, "setChannel") : ERROR;
 	ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(y, numberOfChannels, "setChannel") : ERROR;
