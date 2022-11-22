@@ -1,6 +1,8 @@
 #ifndef PHYPHOXBLE
 #define PHYPHOXBLE
 
+#include "Arduino.h"
+
 static const char *phyphoxBleExperimentServiceUUID = "cddf0001-30f7-4671-8b43-5e40ba53514a";
 static const char *phyphoxBleExperimentCharacteristicUUID = "cddf0002-30f7-4671-8b43-5e40ba53514a";
 static const char *phyphoxBleExperimentControlCharacteristicUUID = "cddf0003-30f7-4671-8b43-5e40ba53514a";
@@ -12,6 +14,25 @@ static const char *phyphoxBleConfigCharacteristicUUID = "cddf1003-30f7-4671-8b43
 
 static const char *deviceName = "phyphox-Arduino";
 
+#define SENSOR_ACCELEROMETER "accelerometer"
+#define SENSOR_ACCELEROMETER_WITHOUT_G "linear_acceleration"
+#define SENSOR_GYROSCOPE "gyroscope"
+#define SENSOR_MAGNETOMETER "magnetometer"
+#define SENSOR_PRESSURE "pressure"
+#define SENSOR_TEMPERATURE "temperature"
+#define SENSOR_LIGHT "light"
+#define SENSOR_HUMIDITY "humidity"
+#define SENSOR_PROXIMITY "proximity"
+
+#define STYLE_DOTS "dots"
+#define STYLE_LINES "lines"
+#define STYLE_VBARS "vbars"
+#define STYLE_HBARS "hbars"
+#define STYLE_MAP "map"
+
+#define LAYOUT_AUTO "auto"
+#define LAYOUT_EXTEND "extend"
+#define LAYOUT_FIXED "fixed"
 
 #ifndef CONFIGSIZE
 #define CONFIGSIZE 20

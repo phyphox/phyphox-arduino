@@ -3,10 +3,7 @@
 
 void PhyphoxBleExperiment::Element::setLabel(const char *l){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(l, 41, "setLabel") : ERROR;
-	memset(&LABEL[0], 0, sizeof(LABEL));
-	strcat(LABEL, " label=\"");
-	strcat(LABEL, l);
-	strcat(LABEL, "\"");
+	copyToMem(&LABEL, (std::string(l)).c_str());
 }
 
 // void PhyphoxBleExperiment::Element::setLabel(const char *l){

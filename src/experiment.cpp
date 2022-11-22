@@ -21,6 +21,37 @@ void PhyphoxBleExperiment::addSensor(Sensor& s){
 	{
 		if(SENSORS[i]==nullptr){
 			SENSORS[i] = &s;
+
+			//add view to show raw data in last view
+			if(VIEWS[phyphoxBleNViews-1]==nullptr){
+				View* RawDataSmartoneSensor = new View();
+				RawDataSmartoneSensor->setLabel("SENSOR RAW DATA");
+				VIEWS[phyphoxBleNViews-1] = RawDataSmartoneSensor;
+				InfoField* SensorType = new InfoField();
+				SensorType->INFO = s.TYPE;
+				for (int j = 0; j < phyphoxBleNElements; j++){
+					if(VIEWS[phyphoxBleNViews-1]->ELEMENTS[j]==nullptr){
+						VIEWS[phyphoxBleNViews-1]->ELEMENTS[j] = SensorType;
+						break;
+					}
+				}
+
+			}
+			
+			for(int mappedCH = 0; mappedCH<5; mappedCH++){
+				if( s.CHANNEL[mappedCH]!=nullptr){
+					for (int j = 0; j < phyphoxBleNElements; j++){
+						if(VIEWS[phyphoxBleNViews-1]->ELEMENTS[j]==nullptr){
+							PhyphoxBleExperiment::Value* newValueField = new Value();
+							newValueField->INPUTVALUE = s.CHANNEL[mappedCH];
+							newValueField->LABEL = s.COMPONENT[mappedCH];
+							VIEWS[phyphoxBleNViews-1]->ELEMENTS[j]=newValueField;
+							break;
+						}
+					}
+				}
+			}
+
 			break;
 		}
 	}
@@ -123,12 +154,12 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 
 	if(repeating <= 0){
 		for(int i=1; i<=numberOfChannels;i++){
-			strcat(buffArray, "<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" ");
+			strcat(buffArray, "\t\t<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" ");
 			char add[20];
 			int k = (i-1)*4;
 			sprintf(add, "offset=\"%i\" >CH%i", k,i);
 			strcat(buffArray, add);
-			strcat(buffArray,"</output>\n\t\t");
+			strcat(buffArray,"</output>\n");
 		}
 	}else{
 		for(int i=1; i<=numberOfChannels;i++){
@@ -141,7 +172,7 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 		}
 	}
 	
-	strcat(buffArray,"<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" extra=\"time\">CH0</output>");
+	strcat(buffArray,"\t\t<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" extra=\"time\">CH0</output>");
 
 	strcat(buffArray, "\n\t</bluetooth>\n");
 	//build sensor input
@@ -191,7 +222,6 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 			if(VIEWS[i]!= nullptr && errors<=2){
 				if(VIEWS[i]->ELEMENTS[j]!=nullptr){
 					if(VIEWS[i]->ELEMENTS[j]->ERROR.MESSAGE != NULL) {
-					// if(strcmp(VIEWS[i]->ELEMENTS[j]->ERROR.MESSAGE, "") != 0) {
 						if(errors == 0) {
 							strcat(buffArray, "\t<view label=\"ERRORS\"> \n");
 						}
@@ -202,7 +232,7 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 			}
 		}
 	}
-	/*
+	
 	for(int i=0; i<phyphoxBleNSensors;i++){
 		if(SENSORS[i]!=nullptr && SENSORS[i]->ERROR.MESSAGE !=NULL){
 			if(errors == 0){
@@ -212,7 +242,7 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 			errors++;
 		}
 	}
-	*/
+	
 	if(errors>0) {
 		strcat(buffArray,"\t\t<info  label=\"DE: Siehe Dokumentation für mehr Informationen zu Fehlern.\">\n");
 		//strcat(buffArray,"\" color=\"ff0000\">\n");

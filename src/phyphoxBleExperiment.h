@@ -43,7 +43,7 @@ class PhyphoxBleExperiment {
 
 		int typeID = 0;
 
-		char LABEL[50] = " label=\"label\"";
+		char* LABEL = NULL;
 
 		Error ERROR;
 
@@ -204,7 +204,7 @@ class PhyphoxBleExperiment {
 		void setComponent(const char *);
 		void setAverage(bool);
 		void setRate(int);
-		void routeData(const char *, int);
+		void mapChannel(const char *, int);
 		void setXMLAttribute(const char *);
 		void getBytes(char *);
 

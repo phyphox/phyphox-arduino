@@ -4,7 +4,7 @@
 void PhyphoxBleExperiment::InfoField::setInfo(const char *i)
 {
 	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(i, 191, "setInfo") : ERROR;
-	copyToMem(&INFO, (" label=\"" + std::string(i) + "\"").c_str());
+	copyToMem(&INFO, (std::string(i)).c_str());
 }
 
 void PhyphoxBleExperiment::InfoField::setColor(const char *c)
@@ -22,7 +22,13 @@ void PhyphoxBleExperiment::InfoField::getBytes(char *buffArray)
 {
 
 	strcat(buffArray,"\t\t<info");
-	if (!INFO)  {strcat(buffArray," label=\"infotext\"");} else {strcat(buffArray,INFO);}
+	if (!INFO){
+			strcat(buffArray," label=\"infotext\"");
+		} else {
+			strcat(buffArray," label=\"");
+			strcat(buffArray,INFO);
+			strcat(buffArray," \"");
+		}
 	if (COLOR) {strcat(buffArray,COLOR);}
 	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
 	strcat(buffArray,">\n");

@@ -421,7 +421,7 @@ void PhyphoxBLE::when_subscription_received()
 }
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
-  char buffer[2500] ="";
+  char buffer[5000] ="";
   uint16_t length = 0;
 
 	exp.getFirstBytes(buffer, deviceName);

@@ -66,14 +66,20 @@ void PhyphoxBleExperiment::Graph::addSubgraph(Subgraph& sg){
 	for (int i = 0; i < phyphoxBleNChannel; i++){
 		if(SUBGRAPHS[i]==nullptr){
 			SUBGRAPHS[i] = &sg;
+			if(ERROR.MESSAGE==NULL){
+				ERROR = sg.ERROR;
+			}
 			break;
 		}			
 	}
 }
 
 void PhyphoxBleExperiment::Graph::setStyle(const char *s){
-	ERROR = ERROR.MESSAGE == NULL ? err_checkStyle(s, "setStyle") : ERROR;
-	copyToMem(&FIRSTSUBGRAPH.STYLE, ("" + std::string(s)).c_str());
+	Error styleError = err_checkStyle(s, "setStyle");
+	if(styleError.MESSAGE == NULL){
+		FIRSTSUBGRAPH.setStyle(s);
+	}
+	ERROR = ERROR.MESSAGE == NULL ? styleError : ERROR;
 }
 
 void PhyphoxBleExperiment::Graph::setMinX(float value, const char * layout) {

@@ -5,24 +5,23 @@
 void PhyphoxBleExperiment::Sensor::setType(const char *t)
 {
     ERROR = ERROR.MESSAGE == NULL ? err_checkSensor(t, "setType") : ERROR;
-	copyToMem(&TYPE, (" type=\"" + std::string(t) + "\"").c_str());
+	copyToMem(&TYPE, (std::string(t)).c_str());
 }
 
-void PhyphoxBleExperiment::Sensor::routeData(const char *comp, int ch)
+void PhyphoxBleExperiment::Sensor::mapChannel(const char *comp, int ch)
 {
     for(int i=0;i<5;i++){
         if (COMPONENT[i]==NULL)
         {
             ERROR = ERROR.MESSAGE == NULL ? err_checkComponent(comp, "routeData") : ERROR;
             ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(ch,5, "routeData") : ERROR;
-            copyToMem(&COMPONENT[i], (" component=\"" + std::string(comp) + "\"").c_str());
+            copyToMem(&COMPONENT[i], (std::string(comp)).c_str());
             std::ostringstream s;
             s << ch;
             std::string temp = s.str();
             copyToMem(&CHANNEL[i], ("CB"+temp).c_str());
             break;
         }
-        
     }
 }
 void PhyphoxBleExperiment::Sensor::setAverage(bool b)
@@ -50,8 +49,9 @@ void PhyphoxBleExperiment::Sensor::setXMLAttribute(const char *xml){
 void PhyphoxBleExperiment::Sensor::getBytes(char *buffArray)
 {
     if(ERROR.MESSAGE == NULL){
-        strcat(buffArray,"\t\t<sensor ");
+        strcat(buffArray,"\t<sensor type=\"");
         strcat(buffArray,TYPE);
+        strcat(buffArray,"\"");
         if (!RATE)  {strcat(buffArray," rate=\"80\"");} else {strcat(buffArray,RATE);}
         if (!AVERAGE)  {strcat(buffArray," average=\"true\"");} else {strcat(buffArray,AVERAGE);}
         if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
@@ -60,13 +60,15 @@ void PhyphoxBleExperiment::Sensor::getBytes(char *buffArray)
         for (int i = 0; i < 5; i++){
             if(CHANNEL[i]!=NULL && COMPONENT[i]!=NULL){
                 strcat(buffArray,"\t\t<output");
+                strcat(buffArray," component=\"");
                 strcat(buffArray,COMPONENT[i]);
+                strcat(buffArray,"\"");
                 strcat(buffArray,">");
                 strcat(buffArray,CHANNEL[i]);
                 strcat(buffArray,"</output>\n");
             }
         }
-        strcat(buffArray,"\t\t</sensor>\n");
+        strcat(buffArray,"\t</sensor>\n");
     }
     
 }

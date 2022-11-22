@@ -38,10 +38,15 @@ void PhyphoxBleExperiment::Graph::Subgraph::setLinewidth(float w){
 	sprintf(tmp, "%.2f", w);
 	copyToMem(&WIDTH, tmp);
 }
-
+/**
+ * @param use STYLE_DOTS, STYLE_LINES
+ */
 void PhyphoxBleExperiment::Graph::Subgraph::setStyle(const char *s){
-	ERROR = ERROR.MESSAGE == NULL ? err_checkStyle(s, "setStyle") : ERROR;
-	copyToMem(&STYLE, ("" + std::string(s)).c_str());
+    Error styleError = err_checkStyle(s, "setStyle");
+	ERROR = ERROR.MESSAGE == NULL ? styleError : ERROR;
+    if(styleError.MESSAGE == NULL){
+	    copyToMem(&STYLE, ("" + std::string(s)).c_str());
+    }
 }
 
 void PhyphoxBleExperiment::Graph::Subgraph::setChannel(int x, int y)
