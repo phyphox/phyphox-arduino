@@ -3,7 +3,7 @@
 #include "Arduino.h"
 #include <stdio.h>
 #include "esp_system.h"
-#define DEBUG
+//#define DEBUG
 //init statics
 uint8_t PhyphoxBLE::data_package[20] = {0};
 void (*PhyphoxBLE::configHandler)() = nullptr;
@@ -37,7 +37,7 @@ uint16_t PhyphoxBLE::timeout = 50;
 uint16_t PhyphoxBLE::currentConnections=0;
 bool     PhyphoxBLE::isSubscribed=false;
 
-uint8_t PhyphoxBLE::eventData[17]={NULL};
+uint8_t PhyphoxBLE::eventData[17]={0};
 int64_t PhyphoxBLE::experimentTime = NULL;
 int64_t PhyphoxBLE::systemTime = NULL;
 uint8_t PhyphoxBLE::eventType = NULL;
@@ -195,10 +195,8 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
            BLECharacteristic::PROPERTY_NOTIFY 
       );  
   eventCharacteristic = phyphoxExperimentService->createCharacteristic(
-          phyphoxBleExperimentEventCharacteristicUUID,
-          BLECharacteristic::PROPERTY_READ   |
-          BLECharacteristic::PROPERTY_WRITE |
-          BLECharacteristic::PROPERTY_NOTIFY 
+          phyphoxBleEventCharacteristicUUID,
+          BLECharacteristic::PROPERTY_WRITE
       );      
 
   phyphoxDataService = myServer->createService(phyphoxBleDataServiceUUID);
@@ -226,14 +224,14 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
 
   myExperimentDescriptor->setCallbacks(new MyExpCallback());
   myDataDescriptor->setCallbacks(new MyDataCallback());
+  eventCharacteristic->setCallbacks(new MyEventCallback());
+  configCharacteristic->setCallbacks(new MyCharCallback());
   
   dataCharacteristic->addDescriptor(myDataDescriptor);
   experimentCharacteristic->addDescriptor(myExperimentDescriptor);
   eventCharacteristic->addDescriptor(myEventDescriptor);
-  eventCharacteristic->setCallbacks(new MyEventCallback());
-
   configCharacteristic->addDescriptor(myConfigDescriptor);
-  configCharacteristic->setCallbacks(new MyCharCallback());
+  
 
   phyphoxExperimentService->start();
   phyphoxDataService->start();
@@ -444,14 +442,6 @@ void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
   length += strlen(buffer);
 	p_exp = &EXPARRAY[0];
 	expLen = length;
-  #ifdef DEBUG
-  if(printer != nullptr){
-    for(int i =0; i<length;i++){
-      char CHAR = EXPARRAY[i];
-      printer->print(CHAR);
-    }
-  }
-  #endif
 }
 
 void PhyphoxBLE::disconnected(){
@@ -471,6 +461,15 @@ void PhyphoxBLE::begin(HardwareSerial* hwPrint)
   if(printer)
 	   printer->begin(115200);       
   #endif  
+}
+
+void PhyphoxBLE::printXML(HardwareSerial* printer){
+  printer->println("");
+  for(int i =0; i<expLen;i++){
+      char CHAR = EXPARRAY[i];
+      printer->print(CHAR);
+  }
+  printer->println("");
 }
 
 #endif
