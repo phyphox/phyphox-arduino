@@ -100,6 +100,11 @@ class PhyphoxBleExperiment {
 		char* MINY = NULL;
 		char* MAXY = NULL;
 
+		char* TIMEONX = NULL;
+		char* TIMEONY = NULL;
+		
+		char* SYSTEMTIME = NULL;
+
 		char* INPUTX = NULL;
 		char* INPUTY = NULL;
 
@@ -114,6 +119,9 @@ class PhyphoxBleExperiment {
 		void setLabelY(const char *);
 		void setXPrecision(int);
 		void setYPrecision(int);
+		void setTimeOnX(bool);
+		void setTimeOnY(bool);
+		void setSystemTime(bool);
 
 		void setChannel(int, int);
 		void addSubgraph(Subgraph &);

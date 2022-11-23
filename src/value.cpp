@@ -38,13 +38,13 @@ void PhyphoxBleExperiment::Value::getBytes(char *buffArray)
 {
 
 	strcat(buffArray,"\t\t<value");
-	if (!LABEL){
-			strcat(buffArray," label=\"label\"");
-		} else {
-			strcat(buffArray," label=\"");
-			strcat(buffArray,LABEL);
-			strcat(buffArray,"\"");
-		}
+	if (LABEL)  {
+		strcat(buffArray," label=\"");
+		strcat(buffArray,LABEL);
+		strcat(buffArray,"\"");
+	}else{
+		strcat(buffArray," label=\"myLabel\"");
+	}		
 	if (PRECISION) {strcat(buffArray,PRECISION);}
 	if (UNIT) {strcat(buffArray,UNIT);}
     strcat(buffArray," facor=\"1\"");

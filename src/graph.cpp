@@ -18,7 +18,7 @@ void PhyphoxBleExperiment::Graph::setLabelX(const char *lx){
 }
 
 void PhyphoxBleExperiment::Graph::setLabelY(const char *ly){
-	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(ly, 20, "setLabelX") : ERROR;
+	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(ly, 20, "setLabelY") : ERROR;
 	copyToMem(&LABELY, (" labelY=\"" + std::string(ly) + "\"").c_str());
 }
 
@@ -47,6 +47,36 @@ void PhyphoxBleExperiment::Graph::setYPrecision(int py){
 	char tmp[20];
 	sprintf(tmp, " yPrecision=\"%i\"", py);
 	copyToMem(&YPRECISION, tmp);
+}
+
+void PhyphoxBleExperiment::Graph::setTimeOnX(bool b){
+	char tmp[10];
+	if(b){
+		sprintf(tmp, "true");
+	}else{
+		sprintf(tmp, "false");
+	}
+	copyToMem(&TIMEONX, tmp);
+}
+
+void PhyphoxBleExperiment::Graph::setTimeOnY(bool b){
+	char tmp[10];
+	if(b){
+		sprintf(tmp, "true");
+	}else{
+		sprintf(tmp, "false");
+	}
+	copyToMem(&TIMEONY, tmp);
+}
+
+void PhyphoxBleExperiment::Graph::setSystemTime(bool b){
+	char tmp[10];
+	if(b){
+		sprintf(tmp, "true");
+	}else{
+		sprintf(tmp, "false");
+	}
+	copyToMem(&SYSTEMTIME, tmp);
 }
 
 void PhyphoxBleExperiment::Graph::setChannel(int x, int y)
@@ -161,7 +191,14 @@ void PhyphoxBleExperiment::Graph::setXMLAttribute(const char *xml){
 void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 {
 	strcat(buffArray,"\t\t<graph");
-	if (!LABEL)  {strcat(buffArray," label=\"label\"");} else {strcat(buffArray,LABEL);}
+	if (LABEL)  {
+		strcat(buffArray," label=\"");
+		strcat(buffArray,LABEL);
+		strcat(buffArray,"\"");
+	}else{
+		strcat(buffArray," label=\"myLabel\"");
+	}
+
 	if (!LABELX) {strcat(buffArray, " labelX=\"label x\"");} else {strcat(buffArray,LABELX);}
 	if (!LABELY) {strcat(buffArray, " labelY=\"label y\"");} else {strcat(buffArray,LABELY);}
 	if (UNITX) {strcat(buffArray,UNITX);}
@@ -173,6 +210,22 @@ void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 	if (MINY) {strcat(buffArray,MINY);}
 	if (MAXY) {strcat(buffArray,MAXY);}
 	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
+
+	if(TIMEONX){
+		strcat(buffArray," timeOnX=\"");
+		strcat(buffArray,TIMEONX);
+		strcat(buffArray,"\"");
+	}
+	if(TIMEONY){
+		strcat(buffArray," timeOnY=\"");
+		strcat(buffArray,TIMEONY);
+		strcat(buffArray,"\"");
+	}
+	if(SYSTEMTIME){
+		strcat(buffArray," systemTime=\"");
+		strcat(buffArray,SYSTEMTIME);
+		strcat(buffArray,"\"");
+	}	
 
 	strcat(buffArray,">");
 
