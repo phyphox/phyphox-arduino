@@ -250,7 +250,8 @@ void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len
 	if(exp_pointer != nullptr){
 		p_exp = exp_pointer;
 		expLen = len;
-	}elseif(p_exp==nullptr){
+	}else if(p_exp==nullptr){
+	/*
       PhyphoxBleExperiment defaultExperiment;
 
       //View
@@ -264,6 +265,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len
       defaultExperiment.addView(firstView);
       
       addExperiment(defaultExperiment);
+	  */
 	}
 
 	bleEventThread.start(callback(&queue, &EventQueue::dispatch_forever));
