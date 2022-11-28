@@ -157,7 +157,7 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 			strcat(buffArray, "\t\t<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" ");
 			char add[20];
 			int k = (i-1)*4;
-			sprintf(add, "offset=\"%i\" >CH%i", k,i);
+			sprintf(add, "offset=\"%i\">CH%i", k,i);
 			strcat(buffArray, add);
 			strcat(buffArray,"</output>\n");
 		}

@@ -4,7 +4,7 @@
 void PhyphoxBleExperiment::Graph::Subgraph::getBytes(char *buffArray)
 {
     //strcat(buffArray, "</input>\n");
-    strcat(buffArray, "\n\t\t\t<input axis=\"x\" ");
+    strcat(buffArray, "\n\t\t\t<input axis=\"x\"");
     if(COLOR){
         strcat(buffArray," color=\"");
         strcat(buffArray,COLOR);
@@ -22,7 +22,7 @@ void PhyphoxBleExperiment::Graph::Subgraph::getBytes(char *buffArray)
         }
     strcat(buffArray, ">");
     if (!INPUTX)  {strcat(buffArray,"CH0");} else {strcat(buffArray,INPUTX);}
-    strcat(buffArray, "</input>\n\t\t\t<input axis=\"y\" >");
+    strcat(buffArray, "</input>\n\t\t\t<input axis=\"y\">");
     if (!INPUTY)  {strcat(buffArray,"CH1");} else {strcat(buffArray,INPUTY);}
     strcat(buffArray, "</input>");
 }
@@ -39,7 +39,7 @@ void PhyphoxBleExperiment::Graph::Subgraph::setLinewidth(float w){
 	copyToMem(&WIDTH, tmp);
 }
 /**
- * @param STYLE_DOTS, STYLE_LINES
+ * @param s STYLE_DOTS
  */
 void PhyphoxBleExperiment::Graph::Subgraph::setStyle(const char *s){
     Error styleError = err_checkStyle(s, "setStyle");

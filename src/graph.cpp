@@ -4,28 +4,26 @@
 
 void PhyphoxBleExperiment::Graph::setUnitX(const char *ux){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(ux, 5, "setUnitX") : ERROR;
-	copyToMem(&UNITX, (" unitX=\"" + std::string(ux) + "\"").c_str());
+	copyToMem(&UNITX, (std::string(ux)).c_str());
 }
 
 void PhyphoxBleExperiment::Graph::setUnitY(const char *uy){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(uy, 5, "setUnitY") : ERROR;
-	copyToMem(&UNITY, (" unitY=\"" + std::string(uy) + "\"").c_str());
+	copyToMem(&UNITY, (std::string(uy)).c_str());
 }
 
 void PhyphoxBleExperiment::Graph::setLabelX(const char *lx){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(lx, 20, "setLabelX") : ERROR;
-	copyToMem(&LABELX, (" labelX=\"" + std::string(lx) + "\"").c_str());
+	copyToMem(&LABELX, (std::string(lx)).c_str());
 }
 
 void PhyphoxBleExperiment::Graph::setLabelY(const char *ly){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(ly, 20, "setLabelY") : ERROR;
-	copyToMem(&LABELY, (" labelY=\"" + std::string(ly) + "\"").c_str());
+	copyToMem(&LABELY, (std::string(ly)).c_str());
 }
 
 
 void PhyphoxBleExperiment::Graph::setColor(const char *c){
-	//ERROR = ERROR.MESSAGE == NULL ? err_checkHex(c, "setColor") : ERROR;
-	//copyToMem(&FIRSTSUBGRAPH.COLOR, (std::string(c)).c_str());
 	FIRSTSUBGRAPH.setColor(c);
 }
 
@@ -36,14 +34,14 @@ void PhyphoxBleExperiment::Graph::setLinewidth(float w){
 void PhyphoxBleExperiment::Graph::setXPrecision(int px){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(px, 9999, "setXPrecision") : ERROR;
 	char tmp[20];
-	sprintf(tmp, " xPrecision=\"%i\"", px);
+	sprintf(tmp, "%i", px);
 	copyToMem(&XPRECISION, tmp);
 }
 
 void PhyphoxBleExperiment::Graph::setYPrecision(int py){
 	ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(py, 9999, "setYPrecision") : ERROR;
 	char tmp[20];
-	sprintf(tmp, " yPrecision=\"%i\"", py);
+	sprintf(tmp, "%i", py);
 	copyToMem(&YPRECISION, tmp);
 }
 
@@ -103,11 +101,7 @@ void PhyphoxBleExperiment::Graph::addSubgraph(Subgraph& sg){
 }
 
 void PhyphoxBleExperiment::Graph::setStyle(const char *s){
-	//Error styleError = err_checkStyle(s, "setStyle");
-	//if(styleError.MESSAGE == NULL){
 		FIRSTSUBGRAPH.setStyle(s);
-	//}
-	//ERROR = ERROR.MESSAGE == NULL ? styleError : ERROR;
 }
 
 void PhyphoxBleExperiment::Graph::setMinX(float value, const char * layout) {
@@ -196,13 +190,41 @@ void PhyphoxBleExperiment::Graph::getBytes(char *buffArray)
 	}else{
 		strcat(buffArray," label=\"myLabel\"");
 	}
-
-	if (!LABELX) {strcat(buffArray, " labelX=\"label x\"");} else {strcat(buffArray,LABELX);}
-	if (!LABELY) {strcat(buffArray, " labelY=\"label y\"");} else {strcat(buffArray,LABELY);}
-	if (UNITX) {strcat(buffArray,UNITX);}
-	if (UNITY) {strcat(buffArray,UNITY);}
-	if (XPRECISION) {strcat(buffArray,XPRECISION);}
-	if (YPRECISION) {strcat(buffArray,YPRECISION);}
+	if (LABELX){
+		strcat(buffArray, " labelX=\"");
+		strcat(buffArray, LABELX);
+		strcat(buffArray, "\"");
+	} else {
+		strcat(buffArray," labelX=\"label x\"");
+	}
+	if (LABELY){
+		strcat(buffArray, " labelY=\"");
+		strcat(buffArray, LABELY);
+		strcat(buffArray, "\"");
+	} else {
+		strcat(buffArray," labelY=\"label y\"");
+	}
+	
+	if(UNITX){
+		strcat(buffArray, " unitX=\"");
+		strcat(buffArray, UNITX);
+		strcat(buffArray, "\"");
+	}
+	if(UNITY){
+		strcat(buffArray, " unitY=\"");
+		strcat(buffArray, UNITY);
+		strcat(buffArray, "\"");
+	}
+	if (XPRECISION){
+		strcat(buffArray," xPrecision=\"");
+		strcat(buffArray,XPRECISION);
+		strcat(buffArray,"\"");
+	}
+	if (YPRECISION){
+		strcat(buffArray," yPrecision=\"");
+		strcat(buffArray,YPRECISION);
+		strcat(buffArray,"\"");
+	}
 	if (MINX) {strcat(buffArray,MINX);}
 	if (MAXX) {strcat(buffArray,MAXX);}
 	if (MINY) {strcat(buffArray,MINY);}

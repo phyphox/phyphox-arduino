@@ -27,9 +27,9 @@ void PhyphoxBleExperiment::Sensor::mapChannel(const char *comp, int ch)
 void PhyphoxBleExperiment::Sensor::setAverage(bool b)
 {
     if(b){
-        copyToMem(&AVERAGE, " average=\"true\"");
+        copyToMem(&AVERAGE, "true");
     }else{
-        copyToMem(&AVERAGE, " average=\"false\"");
+        copyToMem(&AVERAGE, "false");
     }
 }
 
@@ -53,7 +53,13 @@ void PhyphoxBleExperiment::Sensor::getBytes(char *buffArray)
         strcat(buffArray,TYPE);
         strcat(buffArray,"\"");
         if (!RATE)  {strcat(buffArray," rate=\"80\"");} else {strcat(buffArray,RATE);}
-        if (!AVERAGE)  {strcat(buffArray," average=\"true\"");} else {strcat(buffArray,AVERAGE);}
+        if (AVERAGE) {
+            strcat(buffArray," average=\"");
+            strcat(buffArray,AVERAGE);
+            strcat(buffArray,"\"");
+        } else {
+            strcat(buffArray," average=\"true\"");
+        }
         if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
         strcat(buffArray,">\n");
         //route components
