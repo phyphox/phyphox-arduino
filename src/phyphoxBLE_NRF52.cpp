@@ -46,7 +46,7 @@ uint8_t* PhyphoxBLE::data = nullptr; //this pointer points to the data the user 
 uint8_t* PhyphoxBLE::config =nullptr;
 uint8_t* PhyphoxBLE::p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
 
-uint8_t PhyphoxBLE::EXPARRAY[4096] = {0};// block some storage
+char PhyphoxBLE::EXPARRAY[4096] = {0};// block some storage
 size_t PhyphoxBLE::expLen = 0; //try o avoid this maybe use std::array or std::vector
 
 void (*PhyphoxBLE::configHandler)() = nullptr;
@@ -101,6 +101,15 @@ void PhyphoxBLE::output(const uint32_t num)
 
 #endif
 
+void PhyphoxBLE::printXML(HardwareSerial* printer){
+  printer->println("");
+  for(int i =0; i<expLen;i++){
+      char CHAR = EXPARRAY[i];
+      printer->print(CHAR);
+  }
+  printer->println("");
+}
+
 
 
 void PhyphoxBLE::when_subscription_received(GattAttribute::Handle_t handle)
@@ -137,7 +146,7 @@ void PhyphoxBLE::transferExp()
 	#endif
 
 	uint8_t header[20] = {0}; //20 byte as standard package size for ble transfer
-	const char phyphox[] = "phyphox";
+	const char phyphox[] = "phyphox-Arduino";
 	uint32_t table[256];
 	phyphoxBleCrc32::generate_table(table);
 	uint32_t checksum = phyphoxBleCrc32::update(table, 0, exp, exp_len);
@@ -241,8 +250,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len
 	if(exp_pointer != nullptr){
 		p_exp = exp_pointer;
 		expLen = len;
-	}else{
-		
+	}elseif(p_exp==nullptr){
       PhyphoxBleExperiment defaultExperiment;
 
       //View
@@ -256,7 +264,6 @@ void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len
       defaultExperiment.addView(firstView);
       
       addExperiment(defaultExperiment);
-      
 	}
 
 	bleEventThread.start(callback(&queue, &EventQueue::dispatch_forever));
@@ -266,7 +273,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len
 }
 
 void PhyphoxBLE::start(uint8_t* exp_pointer, size_t len) {
-    start("phyphox", exp_pointer, len);
+    start("phyphox-Arduino", exp_pointer, len);
 }
 
 void PhyphoxBLE::start(const char* DEVICE_NAME) {
@@ -275,7 +282,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME) {
 }
 
 void PhyphoxBLE::start() {
-    start("phyphox", nullptr, 0);
+    start("phyphox-Arduino", nullptr, 0);
 }
 
 void PhyphoxBLE::poll() {
@@ -378,28 +385,18 @@ void PhyphoxBLE::read(uint8_t *arrayPointer, unsigned int arraySize)
 
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
-  char buffer[2000] ="";
-  uint16_t length = 0;
-
-	exp.getFirstBytes(buffer, deviceName);
-	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-  length += strlen(buffer);
-  memset(&(buffer[0]), NULL, strlen(buffer));
-
-  for(uint8_t i=0;i<phyphoxBleNViews; i++){
-    for(int j=0; j<phyphoxBleNElements; j++){
-      exp.getViewBytes(buffer,0,j);
-	    memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-      length += strlen(buffer);
-      memset(&(buffer[0]), NULL, strlen(buffer));
-    }
-  }
-
-  exp.getLastBytes(buffer);
-	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-  length += strlen(buffer);
-	p_exp = &EXPARRAY[0];
-	expLen = length;
+	for (int i = 0; i < 4096; i++){
+		PhyphoxBLE::EXPARRAY[i]=0;
+	}
+	exp.getFirstBytes(EXPARRAY, deviceName);
+	for(uint8_t i=0;i<phyphoxBleNViews; i++){
+		for(int j=0; j<phyphoxBleNElements; j++){
+			exp.getViewBytes(EXPARRAY,i,j);
+		}
+	}
+	exp.getLastBytes(EXPARRAY);
+	p_exp =  (uint8_t*)&EXPARRAY[0];
+	expLen = strlen(EXPARRAY);
 }
 
 

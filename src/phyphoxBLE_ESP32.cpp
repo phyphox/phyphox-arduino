@@ -10,7 +10,7 @@ void (*PhyphoxBLE::configHandler)() = nullptr;
 void (*PhyphoxBLE::experimentEventHandler)() = nullptr;
 uint8_t storage[64000];
 //uint8_t *storage = (uint8_t*) malloc(8000 * sizeof(char));
-uint8_t *PhyphoxBLE::EXPARRAY=storage;
+char *PhyphoxBLE::EXPARRAY=(char*)storage;
 uint8_t* PhyphoxBLE::p_exp = nullptr;
 size_t PhyphoxBLE::expLen = 0;
 HardwareSerial* PhyphoxBLE::printer =nullptr;
@@ -419,29 +419,20 @@ void PhyphoxBLE::when_subscription_received()
 }
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
-  char buffer[5000] ="";
-  uint16_t length = 0;
-
-	exp.getFirstBytes(buffer, deviceName);
-	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-  length += strlen(buffer);
-  memset(&(buffer[0]), NULL, strlen(buffer));
-
-  for(uint8_t i=0;i<phyphoxBleNViews; i++){
-    for(int j=0; j<phyphoxBleNElements; j++){
-      exp.getViewBytes(buffer,i,j);
-	    memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-      length += strlen(buffer);
-      memset(&(buffer[0]), NULL, strlen(buffer));
-    }
+  for (int i = 0; i < 64000; i++)
+  {
+    storage[i]=0;
   }
-
-  exp.getLastBytes(buffer);
   
-	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-  length += strlen(buffer);
-	p_exp = &EXPARRAY[0];
-	expLen = length;
+  exp.getFirstBytes(EXPARRAY, deviceName);
+	for(uint8_t i=0;i<phyphoxBleNViews; i++){
+		for(int j=0; j<phyphoxBleNElements; j++){
+			exp.getViewBytes(EXPARRAY,i,j);
+		}
+	}
+	exp.getLastBytes(EXPARRAY);
+	p_exp =  (uint8_t*)&EXPARRAY[0];
+	expLen = strlen(EXPARRAY);
 }
 
 void PhyphoxBLE::disconnected(){

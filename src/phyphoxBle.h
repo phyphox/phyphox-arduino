@@ -30,6 +30,14 @@ static const char *deviceName = "phyphox-Arduino";
 #define STYLE_HBARS "hbars"
 #define STYLE_MAP "map"
 
+#define COLOR_RED "fe005d"
+#define COLOR_BLUE "39a2ff"
+#define COLOR_GREEN "2bfb4c"
+#define COLOR_ORANGE "ff7e22"
+#define COLOR_WHITE "ffffff"
+#define COLOR_YELLOW "edf668"
+#define COLOR_MAGENTA "eb46f4"
+
 #define LAYOUT_AUTO "auto"
 #define LAYOUT_EXTEND "extend"
 #define LAYOUT_FIXED "fixed"

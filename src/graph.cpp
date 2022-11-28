@@ -24,15 +24,13 @@ void PhyphoxBleExperiment::Graph::setLabelY(const char *ly){
 
 
 void PhyphoxBleExperiment::Graph::setColor(const char *c){
-	ERROR = ERROR.MESSAGE == NULL ? err_checkHex(c, "setColor") : ERROR;
-	copyToMem(&FIRSTSUBGRAPH.COLOR, (std::string(c)).c_str());
+	//ERROR = ERROR.MESSAGE == NULL ? err_checkHex(c, "setColor") : ERROR;
+	//copyToMem(&FIRSTSUBGRAPH.COLOR, (std::string(c)).c_str());
+	FIRSTSUBGRAPH.setColor(c);
 }
 
 void PhyphoxBleExperiment::Graph::setLinewidth(float w){
-	ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(w, 10, "setLinewidth") : ERROR;
-	char tmp[10];
-	sprintf(tmp, "%.2f", w);
-	copyToMem(&FIRSTSUBGRAPH.WIDTH, tmp);
+	FIRSTSUBGRAPH.setLinewidth(w);	
 }
 
 void PhyphoxBleExperiment::Graph::setXPrecision(int px){
@@ -105,11 +103,11 @@ void PhyphoxBleExperiment::Graph::addSubgraph(Subgraph& sg){
 }
 
 void PhyphoxBleExperiment::Graph::setStyle(const char *s){
-	Error styleError = err_checkStyle(s, "setStyle");
-	if(styleError.MESSAGE == NULL){
+	//Error styleError = err_checkStyle(s, "setStyle");
+	//if(styleError.MESSAGE == NULL){
 		FIRSTSUBGRAPH.setStyle(s);
-	}
-	ERROR = ERROR.MESSAGE == NULL ? styleError : ERROR;
+	//}
+	//ERROR = ERROR.MESSAGE == NULL ? styleError : ERROR;
 }
 
 void PhyphoxBleExperiment::Graph::setMinX(float value, const char * layout) {

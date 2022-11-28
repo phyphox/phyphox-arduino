@@ -101,8 +101,10 @@ class PhyphoxBLE
 
 	public:
 
-	static uint8_t EXPARRAY[4096];// block some storage
+	static char EXPARRAY[4096];// block some storage
 	static size_t expLen; //try o avoid this maybe use std::array or std::vector
+
+	static void printXML(HardwareSerial*);
 
 	static inline uint16_t minConInterval = 6;	//7.5ms
 	static inline uint16_t maxConInterval = 24; //30ms

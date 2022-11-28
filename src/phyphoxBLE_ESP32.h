@@ -39,7 +39,7 @@ class PhyphoxBLE
         static uint8_t* p_exp; //this pointer will point to the byte array which holds an experiment
         static TaskHandle_t TaskTransfer;
 
-        static uint8_t *EXPARRAY;
+        static char *EXPARRAY;
 
         static size_t expLen; //try o avoid this maybe use std::array or std::vector
 

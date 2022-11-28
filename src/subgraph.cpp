@@ -39,7 +39,7 @@ void PhyphoxBleExperiment::Graph::Subgraph::setLinewidth(float w){
 	copyToMem(&WIDTH, tmp);
 }
 /**
- * @param use STYLE_DOTS, STYLE_LINES
+ * @param STYLE_DOTS, STYLE_LINES
  */
 void PhyphoxBleExperiment::Graph::Subgraph::setStyle(const char *s){
     Error styleError = err_checkStyle(s, "setStyle");
