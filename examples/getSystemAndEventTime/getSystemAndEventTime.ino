@@ -1,9 +1,10 @@
 #include <phyphoxBle.h> 
 
 void setup() {
-  PhyphoxBLE::begin(&Serial);
+  Serial.begin(115200);
   PhyphoxBLE::start();
   PhyphoxBLE::experimentEventHandler = &newExperimentEvent; // declare which function should be called after receiving an experiment event 
+  PhyphoxBLE::printXML(&Serial);
 }
 
 void loop() {
