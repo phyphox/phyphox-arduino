@@ -5,7 +5,7 @@
 
 static const char *phyphoxBleExperimentServiceUUID = "cddf0001-30f7-4671-8b43-5e40ba53514a";
 static const char *phyphoxBleExperimentCharacteristicUUID = "cddf0002-30f7-4671-8b43-5e40ba53514a";
-static const char *phyphoxBletControlCharacteristicUUID = "cddf0003-30f7-4671-8b43-5e40ba53514a";
+static const char *phyphoxBleExperimentControlCharacteristicUUID = "cddf0003-30f7-4671-8b43-5e40ba53514a";
 static const char *phyphoxBleEventCharacteristicUUID = "cddf0004-30f7-4671-8b43-5e40ba53514a";
 
 static const char *phyphoxBleDataServiceUUID = "cddf1001-30f7-4671-8b43-5e40ba53514a";

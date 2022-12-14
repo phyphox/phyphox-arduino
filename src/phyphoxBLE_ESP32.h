@@ -23,11 +23,13 @@ class PhyphoxBLE
         static BLEService *phyphoxDataService;
         static BLEService *phyphoxExperimentService;
         static BLEDescriptor *myExperimentDescriptor;
+        static BLEDescriptor *myControlDescriptor;
         static BLEDescriptor *myDataDescriptor;
         static BLEDescriptor *myEventDescriptor;
         static BLEDescriptor *myConfigDescriptor;
         static BLECharacteristic *dataCharacteristic;
         static BLECharacteristic *experimentCharacteristic;
+        static BLECharacteristic *controlCharacteristic;
         static BLECharacteristic *eventCharacteristic;
         static BLECharacteristic *configCharacteristic;
         static BLEAdvertising *myAdvertising;
@@ -51,7 +53,8 @@ class PhyphoxBLE
         static void start(uint8_t* p, size_t n = 0); 
         static void start();
 
-        static void when_subscription_received();
+        static void experimentRequested();
+        static void prepareHeader();
         static void addExperiment(PhyphoxBleExperiment&);
 
         static void poll();
