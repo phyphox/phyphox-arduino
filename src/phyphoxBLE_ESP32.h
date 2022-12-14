@@ -79,7 +79,7 @@ class PhyphoxBLE
         static void (*experimentEventHandler)();
 
         static void printXML(HardwareSerial*);
-
+        static void expTransferRead();
         static void setMTU(uint16_t);
         static uint16_t MTU;
 

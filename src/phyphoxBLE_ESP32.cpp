@@ -3,7 +3,7 @@
 #include "Arduino.h"
 #include <stdio.h>
 #include "esp_system.h"
-//#define DEBUG
+#define DEBUG
 //init statics
 uint8_t PhyphoxBLE::data_package[20] = {0};
 void (*PhyphoxBLE::configHandler)() = nullptr;
@@ -92,6 +92,18 @@ class MyEventCallback: public BLECharacteristicCallbacks {
     };
   };
 
+class experimentCharacteristicCallback: public BLECharacteristicCallbacks {
+
+    public:
+      experimentCharacteristicCallback(){};
+
+    private:
+
+    void onRead(BLECharacteristic *pCharacteristic) {
+      PhyphoxBLE::expTransferRead();
+    };
+  };
+
 class MyCharCallback: public BLECharacteristicCallbacks {
   public:
     MyCharCallback(){};
@@ -133,6 +145,10 @@ void PhyphoxBLE::eventCharacteristicHandler(){
   if(experimentEventHandler!=nullptr){
     (*experimentEventHandler)();
   }  
+}
+
+void PhyphoxBLE::expTransferRead(){
+  printer->println("data readout");
 }
 
 void PhyphoxBLE::setMTU(uint16_t mtuSize) {
@@ -229,6 +245,7 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
   
   dataCharacteristic->addDescriptor(myDataDescriptor);
   experimentCharacteristic->addDescriptor(myExperimentDescriptor);
+  experimentCharacteristic->setCallbacks(new experimentCharacteristicCallback());
   eventCharacteristic->addDescriptor(myEventDescriptor);
   configCharacteristic->addDescriptor(myConfigDescriptor);
   
