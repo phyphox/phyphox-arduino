@@ -143,7 +143,7 @@ If you can help with this, we are happy to receive a pull request. You can conta
 
 ## Credits
 
-This library has been developed by the phyphox team at the RWTH Aachen University. In particular, the foundations and basic concept was created by Alexander Krampe as part of his Master thesis. The library has been further improved and is now maintained by Dominik Dorsel, our PhD student who also supervised Alexander's thesis.
+This library has been developed by the phyphox team at the RWTH Aachen University. In particular, the foundations and basic concept was created by Alexander Krampe as part of his Master thesis. The library has been further improved and is now maintained by Dominik Dorsel, our PhD student who also supervised Alexander's thesis. The library was also further optimized and extended with new features by Marcel Hagedorn and Edward Leier.
 
 ## Licence
 
