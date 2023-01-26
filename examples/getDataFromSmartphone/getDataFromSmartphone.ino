@@ -11,7 +11,7 @@ bool led = true;
 
 void setup()
 {
-   PhyphoxBLE::begin(&Serial);
+   Serial.begin(115200);
    PhyphoxBLE::start();
    PhyphoxBLE::configHandler=&receivedData;
    pinMode(LED_BUILTIN, OUTPUT);

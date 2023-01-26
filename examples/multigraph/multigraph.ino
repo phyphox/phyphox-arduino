@@ -4,8 +4,9 @@
 float periodTime = 2.0;//in s
 
 void setup() {
+  Serial.begin(115200);
   PhyphoxBLE::start();
-
+  
   PhyphoxBleExperiment MultiGraph;
 
   MultiGraph.setTitle("Multi Graph Example");
@@ -19,42 +20,46 @@ void setup() {
   // OPTION 1 is do create a graph as usual and add additional datastreams the following way
   PhyphoxBleExperiment::Graph myFirstGraph;
   myFirstGraph.setChannel(1,2);
-  myFirstGraph.setStyle("dots");//"lines" are used if you dont set a style 
+  myFirstGraph.setStyle(STYLE_DOTS);//"lines" are used if you dont set a style 
   myFirstGraph.setColor("ffffff");
   myFirstGraph.setLinewidth(2);//if you dont select a linewidth, a width of 1 is used by default
   
-  PhyphoxBleExperiment::Datastream additionalData;
+  PhyphoxBleExperiment::Graph::Subgraph additionalData;
   additionalData.setChannel(1,3);
+  additionalData.setStyle(STYLE_LINES);
   additionalData.setColor("ff00ff");
   additionalData.setLinewidth(1);
 
-  myFirstGraph.addDatastream(additionalData);
+  myFirstGraph.addSubgraph(additionalData);
 
   //OPTION 2: you can also skip editing the graph object and just add datastreams
   PhyphoxBleExperiment::Graph mySecondGraph;
 
-  PhyphoxBleExperiment::Datastream firstData;
+  PhyphoxBleExperiment::Graph::Subgraph firstData;
   firstData.setChannel(1,2);
   firstData.setColor("ffffff");
-  firstData.setStyle("dots");
+  firstData.setStyle(STYLE_DOTS);
   firstData.setLinewidth(2);
   
-  mySecondGraph.addDatastream(firstData);
+  mySecondGraph.addSubgraph(firstData);
 
-  PhyphoxBleExperiment::Datastream secondData;
+  PhyphoxBleExperiment::Graph::Subgraph secondData;
   secondData.setChannel(1,3);
   secondData.setColor("ff00ff");
   secondData.setLinewidth(1);//if you dont select a linewidth, a width of 1 is used by default
-  secondData.setStyle("lines"); //"lines" are used if you dont set a style 
+  secondData.setStyle(STYLE_LINES); //"lines" are used if you dont set a style 
 
-  mySecondGraph.addDatastream(secondData);
+
+  mySecondGraph.addSubgraph(secondData);
 
   firstView.addElement(myFirstGraph);
   firstView.addElement(mySecondGraph);
 
   MultiGraph.addView(firstView);
-
+  
   PhyphoxBLE::addExperiment(MultiGraph);
+  
+  PhyphoxBLE::printXML(&Serial);
 }
 
 void loop() {
