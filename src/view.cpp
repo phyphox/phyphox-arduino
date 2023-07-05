@@ -9,7 +9,6 @@ void PhyphoxBleExperiment::View::addElement(Element& e)
 			break;
 		}
 	}	
-
 }
 
 void PhyphoxBleExperiment::View::setLabel(const char *l){

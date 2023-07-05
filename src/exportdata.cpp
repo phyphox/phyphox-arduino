@@ -13,20 +13,15 @@ void PhyphoxBleExperiment::ExportData::setXMLAttribute(const char *xml){
 
 void PhyphoxBleExperiment::ExportData::setLabel(const char *l)
 {
-	//ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(l, 41, "setLabel") : ERROR;
-	memset(&LABEL[0], 0, sizeof(LABEL));
-	strcat(LABEL, " name=\"");
-	strcat(LABEL, l);
-	strcat(LABEL, "\"");	
+	copyToMem(&LABEL, (std::string(l)).c_str());
 }
 
 void PhyphoxBleExperiment::ExportData::getBytes(char *buffArray)
 {
-	
-	strcat(buffArray,"\t\t<data");
-    if (!LABEL)  {strcat(buffArray," label=\"label\"");} else {strcat(buffArray,LABEL);}
+	strcat(buffArray,"\t\t<data name=\"");
+    if (!LABEL)  {strcat(buffArray,"label");} else {strcat(buffArray,LABEL);}
 	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
-	strcat(buffArray,">");
+	strcat(buffArray,"\">");
     if (!BUFFER)  {strcat(buffArray,"CH1");} else {strcat(buffArray,BUFFER);}
     strcat(buffArray, "</data>\n");
 	

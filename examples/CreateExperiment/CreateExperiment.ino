@@ -5,7 +5,7 @@ float editValue = 0;
 void setup()
 {
   Serial.begin(115200);
-  PhyphoxBLE::start("My Device");
+  PhyphoxBLE::start("create experiment");
   PhyphoxBLE::configHandler = &receivedData;   // used to receive data from PhyPhox.
 
   //Experiment
@@ -42,7 +42,7 @@ void setup()
   */
 
   firstGraph.setChannel(0, 1);
-
+  
   //Second Graph
   
   PhyphoxBleExperiment::Graph secondGraph;      //Create graph which will plot random numbers over time
@@ -61,12 +61,12 @@ void setup()
   */
   
   secondGraph.setChannel(1, 2);
-  secondGraph.addChannel(0,2,"ffffff");
+  
 
   //Info
   PhyphoxBleExperiment::InfoField myInfo;      //Creates an info-box.
   myInfo.setInfo("In this view you can set a value between 1 and 10. The squared random value will be multiplied by this value and can be seen here.");
-  myInfo.setColor("404040");                   //Sets font color. Uses a 6 digit hexadecimal value in "quotation marks".
+  myInfo.setColor("890128");                   //Sets font color. Uses a 6 digit hexadecimal value in "quotation marks".
   myInfo.setXMLAttribute("size=\"1.2\"");
 
   //Separator
@@ -96,7 +96,6 @@ void setup()
   //Export
   PhyphoxBleExperiment::ExportSet mySet;       //Provides exporting the data to excel etc.
   mySet.setLabel("mySet");
-
   PhyphoxBleExperiment::ExportData myData1;
   myData1.setLabel("myData1");
   myData1.setDatachannel(1);
@@ -119,11 +118,6 @@ void setup()
   mySet.addElement(myData2);                   //attach data to exportSet
   plotRandomValues.addExportSet(mySet);        //attach exportSet to experiment
   PhyphoxBLE::addExperiment(plotRandomValues);      //attach experiment to server
-
-  while(!PhyphoxBLE::isSubscribed) {
-    Serial.println("...");
-    delay(1);
-  }
 }
 
 
@@ -136,7 +130,7 @@ void loop()
       Up to 5 Channels can written at the same time with server.write(randomDistance, valueChannel2, valueChannel3.. )
   */
   float tmp = randomValue2*editValue;
-  PhyphoxBLE::write(randomValue, randomValue2, tmp);
+  PhyphoxBLE::write(randomValue, randomValue2);
   delay(50);
 
   PhyphoxBLE::poll(); //Only required for the Arduino Nano 33 IoT, but it does no harm for other boards.
@@ -146,4 +140,6 @@ void receivedData() {           // get data from PhyPhox app
   float readInput;
   PhyphoxBLE::read(readInput);
   editValue = readInput;
+  Serial.print("new value:");
+  Serial.println(readInput);
 }

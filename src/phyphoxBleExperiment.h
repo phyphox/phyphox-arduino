@@ -171,6 +171,7 @@ class PhyphoxBleExperiment {
 		~ExportData() = default;
 
 		char* BUFFER = NULL;
+		char* LABEL = NULL;
 		char* XMLAttribute = NULL;
 		void setDatachannel(int);
 		void setXMLAttribute(const char *);
@@ -319,6 +320,7 @@ class PhyphoxBleExperiment {
 	void setTitle(const char *);
 	void setCategory(const char *);
 	void setDescription(const char *);
+	void setRepeating(const int);
 	// void setConfig(const char *);
 	void setSubscribeOnStart(bool);
 

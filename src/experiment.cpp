@@ -69,6 +69,9 @@ void PhyphoxBleExperiment::setDescription(const char *d){
 	copyToMem(&DESCRIPTION, d);
 }
 
+void PhyphoxBleExperiment::setRepeating(const int r){
+	PhyphoxBleExperiment::repeating = r;
+}
 void PhyphoxBleExperiment::setSubscribeOnStart(bool b) {
 	if(b) copyToMem(&SUBSCRIBEONSTART, "true");
     else copyToMem(&SUBSCRIBEONSTART, "false");
@@ -168,7 +171,7 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 			int k = (i-1)*4;
 			sprintf(add, "offset=\"%i\" repeating=\"%i\" >CH%i", k,repeating,i);
 			strcat(buffArray, add);
-			strcat(buffArray,"</output>\n\t\t");
+			strcat(buffArray,"</output>\n");
 		}
 	}
 	
