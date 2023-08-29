@@ -58,7 +58,7 @@ void PhyphoxBleExperiment::Sensor::getBytes(char *buffArray)
             strcat(buffArray,AVERAGE);
             strcat(buffArray,"\"");
         } else {
-            strcat(buffArray," average=\"true\"");
+            strcat(buffArray," average=\"false\"");
         }
         if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
         strcat(buffArray,">\n");

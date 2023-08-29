@@ -114,6 +114,41 @@ void PhyphoxBLE::read(float& f)
   memcpy(&f,&readDATA[0],4);
 }
 
+void PhyphoxBLE::read(float& f1, float& f2)
+{
+  uint8_t readDATA[8];
+  configCharacteristic.readValue(readDATA, 8);
+  memcpy(&f1,data,4);
+  memcpy(&f2,data+4,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2, float& f3)
+{
+  uint8_t readDATA[12];
+  configCharacteristic.readValue(readDATA, 12);
+  memcpy(&f1,data,4);
+  memcpy(&f2,data+4,4);
+  memcpy(&f3,data+8,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2, float& f3, float& f4)
+{
+  uint8_t readDATA[16];
+  configCharacteristic.readValue(readDATA, 16);
+  memcpy(&f1,data,4);
+  memcpy(&f2,data+4,4);
+  memcpy(&f3,data+8,4);
+  memcpy(&f4,data+12,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2, float& f3, float& f4, float& f5)
+{
+  uint8_t readDATA[20];
+  configCharacteristic.readValue(readDATA, 20);
+  memcpy(&f1,data,4);
+  memcpy(&f2,data+4,4);
+  memcpy(&f3,data+8,4);
+  memcpy(&f4,data+12,4);
+  memcpy(&f5,data+16,4);
+}
+
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
   char buffer[2000] ="";

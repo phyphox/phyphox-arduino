@@ -28,7 +28,7 @@ void setup() {
   // SENSOR_PRESSURE
   smartphoneAcc.setType(SENSOR_ACCELEROMETER);
   smartphoneAcc.setAverage(true);
-  smartphoneAcc.setRate(0);
+  smartphoneAcc.setRate(80);
 
   // map sensor channel to incoming data channels
   smartphoneAcc.mapChannel("x",1);

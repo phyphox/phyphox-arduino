@@ -45,7 +45,10 @@ class PhyphoxBLE
 
         static void read(uint8_t*, unsigned int);
         static void read(float&);
-        
+        static void read(float&, float&);
+        static void read(float&, float&, float&);
+        static void read(float&, float&, float&, float&);
+        static void read(float&, float&, float&, float&, float&);
         
 
         static void poll();
