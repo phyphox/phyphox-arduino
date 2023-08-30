@@ -153,17 +153,14 @@ void PhyphoxBLE::configReceived(const GattWriteCallbackParams *params)
 		PhyphoxBLE::eventType = eventData[0];
 		PhyphoxBLE::systemTime = swap_int64(st);
 		PhyphoxBLE::experimentTime = swap_int64(et);
-		if(configHandler != nullptr){
+		if(experimentEventHandler != nullptr){
 			transferQueue.call( experimentEventHandler ); 		
 		}
 		
 	}
 	
 }
-void PhyphoxBLE::eventReceived(const GattWriteCallbackParams *params)
-{
-	//TODo
-}
+
 void PhyphoxBLE::transferExp()
 {
 	BLE &ble = PhyphoxBLE::ble;

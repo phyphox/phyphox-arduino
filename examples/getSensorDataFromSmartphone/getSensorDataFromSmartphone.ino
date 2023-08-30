@@ -24,7 +24,7 @@ void setup() {
   // SENSOR_ACCELEROMETER
   // SENSOR_ACCELEROMETER_WITHOUT_G
   // SENSOR_GYROSCOPE
-  // SENSOR_MAGNETOMETER
+  // SENSOR_MAGNETOMETER   
   // SENSOR_PRESSURE
   smartphoneAcc.setType(SENSOR_ACCELEROMETER);
   smartphoneAcc.setAverage(true);
