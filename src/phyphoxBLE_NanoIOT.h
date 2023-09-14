@@ -26,7 +26,7 @@ class PhyphoxBLE
         static uint8_t* p_exp; //this pointer will point to the byte array which holds an experiment
 
         static size_t expLen; //try o avoid this maybe use std::array or std::vector
-        static uint8_t EXPARRAY[4000];// block some storage
+        static char *EXPARRAY;
 
     public:
         

@@ -24,7 +24,8 @@ uint8_t* PhyphoxBLE::data = nullptr; //this pointer points to the data the user 
 uint8_t* PhyphoxBLE::p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
 
 size_t PhyphoxBLE::expLen = 0; //try o avoid this maybe use std::array or std::vector
-uint8_t PhyphoxBLE::EXPARRAY[4000] = {0};// block some storage
+uint8_t storage[4000];
+char *PhyphoxBLE::EXPARRAY=(char*)storage;
 
 void(*PhyphoxBLE::configHandler)() = nullptr;
 
@@ -46,7 +47,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME)
 
   controlCharacteristic.setEventHandler(BLEWritten, controlCharacteristicWritten);
   configCharacteristic.setEventHandler(BLEWritten, configCharacteristicWritten);
-
+  
 	if(p_exp == nullptr){
   
       PhyphoxBleExperiment defaultExperiment;
@@ -154,25 +155,19 @@ void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
   char buffer[2000] ="";
   uint16_t length = 0;
 
-	exp.getFirstBytes(buffer, deviceName);
-	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-  length += strlen(buffer);
-  memset(&(buffer[0]), NULL, strlen(buffer));
+	exp.getFirstBytes(EXPARRAY, deviceName);
+
 
   for(uint8_t i=0;i<phyphoxBleNViews; i++){
     for(int j=0; j<phyphoxBleNElements; j++){
-      exp.getViewBytes(buffer,0,j);
-	    memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-      length += strlen(buffer);
-      memset(&(buffer[0]), NULL, strlen(buffer));
+      exp.getViewBytes(EXPARRAY,i,j);
     }
   }
 
-  exp.getLastBytes(buffer);
-	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-  length += strlen(buffer);
-	p_exp = &EXPARRAY[0];
-	expLen = length;
+  exp.getLastBytes(EXPARRAY);
+	p_exp = (uint8_t*)&EXPARRAY[0];
+	expLen = strlen(EXPARRAY);
+  
 }
 
 
