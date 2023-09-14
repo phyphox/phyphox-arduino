@@ -69,6 +69,10 @@ void PhyphoxBleExperiment::setDescription(const char *d){
 	copyToMem(&DESCRIPTION, d);
 }
 
+void PhyphoxBleExperiment::setColor(const char *c){
+	copyToMem(&COLOR, (std::string(c)).c_str());
+}
+
 void PhyphoxBleExperiment::setRepeating(const int r){
 	PhyphoxBleExperiment::repeating = r;
 }
@@ -108,10 +112,22 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 	if (!CATEGORY)  {strcat(buffArray,"Arduino Experiments");} else {strcat(buffArray,CATEGORY);}
 	strcat(buffArray, "</category>\n");	
 
+	//build color
+	/*
+	if (!COLOR){
+		strcat(buffArray, "<color>");
+		strcat(buffArray,COLOR);
+		strcat(buffArray, "</color>\n");
+	}
+	*/
+
 	//build description
 	strcat(buffArray, "<description>");
-	if (!DESCRIPTION)  {strcat(buffArray,"An experiment created with the phyphox BLE library for Arduino-compatible micro controllers.");}
-	else {strcat(buffArray,DESCRIPTION);}
+	if (!DESCRIPTION)  {
+		strcat(buffArray,"An experiment created with the phyphox BLE library for Arduino-compatible micro controllers.");
+	}else {
+		strcat(buffArray,DESCRIPTION);
+	}
 	strcat(buffArray, "</description>\n");
 
 	//build container
@@ -144,7 +160,7 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 	}
 	strcat(buffArray, "\" id=\"phyphoxBLE\" mode=\"notification\" subscribeOnStart=\"");
 	if (!SUBSCRIBEONSTART)  {strcat(buffArray, "false");} else {strcat(buffArray, SUBSCRIBEONSTART);}
-	strcat(buffArray, "\">\n");
+	strcat(buffArray, "\">\n\t\t");
 	
 	
 	
@@ -171,11 +187,11 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 			int k = (i-1)*4;
 			sprintf(add, "offset=\"%i\" repeating=\"%i\" >CH%i", k,repeating,i);
 			strcat(buffArray, add);
-			strcat(buffArray,"</output>\n");
+			strcat(buffArray,"</output>\n\t\t");
 		}
 	}
 	
-	strcat(buffArray,"\t\t<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" extra=\"time\">CH0</output>");
+	strcat(buffArray,"<output char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" extra=\"time\">CH0</output>");
 
 	strcat(buffArray, "\n\t</bluetooth>\n");
 	//build sensor input
@@ -194,7 +210,7 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 	strcat(buffArray, "<output>\n");
 	strcat(buffArray, "\t<bluetooth id=\"phyphoxBLE\" name=\"");
 	strcat(buffArray, DEVICENAME);
-	strcat(buffArray, "\">\n");
+	strcat(buffArray, "\">\n\t\t");
 
 	// for(int i=1; i<=1;i++){
 	// 	strcat(buffArray, "<input char=\"cddf1002-30f7-4671-8b43-5e40ba53514a\" conversion=\"float32LittleEndian\" ");

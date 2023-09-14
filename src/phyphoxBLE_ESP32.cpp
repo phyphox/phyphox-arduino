@@ -8,7 +8,7 @@
 uint8_t PhyphoxBLE::data_package[20] = {0};
 void (*PhyphoxBLE::configHandler)() = nullptr;
 void (*PhyphoxBLE::experimentEventHandler)() = nullptr;
-uint8_t storage[64000];
+uint8_t storage[16000];
 //uint8_t *storage = (uint8_t*) malloc(8000 * sizeof(char));
 char *PhyphoxBLE::EXPARRAY=(char*)storage;
 uint8_t* PhyphoxBLE::p_exp = nullptr;
@@ -419,7 +419,7 @@ void PhyphoxBLE::when_subscription_received()
 }
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
-  for (int i = 0; i < 64000; i++)
+  for (int i = 0; i < 16000; i++)
   {
     storage[i]=0;
   }

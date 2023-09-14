@@ -320,6 +320,7 @@ class PhyphoxBleExperiment {
 	void setTitle(const char *);
 	void setCategory(const char *);
 	void setDescription(const char *);
+	void setColor(const char *);
 	void setRepeating(const int);
 	// void setConfig(const char *);
 	void setSubscribeOnStart(bool);
@@ -335,6 +336,7 @@ class PhyphoxBleExperiment {
 	char* TITLE = NULL;
 	char* CATEGORY = NULL;
 	char* DESCRIPTION = NULL;
+	char* COLOR = NULL;
 	// char* CONFIG = NULL;
 	char* SUBSCRIBEONSTART = NULL;
 
