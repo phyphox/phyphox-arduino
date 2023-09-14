@@ -11,11 +11,13 @@ class PhyphoxBLE
         static uint8_t data_package[20];
 
         static void controlCharacteristicWritten(BLEDevice, BLECharacteristic);
+        static void eventCharacteristicWritten(BLEDevice, BLECharacteristic);
         static void configCharacteristicWritten(BLEDevice, BLECharacteristic);
 
 		static BLEService phyphoxExperimentService;
         static BLECharacteristic experimentCharacteristic;
         static BLECharacteristic controlCharacteristic;
+        static BLECharacteristic eventCharacteristic;
 
         static BLEService phyphoxDataService;
 		static BLECharacteristic dataCharacteristic;
@@ -55,11 +57,22 @@ class PhyphoxBLE
         static void poll(int timeout);
 
         static void(*configHandler)();
+        static void(*experimentEventHandler)();
+
         static uint16_t minConInterval;
         static uint16_t maxConInterval;
         static uint16_t slaveLatency;
         static uint16_t timeout;
         static uint16_t MTU;
+
+        static int64_t experimentTime;
+        static int64_t systemTime;
+        static uint8_t eventType;
+
+        static uint8_t eventData[17];
+
+        static void printXML(HardwareSerial*);
+
 };
 
 
