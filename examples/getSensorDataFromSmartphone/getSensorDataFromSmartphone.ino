@@ -44,6 +44,7 @@ void setup() {
 
 void loop() {
   delay(100);
+  PhyphoxBLE::poll(); //Only required for the Arduino Nano 33 IoT, but it does no harm for other boards.  
 }
 
 void receivedData(){

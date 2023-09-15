@@ -42,14 +42,13 @@ void setup()
 
 void loop()
 {
-    PhyphoxBLE::poll(); //Only required for the Arduino Nano 33 IoT, but it does no harm for other boards.
+   PhyphoxBLE::poll(); //Only required for the Arduino Nano 33 IoT, but it does no harm for other boards.
 
     if(millis()-lastTimestamp>blinkInterval){
       lastTimestamp = millis();
       led=!led;
       digitalWrite(LED_BUILTIN, led);
       }
-    
 }
 
 void receivedData(){

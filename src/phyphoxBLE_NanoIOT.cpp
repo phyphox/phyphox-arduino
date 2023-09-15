@@ -29,7 +29,7 @@ uint8_t* PhyphoxBLE::data = nullptr; //this pointer points to the data the user 
 uint8_t* PhyphoxBLE::p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
 
 size_t PhyphoxBLE::expLen = 0; //try o avoid this maybe use std::array or std::vector
-uint8_t storage[4000];
+uint8_t storage[6000];
 uint8_t PhyphoxBLE::eventData[17]={0};
 //uint8_t eventData[17];
 char *PhyphoxBLE::EXPARRAY=(char*)storage;
@@ -291,8 +291,8 @@ void PhyphoxBLE::eventCharacteristicWritten(BLEDevice central, BLECharacteristic
 
   memcpy(&eventData[0],read_buffer,17);
   int64_t et,st;
-  memcpy(&et,data+1,8);
-  memcpy(&st,data+1+8,8);
+  memcpy(&et,&eventData[0]+1,8);
+  memcpy(&st,&eventData[0]+1+8,8);
   PhyphoxBLE::eventType = eventData[0];
   PhyphoxBLE::systemTime = swap_int64(st);
   PhyphoxBLE::experimentTime = swap_int64(et);

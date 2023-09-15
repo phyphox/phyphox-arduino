@@ -11,6 +11,8 @@ void loop() {
   float randomNumber = random(0,100); //Generate random number in the range 0 to 100
 	PhyphoxBLE::write(randomNumber);     //Send value to phyphox
   delay(100);
+  PhyphoxBLE::poll(); //Only required for the Arduino Nano 33 IoT, but it does no harm for other boards.
+
 }
 
 //declare function which is called after phyphox wrote to the event characteristic

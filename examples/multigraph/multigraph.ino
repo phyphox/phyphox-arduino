@@ -69,6 +69,7 @@ void loop() {
   float cosinus = generateSin(currentTime+0.5*periodTime);
   PhyphoxBLE::write(currentTime,sinus,cosinus);
   delay(100);
+  PhyphoxBLE::poll(); //Only required for the Arduino Nano 33 IoT, but it does no harm for other boards.
 }
 
 float generateSin(float x){
