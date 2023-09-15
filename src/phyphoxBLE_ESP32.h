@@ -24,9 +24,11 @@ class PhyphoxBLE
         static BLEService *phyphoxExperimentService;
         static BLEDescriptor *myExperimentDescriptor;
         static BLEDescriptor *myDataDescriptor;
+        static BLEDescriptor *myEventDescriptor;
         static BLEDescriptor *myConfigDescriptor;
         static BLECharacteristic *dataCharacteristic;
         static BLECharacteristic *experimentCharacteristic;
+        static BLECharacteristic *eventCharacteristic;
         static BLECharacteristic *configCharacteristic;
         static BLEAdvertising *myAdvertising;
 
@@ -37,7 +39,7 @@ class PhyphoxBLE
         static uint8_t* p_exp; //this pointer will point to the byte array which holds an experiment
         static TaskHandle_t TaskTransfer;
 
-        static uint8_t *EXPARRAY;
+        static char *EXPARRAY;
 
         static size_t expLen; //try o avoid this maybe use std::array or std::vector
 
@@ -66,8 +68,17 @@ class PhyphoxBLE
 
         static void read(uint8_t*, unsigned int);
         static void read(float&);
+        static void read(float&, float&);
+        static void read(float&, float&, float&);
+        static void read(float&, float&, float&, float&);
+        static void read(float&, float&, float&, float&, float&);
         static void configHandlerDebug();
         static void (*configHandler)();
+
+        static void eventCharacteristicHandler();
+        static void (*experimentEventHandler)();
+
+        static void printXML(HardwareSerial*);
 
         static void setMTU(uint16_t);
         static uint16_t MTU;
@@ -83,6 +94,12 @@ class PhyphoxBLE
         static uint16_t slaveLatency;
         static uint16_t timeout;
         static uint16_t currentConnections;
+        static bool     isSubscribed;
+        
+        static uint8_t eventData[17];
+        static int64_t experimentTime;
+        static int64_t systemTime;
+        static uint8_t eventType;
 };
 
 

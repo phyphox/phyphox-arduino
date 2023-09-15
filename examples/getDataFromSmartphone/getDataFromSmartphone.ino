@@ -11,7 +11,7 @@ bool led = true;
 
 void setup()
 {
-   PhyphoxBLE::begin(&Serial);
+   Serial.begin(115200);
    PhyphoxBLE::start();
    PhyphoxBLE::configHandler=&receivedData;
    pinMode(LED_BUILTIN, OUTPUT);
@@ -42,14 +42,13 @@ void setup()
 
 void loop()
 {
-    PhyphoxBLE::poll(); //Only required for the Arduino Nano 33 IoT, but it does no harm for other boards.
+   PhyphoxBLE::poll(); //Only required for the Arduino Nano 33 IoT, but it does no harm for other boards.
 
     if(millis()-lastTimestamp>blinkInterval){
       lastTimestamp = millis();
       led=!led;
       digitalWrite(LED_BUILTIN, led);
       }
-    
 }
 
 void receivedData(){

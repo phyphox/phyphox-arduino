@@ -1,4 +1,4 @@
-#ifdef ARDUINO_SAMD_NANO_33_IOT
+#if defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_UNOR4_WIFI)
 
 #include "phyphoxBLE_NanoIOT.h"
 #include "Arduino.h"
@@ -7,6 +7,7 @@
 BLEService PhyphoxBLE::phyphoxExperimentService{phyphoxBleExperimentServiceUUID}; // create service
 BLECharacteristic PhyphoxBLE::experimentCharacteristic{phyphoxBleExperimentCharacteristicUUID, BLERead | BLEWrite| BLENotify, 20, false};
 BLECharacteristic PhyphoxBLE::controlCharacteristic{phyphoxBleExperimentControlCharacteristicUUID, BLERead | BLEWrite| BLENotify, 20, false};
+BLECharacteristic PhyphoxBLE::eventCharacteristic{phyphoxBleEventCharacteristicUUID, BLERead | BLEWrite| BLENotify, 20, false};
 
 BLEService PhyphoxBLE::phyphoxDataService{phyphoxBleDataServiceUUID}; // create service
 BLECharacteristic PhyphoxBLE::dataCharacteristic{phyphoxBleDataCharacteristicUUID, BLERead | BLEWrite | BLENotify, 20, false};
@@ -20,13 +21,22 @@ uint16_t PhyphoxBLE::timeout = 50;
 uint16_t PhyphoxBLE::MTU = 20;
 uint16_t PhyphoxBleExperiment::MTU = 20;
 
+int64_t PhyphoxBLE::experimentTime = NULL;
+int64_t PhyphoxBLE::systemTime = NULL;
+uint8_t PhyphoxBLE::eventType = NULL;
+
 uint8_t* PhyphoxBLE::data = nullptr; //this pointer points to the data the user wants to write in the characteristic
 uint8_t* PhyphoxBLE::p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
 
 size_t PhyphoxBLE::expLen = 0; //try o avoid this maybe use std::array or std::vector
-uint8_t PhyphoxBLE::EXPARRAY[4000] = {0};// block some storage
+const int maxExperimentSize = 6000;
+uint8_t storage[maxExperimentSize];
+uint8_t PhyphoxBLE::eventData[17]={0};
+//uint8_t eventData[17];
+char *PhyphoxBLE::EXPARRAY=(char*)storage;
 
 void(*PhyphoxBLE::configHandler)() = nullptr;
+void(*PhyphoxBLE::experimentEventHandler)() = nullptr;
 
 void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len){
   p_exp = exp_pointer;
@@ -45,8 +55,9 @@ void PhyphoxBLE::start(const char* DEVICE_NAME)
   deviceName = DEVICE_NAME;
 
   controlCharacteristic.setEventHandler(BLEWritten, controlCharacteristicWritten);
+  eventCharacteristic.setEventHandler(BLEWritten, eventCharacteristicWritten);
   configCharacteristic.setEventHandler(BLEWritten, configCharacteristicWritten);
-
+  
 	if(p_exp == nullptr){
   
       PhyphoxBleExperiment defaultExperiment;
@@ -73,6 +84,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME)
   // add the characteristics to the service
   phyphoxExperimentService.addCharacteristic(experimentCharacteristic);
   phyphoxExperimentService.addCharacteristic(controlCharacteristic);
+  phyphoxExperimentService.addCharacteristic(eventCharacteristic);
   phyphoxDataService.addCharacteristic(configCharacteristic);
   phyphoxDataService.addCharacteristic(dataCharacteristic);
 
@@ -114,30 +126,58 @@ void PhyphoxBLE::read(float& f)
   memcpy(&f,&readDATA[0],4);
 }
 
+void PhyphoxBLE::read(float& f1, float& f2)
+{
+  uint8_t readDATA[8];
+  configCharacteristic.readValue(readDATA, 8);
+  memcpy(&f1,readDATA,4);
+  memcpy(&f2,readDATA+4,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2, float& f3)
+{
+  uint8_t readDATA[12];
+  configCharacteristic.readValue(readDATA, 12);
+  memcpy(&f1,readDATA,4);
+  memcpy(&f2,readDATA+4,4);
+  memcpy(&f3,readDATA+8,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2, float& f3, float& f4)
+{
+  uint8_t readDATA[16];
+  configCharacteristic.readValue(readDATA, 16);
+  memcpy(&f1,readDATA,4);
+  memcpy(&f2,readDATA+4,4);
+  memcpy(&f3,readDATA+8,4);
+  memcpy(&f4,readDATA+12,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2, float& f3, float& f4, float& f5)
+{
+  uint8_t readDATA[20];
+  configCharacteristic.readValue(readDATA, 20);
+  memcpy(&f1,readDATA,4);
+  memcpy(&f2,readDATA+4,4);
+  memcpy(&f3,readDATA+8,4);
+  memcpy(&f4,readDATA+12,4);
+  memcpy(&f5,readDATA+16,4);
+}
+
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
-  char buffer[2000] ="";
-  uint16_t length = 0;
+  memset(EXPARRAY,0,maxExperimentSize);
 
-	exp.getFirstBytes(buffer, deviceName);
-	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-  length += strlen(buffer);
-  memset(&(buffer[0]), NULL, strlen(buffer));
+	exp.getFirstBytes(EXPARRAY, deviceName);
+
 
   for(uint8_t i=0;i<phyphoxBleNViews; i++){
     for(int j=0; j<phyphoxBleNElements; j++){
-      exp.getViewBytes(buffer,0,j);
-	    memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-      length += strlen(buffer);
-      memset(&(buffer[0]), NULL, strlen(buffer));
+      exp.getViewBytes(EXPARRAY,i,j);
     }
   }
 
-  exp.getLastBytes(buffer);
-	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-  length += strlen(buffer);
-	p_exp = &EXPARRAY[0];
-	expLen = length;
+  exp.getLastBytes(EXPARRAY);
+	p_exp = (uint8_t*)&EXPARRAY[0];
+	expLen = strlen(EXPARRAY);
+  
 }
 
 
@@ -241,5 +281,33 @@ void PhyphoxBLE::configCharacteristicWritten(BLEDevice central, BLECharacteristi
   if(configHandler!=nullptr){
     (*configHandler)();
   }
+}
+
+void PhyphoxBLE::eventCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic){
+
+  uint8_t read_buffer[17];
+  eventCharacteristic.readValue(read_buffer, 17);
+
+
+  memcpy(&eventData[0],read_buffer,17);
+  int64_t et,st;
+  memcpy(&et,&eventData[0]+1,8);
+  memcpy(&st,&eventData[0]+1+8,8);
+  PhyphoxBLE::eventType = eventData[0];
+  PhyphoxBLE::systemTime = swap_int64(st);
+  PhyphoxBLE::experimentTime = swap_int64(et);
+
+  if(experimentEventHandler!=nullptr){
+    (*experimentEventHandler)();
+  }
+}
+
+void PhyphoxBLE::printXML(HardwareSerial* printer){
+  printer->println("");
+  for(int i =0; i<expLen;i++){
+      char CHAR = EXPARRAY[i];
+      printer->print(CHAR);
+  }
+  printer->println("");
 }
 #endif

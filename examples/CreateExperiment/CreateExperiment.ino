@@ -1,17 +1,15 @@
 #include <phyphoxBle.h>
 
-float editValue = 0;
-
 void setup()
 {
   Serial.begin(115200);
-  PhyphoxBLE::start("My Device");
-  PhyphoxBLE::configHandler = &receivedData;   // used to receive data from PhyPhox.
+  PhyphoxBLE::start("create experiment");
 
   //Experiment
   PhyphoxBleExperiment plotRandomValues;   //generate experiment on Arduino which plot random values
 
-  plotRandomValues.setTitle("Random Number Plotter");
+
+  plotRandomValues.setTitle("Create Experiment");
   plotRandomValues.setCategory("Arduino Experiments");
   plotRandomValues.setDescription("Random numbers are generated on Arduino and visualized with phyphox afterwards");
 
@@ -23,6 +21,8 @@ void setup()
 
   //Graph
   PhyphoxBleExperiment::Graph firstGraph;      //Create graph which will plot random numbers over time
+  firstGraph.setMinY(0, LAYOUT_FIXED);
+  firstGraph.setMaxY(100, LAYOUT_FIXED);
   firstGraph.setLabel("Random number over time");
   firstGraph.setUnitX("s");
   firstGraph.setUnitY("");
@@ -38,29 +38,31 @@ void setup()
   */
 
   firstGraph.setChannel(0, 1);
-
+  
   //Second Graph
+  
   PhyphoxBleExperiment::Graph secondGraph;      //Create graph which will plot random numbers over time
   secondGraph.setLabel("Random number squared over random number");
   secondGraph.setUnitX("");
   secondGraph.setUnitY("");
   secondGraph.setLabelX("random number");
   secondGraph.setLabelY("squared");
-  secondGraph.setStyle("dots");
+  secondGraph.setStyle(STYLE_DOTS);
   secondGraph.setColor("2E728E");                //Sets Color of line
-
+  
   /* Assign Channels, so which data is plotted on x or y axis
      first parameter represents x-axis, second y-axis
      Channel 0 means a timestamp is created after the BLE package arrives in phyphox
      Channel 1 to N corresponding to the N-parameter which is written in server.write()
   */
-
+  
   secondGraph.setChannel(1, 2);
+  
 
   //Info
   PhyphoxBleExperiment::InfoField myInfo;      //Creates an info-box.
-  myInfo.setInfo("In this view you can set a value between 1 and 10. The squared random value will be multiplied by this value and can be seen here.");
-  //myInfo.setColor("404040");                   //Sets font color. Uses a 6 digit hexadecimal value in "quotation marks".
+  myInfo.setInfo("This is an Info field!");
+  myInfo.setColor("890128");                   //Sets font color. Uses a 6 digit hexadecimal value in "quotation marks".
   myInfo.setXMLAttribute("size=\"1.2\"");
 
   //Separator
@@ -72,24 +74,14 @@ void setup()
   PhyphoxBleExperiment::Value myValue;         //Creates a value-box.
   myValue.setLabel("Number");                  //Sets the label
   myValue.setPrecision(2);                     //The amount of digits shown after the decimal point.
-  myValue.setUnit("u");                        //The physical unit associated with the displayed value.
+  myValue.setUnit("unit");                        //The physical unit associated with the displayed value.
   myValue.setColor("FFFFFF");                  //Sets font color. Uses a 6 digit hexadecimal value in "quotation marks".
-  myValue.setChannel(3);
+  myValue.setChannel(0);
   myValue.setXMLAttribute("size=\"2\"");
-
-  //Edit
-  PhyphoxBleExperiment::Edit myEdit;
-  myEdit.setLabel("Editfield");
-  myEdit.setUnit("u");
-  myEdit.setSigned(false);
-  myEdit.setDecimal(false);
-  myEdit.setChannel(1);
-  myEdit.setXMLAttribute("max=\"10\"");
 
   //Export
   PhyphoxBleExperiment::ExportSet mySet;       //Provides exporting the data to excel etc.
   mySet.setLabel("mySet");
-
   PhyphoxBleExperiment::ExportData myData1;
   myData1.setLabel("myData1");
   myData1.setDatachannel(1);
@@ -105,7 +97,7 @@ void setup()
   secondView.addElement(myInfo);                //attach info to view
   secondView.addElement(mySeparator);          //attach separator to view
   secondView.addElement(myValue);               //attach value to view
-  secondView.addElement(myEdit);               //attach editfield to view (Linked to value)
+
   plotRandomValues.addView(firstView);         //attach view to experiment
   plotRandomValues.addView(secondView);
   mySet.addElement(myData1);                   //attach data to exportSet
@@ -117,22 +109,14 @@ void setup()
 
 void loop()
 {
-
   float randomValue = random(0, 100); //create random number between 0 - 100
   float randomValue2 = randomValue * randomValue;
 
   /*  The random number is written into Channel 1
       Up to 5 Channels can written at the same time with server.write(randomDistance, valueChannel2, valueChannel3.. )
   */
-  float tmp = randomValue2*editValue;
-  PhyphoxBLE::write(randomValue, randomValue2, tmp);
+  PhyphoxBLE::write(randomValue, randomValue2);
   delay(50);
 
   PhyphoxBLE::poll(); //Only required for the Arduino Nano 33 IoT, but it does no harm for other boards.
-}
-
-void receivedData() {           // get data from PhyPhox app
-  float readInput;
-  PhyphoxBLE::read(readInput);
-  editValue = readInput;
 }

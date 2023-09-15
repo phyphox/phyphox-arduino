@@ -7,10 +7,11 @@ The purpose of this library is to use the phyphox app (see www.phyphox.org) to p
 - Arduino Nano 33 Ble
 - Arduino Nano Sense
 - Arduino Nano 33 IoT (see note below)
+- Arduino Uno R4 Wifi (see note below)
 - senseBox MCU with NINA-B31 module
 - ESP 32
 
-Note: The Arduino Nano 33 IoT is somewhat unusual. You will need to install the ArduinoBLE library to use it and you will need to call "PhyphoxBLE::poll()" periodically for it to work. See the "randomNumbers-IoT" example.
+Note: The Arduino Nano 33 IoT and the Arduino uno R4 are somewhat unusual. You will need to install the ArduinoBLE library to use it and you will need to call "PhyphoxBLE::poll()" periodically for it to work.
 
 Note: When using the NINA-B31 module you must call PhyphoxBLE::poll() periodically (in loop() ) or the library will not work.
 
@@ -70,6 +71,7 @@ Here are some useful methods to create your own experiment:
 | Experiment | setDescription(char*)    | Sets a description for the experiment                             |
 | Experiment | addView(View&)           | Adds a view to the corresponding experiment                       |
 | Experiment | addExportSet(ExportSet&) | Adds an exportSet to the corresponding experiment                 |
+| Experiment | addSensor(Sensor&)       | Data from smarpthone sensor can will be received (see getSensorDataFromSmartphone example)|
 | View       | addElement(Element&)     | Adds an element to the corresponding view                         |
 | View       | setLabel(char*)          | Sets a label for the view                                         |
 | Graph      | setLabel(char*)          | Sets a label for the graph                                        |
@@ -77,8 +79,14 @@ Here are some useful methods to create your own experiment:
 | Graph      | setLabelX(char*)         | Sets a label for x (similar with y)                               |
 | Graph      | setXPrecision(int)       | Sets the amount of digits after the decimal point (similar with y)|
 | Graph      | setChannel(int, int)     | As explained above (1-5)                                          |
-| Graph      | setStyle(char*)          | Sets the style. For more possibilities check the wiki             |
+| Graph      | addSubgraph(Subgraph)    | Adds an additional subgraph (see example "multigraph")            |
+| Graph      | setStyle(char*)          | Sets the style (use defines: STYLE_LINES, STYLE_DOTS).            |
 | Graph      | setColor(char*)          | Sets the line color of the graph (use a 6 digit hexadecimal code) |
+| Graph      | setMinX(int, const char *)| Sets the min x value of the co-system and a layout (auto, extend and fixed) |
+| Graph      | setMaxX(int, const char *)| Sets the max x value of the co-system and a layout (auto, extend and fixed) |
+| Graph      | setMinY(int, const char *)| Sets the min y value of the co-system and a layout (auto, extend and fixed) |
+| Graph      | setMaxY(int, const char *)| Sets the max y value of the co-system and a layout (auto, extend and fixed) |
+| Graph      | setLineWidth(float)      | Sets the line width                                               |
 | Separator  | setHeight(float)         | Creates a line to separate parts of the experiment                |
 | Separator  | setColor(char*)          | Sets the color of the line (use a 6 digit hexadecimal code)       |
 | Info       | setInfo(char*)           | Sets the infotext                                                 |
@@ -98,11 +106,20 @@ Here are some useful methods to create your own experiment:
 | ExportData | setDatachannel(int)      | Defines which channel should be exported for this dataset (1-5)   |
 | Everything | setXMLAttribute(char*)   | Custom property e.g. setXMLAttribute("lineWidth=\"3\"")           |
 
+
+#### Style and Layout oprtions for setStyle and setMax/setMin
+STYLE_LINES, STYLE_DOTS, STYLE_VBARS, STYLE_HBARS, STYLE_MAP
+
+LAYOUT_AUTO, LAYOUT_EXTEND, LAYOUT_FIXED
+
+#### Error messages
+
 If for some reason the app shows you an error in form of "ERROR FOUND: ERR_X", with different values for X, this could be the reason:
-* ERR_01: The input was too long
-* ERR_02: The value exceeds the upper limit
-* ERR_03: The input was not a 6-digit hexadecimal code
-* ERR_04: The input does not match with a valid value
+* ERR_01: The input was too long.
+* ERR_02: The value exceeds the upper limit.
+* ERR_03: The input was not a 6-digit hexadecimal code.
+* ERR_04: The input does not match with a valid value.
+* ERR_05: The layout must be auto, extend or fixed.
 
 If you realize that the microcontroller is continiously rebooting, you maybe added too many elements.
 
@@ -129,7 +146,7 @@ If you can help with this, we are happy to receive a pull request. You can conta
 
 ## Credits
 
-This library has been developed by the phyphox team at the RWTH Aachen University. In particular, the foundations and basic concept was created by Alexander Krampe as part of his Master thesis. The library has been further improved and is now maintained by Dominik Dorsel, our PhD student who also supervised Alexander's thesis.
+This library has been developed by the phyphox team at the RWTH Aachen University. In particular, the foundations and basic concept was created by Alexander Krampe as part of his Master thesis. The library has been further improved and is now maintained by Dominik Dorsel, our PhD student who also supervised Alexander's thesis. The library was also further optimized and extended with new features by Marcel Hagedorn and Edward Leier.
 
 ## Licence
 
