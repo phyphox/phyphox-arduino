@@ -11,11 +11,13 @@ class PhyphoxBLE
         static uint8_t data_package[20];
 
         static void controlCharacteristicWritten(BLEDevice, BLECharacteristic);
+        static void eventCharacteristicWritten(BLEDevice, BLECharacteristic);
         static void configCharacteristicWritten(BLEDevice, BLECharacteristic);
 
 		static BLEService phyphoxExperimentService;
         static BLECharacteristic experimentCharacteristic;
         static BLECharacteristic controlCharacteristic;
+        static BLECharacteristic eventCharacteristic;
 
         static BLEService phyphoxDataService;
 		static BLECharacteristic dataCharacteristic;
@@ -26,7 +28,7 @@ class PhyphoxBLE
         static uint8_t* p_exp; //this pointer will point to the byte array which holds an experiment
 
         static size_t expLen; //try o avoid this maybe use std::array or std::vector
-        static uint8_t EXPARRAY[4000];// block some storage
+        static char *EXPARRAY;
 
     public:
         
@@ -45,18 +47,32 @@ class PhyphoxBLE
 
         static void read(uint8_t*, unsigned int);
         static void read(float&);
-        
+        static void read(float&, float&);
+        static void read(float&, float&, float&);
+        static void read(float&, float&, float&, float&);
+        static void read(float&, float&, float&, float&, float&);
         
 
         static void poll();
         static void poll(int timeout);
 
         static void(*configHandler)();
+        static void(*experimentEventHandler)();
+
         static uint16_t minConInterval;
         static uint16_t maxConInterval;
         static uint16_t slaveLatency;
         static uint16_t timeout;
         static uint16_t MTU;
+
+        static int64_t experimentTime;
+        static int64_t systemTime;
+        static uint8_t eventType;
+
+        static uint8_t eventData[17];
+
+        static void printXML(HardwareSerial*);
+
 };
 
 

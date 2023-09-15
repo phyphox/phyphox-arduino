@@ -7,6 +7,7 @@ const UUID PhyphoxBLE::experimentCharacteristicUUID = UUID(phyphoxBleExperimentC
 const UUID PhyphoxBLE::phyphoxDataServiceUUID = UUID(phyphoxBleDataServiceUUID);
 const UUID PhyphoxBLE::dataCharacteristicUUID = UUID(phyphoxBleDataCharacteristicUUID);
 const UUID PhyphoxBLE::configCharacteristicUUID = UUID(phyphoxBleConfigCharacteristicUUID);
+const UUID PhyphoxBLE::eventCharacteristicUUID = UUID(phyphoxBleEventCharacteristicUUID);
 
 uint16_t PhyphoxBleExperiment::MTU = 20;
 
@@ -17,6 +18,10 @@ Thread PhyphoxBLE::transferExpThread;
 
 uint8_t PhyphoxBLE::data_package[20] = {0};
 uint8_t PhyphoxBLE::config_package[CONFIGSIZE] = {0};
+uint8_t PhyphoxBLE::eventData[17] = {0};
+int64_t PhyphoxBLE::experimentTime = NULL;
+int64_t PhyphoxBLE::systemTime = NULL;
+uint8_t PhyphoxBLE::eventType = NULL;
 
 /*BLE stuff*/
 BLE& bleInstance = BLE::Instance(BLE::DEFAULT_INSTANCE);
@@ -26,6 +31,7 @@ uint8_t PhyphoxBLE::readValue[DATASIZE] = {0};
 
 ReadWriteArrayGattCharacteristic<uint8_t, sizeof(PhyphoxBLE::data_package)> PhyphoxBLE::dataCharacteristic{PhyphoxBLE::dataCharacteristicUUID, PhyphoxBLE::data_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY}; //Note: Use { } instead of () google most vexing parse
 ReadWriteArrayGattCharacteristic<uint8_t, sizeof(PhyphoxBLE::config_package)> PhyphoxBLE::configCharacteristic{PhyphoxBLE::configCharacteristicUUID, PhyphoxBLE::config_package, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
+ReadWriteArrayGattCharacteristic<uint8_t, sizeof(PhyphoxBLE::eventData)> PhyphoxBLE::eventCharacteristic{PhyphoxBLE::eventCharacteristicUUID, PhyphoxBLE::eventData, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 
 //Experiment Transfer
 ReadOnlyArrayGattCharacteristic<uint8_t, sizeof(PhyphoxBLE::readValue)> PhyphoxBLE::experimentCharacteristic{PhyphoxBLE::experimentCharacteristicUUID, PhyphoxBLE::readValue, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
@@ -36,7 +42,7 @@ EventQueue PhyphoxBLE::transferQueue{32 * EVENTS_EVENT_SIZE};
 
 PhyphoxBleEventHandler PhyphoxBLE::eventHandler(bleInstance);
 
-GattCharacteristic* PhyphoxBLE::phyphoxCharacteristics[1] = {&PhyphoxBLE::experimentCharacteristic};
+GattCharacteristic* PhyphoxBLE::phyphoxCharacteristics[2] = {&PhyphoxBLE::experimentCharacteristic,&PhyphoxBLE::eventCharacteristic};
 GattService PhyphoxBLE::phyphoxService{PhyphoxBLE::phyphoxExperimentServiceUUID, PhyphoxBLE::phyphoxCharacteristics, sizeof(PhyphoxBLE::phyphoxCharacteristics) / sizeof(GattCharacteristic *)};
 
 GattCharacteristic* PhyphoxBLE::phyphoxDataCharacteristics[2] = {&PhyphoxBLE::dataCharacteristic, &PhyphoxBLE::configCharacteristic};
@@ -44,12 +50,14 @@ GattService PhyphoxBLE::phyphoxDataService{PhyphoxBLE::phyphoxDataServiceUUID, P
 
 uint8_t* PhyphoxBLE::data = nullptr; //this pointer points to the data the user wants to write in the characteristic
 uint8_t* PhyphoxBLE::config =nullptr;
+uint8_t* PhyphoxBLE::event =nullptr;
 uint8_t* PhyphoxBLE::p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
 
-uint8_t PhyphoxBLE::EXPARRAY[4096] = {0};// block some storage
+char PhyphoxBLE::EXPARRAY[4096] = {0};// block some storage
 size_t PhyphoxBLE::expLen = 0; //try o avoid this maybe use std::array or std::vector
 
 void (*PhyphoxBLE::configHandler)() = nullptr;
+void (*PhyphoxBLE::experimentEventHandler)() = nullptr;
 
 void PhyphoxBleEventHandler::onDisconnectionComplete(const ble::DisconnectionCompleteEvent &event)
 {
@@ -101,6 +109,15 @@ void PhyphoxBLE::output(const uint32_t num)
 
 #endif
 
+void PhyphoxBLE::printXML(HardwareSerial* printer){
+  printer->println("");
+  for(int i =0; i<expLen;i++){
+      char CHAR = EXPARRAY[i];
+      printer->print(CHAR);
+  }
+  printer->println("");
+}
+
 
 
 void PhyphoxBLE::when_subscription_received(GattAttribute::Handle_t handle)
@@ -122,10 +139,28 @@ void PhyphoxBLE::when_subscription_received(GattAttribute::Handle_t handle)
 }
 void PhyphoxBLE::configReceived(const GattWriteCallbackParams *params)
 {
-	if(configHandler != nullptr){
-		transferQueue.call( configHandler ); 		
+	if(params->handle == configCharacteristic.getValueHandle()){
+		if(configHandler != nullptr){
+			transferQueue.call( configHandler ); 		
+		}
+	}else if (params->handle == eventCharacteristic.getValueHandle())
+	{	
+		uint16_t eventSize = 17;
+		ble.gattServer().read(eventCharacteristic.getValueHandle(), eventData, &eventSize);
+		int64_t et,st;
+		memcpy(&et,&eventData[0]+1,8);
+		memcpy(&st,&eventData[0]+1+8,8);
+		PhyphoxBLE::eventType = eventData[0];
+		PhyphoxBLE::systemTime = swap_int64(st);
+		PhyphoxBLE::experimentTime = swap_int64(et);
+		if(experimentEventHandler != nullptr){
+			transferQueue.call( experimentEventHandler ); 		
+		}
+		
 	}
+	
 }
+
 void PhyphoxBLE::transferExp()
 {
 	BLE &ble = PhyphoxBLE::ble;
@@ -137,7 +172,7 @@ void PhyphoxBLE::transferExp()
 	#endif
 
 	uint8_t header[20] = {0}; //20 byte as standard package size for ble transfer
-	const char phyphox[] = "phyphox";
+	const char phyphox[] = "phyphox-Arduino";
 	uint32_t table[256];
 	phyphoxBleCrc32::generate_table(table);
 	uint32_t checksum = phyphoxBleCrc32::update(table, 0, exp, exp_len);
@@ -187,6 +222,7 @@ void PhyphoxBLE::bleInitComplete(BLE::InitializationCompleteCallbackContext* par
 	
 	ble.gattServer().onUpdatesEnabled(PhyphoxBLE::when_subscription_received);
 	ble.gattServer().onDataWritten(PhyphoxBLE::configReceived);
+
 	ble.gap().setEventHandler(&PhyphoxBLE::eventHandler);
 
 	uint8_t _adv_buffer[ble::LEGACY_ADVERTISING_MAX_SIZE];
@@ -241,8 +277,8 @@ void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len
 	if(exp_pointer != nullptr){
 		p_exp = exp_pointer;
 		expLen = len;
-	}else{
-		
+	}else if(p_exp==nullptr){
+	
       PhyphoxBleExperiment defaultExperiment;
 
       //View
@@ -256,7 +292,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len
       defaultExperiment.addView(firstView);
       
       addExperiment(defaultExperiment);
-      
+	  
 	}
 
 	bleEventThread.start(callback(&queue, &EventQueue::dispatch_forever));
@@ -266,7 +302,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len
 }
 
 void PhyphoxBLE::start(uint8_t* exp_pointer, size_t len) {
-    start("phyphox", exp_pointer, len);
+    start("phyphox-Arduino", exp_pointer, len);
 }
 
 void PhyphoxBLE::start(const char* DEVICE_NAME) {
@@ -275,7 +311,7 @@ void PhyphoxBLE::start(const char* DEVICE_NAME) {
 }
 
 void PhyphoxBLE::start() {
-    start("phyphox", nullptr, 0);
+    start("phyphox-Arduino", nullptr, 0);
 }
 
 void PhyphoxBLE::poll() {
@@ -369,6 +405,45 @@ void PhyphoxBLE::read(float& f1)
 	ble.gattServer().read(configCharacteristic.getValueHandle(), myConfig, &configSize);
 	memcpy(&f1,&myConfig[0], 4);
 }
+void PhyphoxBLE::read(float& f1, float& f2)
+{
+	uint16_t configSize = 8;
+	uint8_t myConfig[8];
+	ble.gattServer().read(configCharacteristic.getValueHandle(), myConfig, &configSize);
+	memcpy(&f1,&myConfig[0],4);
+	memcpy(&f2,&myConfig[0]+4,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2, float& f3)
+{
+	uint16_t configSize = 12;
+	uint8_t myConfig[12];
+	ble.gattServer().read(configCharacteristic.getValueHandle(), myConfig, &configSize);
+	memcpy(&f1,&myConfig[0],4);
+	memcpy(&f2,&myConfig[0]+4,4);
+	memcpy(&f3,&myConfig[0]+8,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2, float& f3, float& f4)
+{
+	uint16_t configSize = 16;
+	uint8_t myConfig[16];
+	ble.gattServer().read(configCharacteristic.getValueHandle(), myConfig, &configSize);
+	memcpy(&f1,&myConfig[0],4);
+	memcpy(&f2,&myConfig[0]+4,4);
+	memcpy(&f3,&myConfig[0]+8,4);
+	memcpy(&f4,&myConfig[0]+12,4);
+}
+void PhyphoxBLE::read(float& f1, float& f2, float& f3, float& f4, float& f5)
+{
+	uint16_t configSize = 20;
+	uint8_t myConfig[20];
+	ble.gattServer().read(configCharacteristic.getValueHandle(), myConfig, &configSize);
+	memcpy(&f1,&myConfig[0],4);
+	memcpy(&f2,&myConfig[0]+4,4);
+	memcpy(&f3,&myConfig[0]+8,4);
+	memcpy(&f4,&myConfig[0]+12,4);
+	memcpy(&f5,&myConfig[0]+16,4);
+}
+
 void PhyphoxBLE::read(uint8_t *arrayPointer, unsigned int arraySize)
 {
 	uint16_t myArraySize = arraySize;
@@ -378,28 +453,18 @@ void PhyphoxBLE::read(uint8_t *arrayPointer, unsigned int arraySize)
 
 void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
 {
-  char buffer[2000] ="";
-  uint16_t length = 0;
-
-	exp.getFirstBytes(buffer, deviceName);
-	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-  length += strlen(buffer);
-  memset(&(buffer[0]), NULL, strlen(buffer));
-
-  for(uint8_t i=0;i<phyphoxBleNViews; i++){
-    for(int j=0; j<phyphoxBleNElements; j++){
-      exp.getViewBytes(buffer,i,j);
-	    memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-      length += strlen(buffer);
-      memset(&(buffer[0]), NULL, strlen(buffer));
-    }
-  }
-
-  exp.getLastBytes(buffer);
-	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
-  length += strlen(buffer);
-	p_exp = &EXPARRAY[0];
-	expLen = length;
+	for (int i = 0; i < 4096; i++){
+		PhyphoxBLE::EXPARRAY[i]=0;
+	}
+	exp.getFirstBytes(EXPARRAY, deviceName);
+	for(uint8_t i=0;i<phyphoxBleNViews; i++){
+		for(int j=0; j<phyphoxBleNElements; j++){
+			exp.getViewBytes(EXPARRAY,i,j);
+		}
+	}
+	exp.getLastBytes(EXPARRAY);
+	p_exp =  (uint8_t*)&EXPARRAY[0];
+	expLen = strlen(EXPARRAY);
 }
 
 

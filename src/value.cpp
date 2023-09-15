@@ -1,56 +1,70 @@
 #include "phyphoxBleExperiment.h"
+#include "copyToMem.h"
 
 void PhyphoxBleExperiment::Value::setColor(const char *c)
 {
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkHex(c, "setColor") : ERROR;
-	memset(&COLOR[0], 0, sizeof(COLOR));
-	strcat(COLOR, " color=\"");
-	strcat(COLOR, c);
-	strcat(COLOR, "\"");
+	ERROR = ERROR.MESSAGE == NULL ? err_checkHex(c, "setColor") : ERROR;
+	copyToMem(&COLOR, (std::string(c)).c_str());
 } 
 
 void PhyphoxBleExperiment::Value::setPrecision(int p)
 {
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkUpper(p, 999, "setPrecision") : ERROR;
-	sprintf(PRECISION, " precision=\"%d\"", p);
+	ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(p, 999, "setPrecision") : ERROR;
+	char tmp[20];
+	sprintf(tmp,"%i", p);
+	copyToMem(&PRECISION, tmp);
 }
 
 void PhyphoxBleExperiment::Value::setUnit(const char* u)
 {
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(u, 12, "setUnit") : ERROR;
-	memset(&UNIT[0], 0, sizeof(UNIT));
-	strcat(UNIT, " unit=\"");
-	strcat(UNIT, u);
-	strcat(UNIT, "\"");
+	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(u, 12, "setUnit") : ERROR;
+	copyToMem(&UNIT, (std::string(u)).c_str());
 }
 
 void PhyphoxBleExperiment::Value::setChannel(int c)
 {
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkUpper(c, numberOfChannels, "setChannel") : ERROR;
-	sprintf(INPUTVALUE, "CH%i", c);
+	ERROR = ERROR.MESSAGE == NULL ? err_checkUpper(c, numberOfChannels, "setChannel") : ERROR;
+	char tmp[20];
+	sprintf(tmp, "CH%i", c);
+	copyToMem(&INPUTVALUE, tmp);
 }
 
 void PhyphoxBleExperiment::Value::setXMLAttribute(const char *xml){
-	ERROR = (strcmp(ERROR.MESSAGE, "")==0) ? err_checkLength(xml, 98, "setXMLAttribute") : ERROR;
-	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
-	strcat(XMLAttribute, " ");
-	strcat(XMLAttribute, xml);
+	ERROR = ERROR.MESSAGE == NULL ? err_checkLength(xml, 98, "setXMLAttribute") : ERROR;
+	copyToMem(&XMLAttribute, (" " + std::string(xml)).c_str());
 }
 
 void PhyphoxBleExperiment::Value::getBytes(char *buffArray)
 {
 
 	strcat(buffArray,"\t\t<value");
-	strcat(buffArray, LABEL);
-    strcat(buffArray, PRECISION);
-    strcat(buffArray, UNIT);
+	if (LABEL)  {
+		strcat(buffArray," label=\"");
+		strcat(buffArray,LABEL);
+		strcat(buffArray,"\"");
+	}else{
+		strcat(buffArray," label=\"myLabel\"");
+	}		
+	if(PRECISION){
+		strcat(buffArray," precision=\"");
+		strcat(buffArray,PRECISION);
+		strcat(buffArray,"\"");		
+	}
+	if(UNIT){
+		strcat(buffArray," unit=\"");
+		strcat(buffArray,UNIT);
+		strcat(buffArray,"\"");
+	}
     strcat(buffArray," facor=\"1\"");
-    strcat(buffArray, COLOR);
-	strcat(buffArray, XMLAttribute);
+	if(COLOR){
+		strcat(buffArray," color=\"");
+		strcat(buffArray,COLOR);
+		strcat(buffArray,"\"");
+	}
+	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
 	strcat(buffArray,">\n");
 
     strcat(buffArray, "\t\t\t<input>");
-	strcat(buffArray, INPUTVALUE);
-	strcat(buffArray, "</input>\n\t\t</value>\n");
-	
+	if (!INPUTVALUE)  {strcat(buffArray,"CH3");} else {strcat(buffArray,INPUTVALUE);}
+	strcat(buffArray, "</input>\n\t\t</value>\n");	
 }

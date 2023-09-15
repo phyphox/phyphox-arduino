@@ -1,4 +1,5 @@
 #include "phyphoxBleExperiment.h"
+#include "copyToMem.h"
 
 void PhyphoxBleExperiment::ExportSet::addElement(Element& e)
 {
@@ -12,24 +13,19 @@ void PhyphoxBleExperiment::ExportSet::addElement(Element& e)
 }
 
 void PhyphoxBleExperiment::ExportSet::setLabel(const char *l){
-	memset(&LABEL[0], 0, sizeof(LABEL));
-	strcat(LABEL, " name=\"");
-	strcat(LABEL, l);
-	strcat(LABEL, "\"");
+	copyToMem(&LABEL, (" name=\"" + std::string(l) + "\"").c_str());
 }
 
 void PhyphoxBleExperiment::ExportSet::setXMLAttribute(const char *xml){
-	memset(&XMLAttribute[0], 0, sizeof(XMLAttribute));
-	strcat(XMLAttribute, " ");
-	strcat(XMLAttribute, xml);
+	copyToMem(&XMLAttribute, (" " + std::string(xml)).c_str());
 }
 
 void PhyphoxBleExperiment::ExportSet::getBytes(char *buffArray)
 {
 	
 	strcat(buffArray, "\t<set");
-	strcat(buffArray, LABEL);
-	strcat(buffArray, XMLAttribute);
+	if (!LABEL)  {strcat(buffArray," label=\"label\"");} else {strcat(buffArray,LABEL);}
+	if (XMLAttribute) {strcat(buffArray,XMLAttribute);}
 	strcat(buffArray,">\n");
 
 	//loop over elements
