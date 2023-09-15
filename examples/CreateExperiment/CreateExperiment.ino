@@ -9,7 +9,7 @@ void setup()
   PhyphoxBleExperiment plotRandomValues;   //generate experiment on Arduino which plot random values
 
 
-  plotRandomValues.setTitle("Random Number Plotter");
+  plotRandomValues.setTitle("Create Experiment");
   plotRandomValues.setCategory("Arduino Experiments");
   plotRandomValues.setDescription("Random numbers are generated on Arduino and visualized with phyphox afterwards");
 
