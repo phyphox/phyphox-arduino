@@ -70,6 +70,7 @@ Here are some useful methods to create your own experiment:
 | Experiment | setDescription(char*)    | Sets a description for the experiment                             |
 | Experiment | addView(View&)           | Adds a view to the corresponding experiment                       |
 | Experiment | addExportSet(ExportSet&) | Adds an exportSet to the corresponding experiment                 |
+| Experiment | addSensor(Sensor&)       | Data from smarpthone sensor can will be received (see getSensorDataFromSmartphone example)|
 | View       | addElement(Element&)     | Adds an element to the corresponding view                         |
 | View       | setLabel(char*)          | Sets a label for the view                                         |
 | Graph      | setLabel(char*)          | Sets a label for the graph                                        |
@@ -77,13 +78,14 @@ Here are some useful methods to create your own experiment:
 | Graph      | setLabelX(char*)         | Sets a label for x (similar with y)                               |
 | Graph      | setXPrecision(int)       | Sets the amount of digits after the decimal point (similar with y)|
 | Graph      | setChannel(int, int)     | As explained above (1-5)                                          |
-| Graph      | addChannel(int, int, String)| Adds channel for multiple graphs in one co-system. 3rd parameter is used for the color|
-| Graph      | setStyle(char*)          | Sets the style. For more possibilities check the wiki             |
+| Graph      | addSubgraph(Subgraph)    | Adds an additional subgraph (see example "multigraph")            |
+| Graph      | setStyle(char*)          | Sets the style (use defines: STYLE_LINES, STYLE_DOTS).            |
 | Graph      | setColor(char*)          | Sets the line color of the graph (use a 6 digit hexadecimal code) |
 | Graph      | setMinX(int, const char *)| Sets the min x value of the co-system and a layout (auto, extend and fixed) |
 | Graph      | setMaxX(int, const char *)| Sets the max x value of the co-system and a layout (auto, extend and fixed) |
 | Graph      | setMinY(int, const char *)| Sets the min y value of the co-system and a layout (auto, extend and fixed) |
 | Graph      | setMaxY(int, const char *)| Sets the max y value of the co-system and a layout (auto, extend and fixed) |
+| Graph      | setLineWidth(float)      | Sets the line width                                               |
 | Separator  | setHeight(float)         | Creates a line to separate parts of the experiment                |
 | Separator  | setColor(char*)          | Sets the color of the line (use a 6 digit hexadecimal code)       |
 | Info       | setInfo(char*)           | Sets the infotext                                                 |
