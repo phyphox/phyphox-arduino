@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "copyToMem.h"
 #include "defines.h"
+#include <string>
 
 class PhyphoxBleExperiment {
 
