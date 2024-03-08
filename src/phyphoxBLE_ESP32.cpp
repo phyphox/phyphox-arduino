@@ -1,4 +1,4 @@
-#ifdef ESP32
+#if defined(ESP32) && !defined(ARDUINO_SENSEBOX_MCU_ESP32S2)
 #include "phyphoxBLE_ESP32.h"
 #include "Arduino.h"
 #include <stdio.h>
@@ -99,8 +99,8 @@ class MyCharCallback: public BLECharacteristicCallbacks {
     PhyphoxBLE* myServerPointer;
     void onWrite(BLECharacteristic *pCharacteristic) {
                  PhyphoxBLE::configHandlerDebug();
-      
-    }      
+
+    }
 };
 
 class MyServerCallbacks: public BLEServerCallbacks {
@@ -118,7 +118,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
 void PhyphoxBLE::configHandlerDebug(){
   if(configHandler!=nullptr){
     (*configHandler)();
-  }  
+  }
 }
 
 void PhyphoxBLE::eventCharacteristicHandler(){
@@ -132,14 +132,14 @@ void PhyphoxBLE::eventCharacteristicHandler(){
   PhyphoxBLE::experimentTime = swap_int64(et);
   if(experimentEventHandler!=nullptr){
     (*experimentEventHandler)();
-  }  
+  }
 }
 
 void PhyphoxBLE::setMTU(uint16_t mtuSize) {
     BLEDevice::setMTU(mtuSize+3); //user mtu size + 3 for overhead
-    
+
     PhyphoxBLE::MTU = mtuSize;
-    PhyphoxBleExperiment::MTU = mtuSize;  
+    PhyphoxBleExperiment::MTU = mtuSize;
 }
 
 void PhyphoxBLE::start(const char* DEVICE_NAME, uint8_t* exp_pointer, size_t len){
@@ -169,18 +169,18 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
           PhyphoxBleExperiment::View firstView;
 
           //Graph
-          PhyphoxBleExperiment::Graph firstGraph;      //Create graph which will plot random numbers over time     
-          firstGraph.setChannel(0,1);    
+          PhyphoxBleExperiment::Graph firstGraph;      //Create graph which will plot random numbers over time
+          firstGraph.setChannel(0,1);
 
           //Value
           PhyphoxBleExperiment::Value valueField;
           valueField.setChannel(1);
 
           firstView.addElement(firstGraph);
-          firstView.addElement(valueField);    
+          firstView.addElement(valueField);
           defaultExperiment.addView(firstView);
-          
-          addExperiment(defaultExperiment);  
+
+          addExperiment(defaultExperiment);
     }
 
 	BLEDevice::init(DEVICE_NAME);
@@ -192,12 +192,12 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
           phyphoxBleExperimentCharacteristicUUID,
           BLECharacteristic::PROPERTY_READ   |
            BLECharacteristic::PROPERTY_WRITE |
-           BLECharacteristic::PROPERTY_NOTIFY 
-      );  
+           BLECharacteristic::PROPERTY_NOTIFY
+      );
   eventCharacteristic = phyphoxExperimentService->createCharacteristic(
           phyphoxBleEventCharacteristicUUID,
           BLECharacteristic::PROPERTY_WRITE
-      );      
+      );
 
   phyphoxDataService = myServer->createService(phyphoxBleDataServiceUUID);
 
@@ -205,7 +205,7 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
 	     phyphoxBleDataCharacteristicUUID,
 	     BLECharacteristic::PROPERTY_READ |
 	     BLECharacteristic::PROPERTY_WRITE |
-	     BLECharacteristic::PROPERTY_NOTIFY 
+	     BLECharacteristic::PROPERTY_NOTIFY
 
 	   );
 
@@ -213,7 +213,7 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
           phyphoxBleConfigCharacteristicUUID,
           BLECharacteristic::PROPERTY_READ   |
            BLECharacteristic::PROPERTY_WRITE |
-           BLECharacteristic::PROPERTY_NOTIFY 
+           BLECharacteristic::PROPERTY_NOTIFY
       );
 
   myExperimentDescriptor = new BLE2902();
@@ -226,12 +226,12 @@ void PhyphoxBLE::start(const char * DEVICE_NAME)
   myDataDescriptor->setCallbacks(new MyDataCallback());
   eventCharacteristic->setCallbacks(new MyEventCallback());
   configCharacteristic->setCallbacks(new MyCharCallback());
-  
+
   dataCharacteristic->addDescriptor(myDataDescriptor);
   experimentCharacteristic->addDescriptor(myExperimentDescriptor);
   eventCharacteristic->addDescriptor(myEventDescriptor);
   configCharacteristic->addDescriptor(myConfigDescriptor);
-  
+
 
   phyphoxExperimentService->start();
   phyphoxDataService->start();
@@ -255,7 +255,7 @@ void PhyphoxBLE::poll(int timeout) {
 void PhyphoxBLE::staticStartTask(void* _this){
 	PhyphoxBLE::when_subscription_received();
   delay(1);
-}	
+}
 
 void PhyphoxBLE::startTask()
 {
@@ -267,8 +267,8 @@ void PhyphoxBLE::write(float& value)
 {
   /**
    * \brief Write a single float into characteristic
-     * The float is parsed to uint8_t* 
-     * because the gattServer write method 
+     * The float is parsed to uint8_t*
+     * because the gattServer write method
      * expects a pointer to uint8_t
      * \param f1 represent a float most likeley sensor data
     */
@@ -380,17 +380,17 @@ void PhyphoxBLE::when_subscription_received()
     experimentSizeArray[0]=  (arrayLength >> 24);
     experimentSizeArray[1]=  (arrayLength >> 16);
     experimentSizeArray[2]=  (arrayLength >> 8);
-    experimentSizeArray[3]=  arrayLength; 
+    experimentSizeArray[3]=  arrayLength;
 
     uint8_t checksumArray[4] = {0};
     checksumArray[0]= (checksum >> 24) & 0xFF;
-    checksumArray[1]= (checksum >> 16) & 0xFF;  
+    checksumArray[1]= (checksum >> 16) & 0xFF;
     checksumArray[2]= (checksum >> 8) & 0xFF;
-    checksumArray[3]= checksum & 0xFF; 
+    checksumArray[3]= checksum & 0xFF;
 
     copy(phyphox, phyphox+7, header);
     copy(experimentSizeArray, experimentSizeArray+ 4, header + 7);
-    copy(checksumArray, checksumArray +  4, header +11); 
+    copy(checksumArray, checksumArray +  4, header +11);
     experimentCharacteristic->setValue(header,sizeof(header));
     experimentCharacteristic->notify();
 
@@ -398,22 +398,22 @@ void PhyphoxBLE::when_subscription_received()
         copy(exp+i*20, exp+i*20+20, header);
         experimentCharacteristic->setValue(header,sizeof(header));
         experimentCharacteristic->notify();
-		    delay(10);// mh does not work anymore with 1ms delay?!   
+		    delay(10);// mh does not work anymore with 1ms delay?!
 	}
-  
+
 	if(exp_len%20 != 0){
 		const size_t rest = exp_len%20;
 		uint8_t slice[rest];
 		copy(exp + exp_len - rest, exp + exp_len, slice);
 		experimentCharacteristic->setValue(slice,sizeof(slice));
-		experimentCharacteristic->notify();        
+		experimentCharacteristic->notify();
 		delay(1);
 	}
- 
+
 
 	myAdvertising->start();
-  
-  
+
+
 	vTaskDelete( NULL );
 
 }
@@ -423,7 +423,7 @@ void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
   {
     storage[i]=0;
   }
-  
+
   exp.getFirstBytes(EXPARRAY, deviceName);
 	for(uint8_t i=0;i<phyphoxBleNViews; i++){
 		for(int j=0; j<phyphoxBleNElements; j++){
@@ -450,8 +450,8 @@ void PhyphoxBLE::begin(HardwareSerial* hwPrint)
   #ifdef DEBUG
 	printer = hwPrint;
   if(printer)
-	   printer->begin(115200);       
-  #endif  
+	   printer->begin(115200);
+  #endif
 }
 
 void PhyphoxBLE::printXML(HardwareSerial* printer){

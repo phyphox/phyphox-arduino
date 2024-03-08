@@ -1,14 +1,21 @@
-#if defined(ARDUINO_SAMD_MKR1000)
+#if defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SENSEBOX_MCU_ESP32S2)
 #include "NINAB31serial.h"
+
+#if defined(ARDUINO_SAMD_MKR1000)
+  #define SerialBLE Serial3
+#elif defined(ARDUINO_SENSEBOX_MCU_ESP32S2)
+  #define SerialBLE Serial1
+#endif
+
 
 String NINAB31Serial::m_input="";
 bool NINAB31Serial::connected=false;
 
 bool NINAB31Serial::configModule(){
-    Serial3.print("AT+UMRS=115200,2,8,1,1\r"); //115200, no flow control, 8 data bits, 1 stop bit, no parity
-    Serial3.print("AT&W0\r"); //write configuration to nonvolatile memory
-    Serial3.print("AT+CPWROFF\r"); //restart module into new configuration
-    Serial3.flush();
+    SerialBLE.print("AT+UMRS=115200,2,8,1,1\r"); //115200, no flow control, 8 data bits, 1 stop bit, no parity
+    SerialBLE.print("AT&W0\r"); //write configuration to nonvolatile memory
+    SerialBLE.print("AT+CPWROFF\r"); //restart module into new configuration
+    SerialBLE.flush();
     delay(2000); //wait for module to come up
     /*digitalWrite(22,HIGH); //hardware power cycle - avoid if possible
     delay(500);
@@ -19,9 +26,9 @@ bool NINAB31Serial::configModule(){
 }
 
 bool NINAB31Serial::begin(){
-    Serial3.begin(115200);
+    SerialBLE.begin(115200);
     delay(500);
-    checkResponse("AT",500); //throwaway command in case buffer gets reinitialized because Serial3.begin was already called
+    checkResponse("AT",500); //throwaway command in case buffer gets reinitialized because SerialBLE.begin was already called
     for(int i=0;i<3;i++){ //try to send a command, in case it fails configure device and restart it
         if(checkResponse("ATE0",500)){
             return true;
@@ -85,17 +92,17 @@ bool NINAB31Serial::writeValue(int characteristic, uint8_t* value, int len){
 
 
 int NINAB31Serial::parseResponse(String cmd, uint32_t timeout){
-  while(Serial3.available()){
-    (Serial3.read());
+  while(SerialBLE.available()){
+    (SerialBLE.read());
   }
-  Serial3.print(cmd);
-  Serial3.write('\r');
-  Serial3.flush();
+  SerialBLE.print(cmd);
+  SerialBLE.write('\r');
+  SerialBLE.flush();
   String input="";
   auto starttime=millis();
   while(millis()-starttime<timeout || timeout==0){
-    if(Serial3.available()){
-      input+=(char)(Serial3.read());
+    if(SerialBLE.available()){
+      input+=(char)(SerialBLE.read());
       if(input.endsWith("ERROR\r")){
         //Serial.println(String("error with command ")+cmd);
         return -1;
@@ -118,15 +125,15 @@ int NINAB31Serial::parseResponse(String cmd, uint32_t timeout){
 }
 
 bool NINAB31Serial::checkResponse(String msg, uint32_t timeout){
-  while(Serial3.available())Serial3.read(); //flush input buffer    
-  Serial3.print(msg);
-  Serial3.write('\r');
-  Serial3.flush();
+  while(SerialBLE.available())SerialBLE.read(); //flush input buffer
+  SerialBLE.print(msg);
+  SerialBLE.write('\r');
+  SerialBLE.flush();
   String input="";
   auto starttime=millis();
   while(millis()-starttime<timeout || timeout==0){
-    if(Serial3.available()){
-      input+=(char)(Serial3.read());
+    if(SerialBLE.available()){
+      input+=(char)(SerialBLE.read());
       if(input.endsWith("ERROR\r")){
         return false;
       }
@@ -136,7 +143,7 @@ bool NINAB31Serial::checkResponse(String msg, uint32_t timeout){
     }
   }
   return false;
-    
+
 }
 
 bool NINAB31Serial::checkUnsolicited(){
@@ -153,8 +160,8 @@ bool NINAB31Serial::checkUnsolicited(){
 }
 
 bool NINAB31Serial::poll(){
-    if(Serial3.available()){
-      m_input+=(char)(Serial3.read());
+    if(SerialBLE.available()){
+      m_input+=(char)(SerialBLE.read());
       if(m_input.endsWith("\r")){
         if(checkUnsolicited()){
             flushInput();
@@ -177,12 +184,12 @@ String NINAB31Serial::checkCharWritten(int handle){
                 return m_input.substring(seccommapos+1,thirdcommapos);
             }
         }
-        
+
     }else{
         //Serial.println(m_input);
     }
     return "";
-    
+
 }
 
 void NINAB31Serial::flushInput(){
