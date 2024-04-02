@@ -1,9 +1,9 @@
-#if defined(ARDUINO_SAMD_MKR1000)
+#if defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SENSEBOX_MCU_ESP32S2)
 
 #include "phyphoxBle.h"
 #include "NINAB31serial.h"
 #include "Arduino.h"
-#include <stdio.h> 
+#include <stdio.h>
 /*
 BLEService PhyphoxBLE::phyphoxExperimentService{phyphoxBleExperimentServiceUUID}; // create service
 BLECharacteristic PhyphoxBLE::experimentCharacteristic{phyphoxBleExperimentCharacteristicUUID, BLERead | BLEWrite| BLENotify, 20, false};
@@ -60,44 +60,44 @@ void PhyphoxBLE::start(const char* DEVICE_NAME)
 {
     port.begin();
     port.stopAdvertise();
-    
+
     port.checkResponse("AT+UBTAD=020A0605121800280011074A5153BA405E438B7146F7300100DFCD",1000);
     h_phyphoxExperimentService=port.parseResponse("AT+UBTGSER=CDDF000130F746718B435E40BA53514A",1000);
     h_controlCharacteristic=port.parseResponse("AT+UBTGCHA=CDDF000330F746718B435E40BA53514A,1a,1,1",1000);
     h_experimentCharacteristic=port.parseResponse("AT+UBTGCHA=CDDF000230F746718B435E40BA53514A,1a,1,1",1000);
-    
+
     h_phyphoxDataService=port.parseResponse("AT+UBTGSER=CDDF100130F746718B435E40BA53514A",1000);
     h_dataCharacteristic=port.parseResponse("AT+UBTGCHA=CDDF100230F746718B435E40BA53514A,1a,1,1",1000);
     h_configCharacteristic=port.parseResponse("AT+UBTGCHA=CDDF100330F746718B435E40BA53514A,1a,1,1",1000);
-    
-    
+
+
 
 	if(p_exp == nullptr){
-  
+
       PhyphoxBleExperiment defaultExperiment;
 
       //View
       PhyphoxBleExperiment::View firstView;
 
       //Graph
-      PhyphoxBleExperiment::Graph firstGraph;      //Create graph which will plot random numbers over time     
-      firstGraph.setChannel(0,1);    
+      PhyphoxBleExperiment::Graph firstGraph;      //Create graph which will plot random numbers over time
+      firstGraph.setChannel(0,1);
 
-      firstView.addElement(firstGraph);       
+      firstView.addElement(firstGraph);
       defaultExperiment.addView(firstView);
-      
-     addExperiment(defaultExperiment);  
+
+     addExperiment(defaultExperiment);
   }
-  
-  
-  
-  
+
+
+
+
   // set connection parameter
   port.setConnectionInterval(minConInterval, maxConInterval);
   port.checkResponse("AT+UBTAD=020A0605121800280011074A5153BA405E438B7146F7300100DFCD",1000);
   port.advertise();
   port.setLocalName(DEVICE_NAME);
-  
+
 }
 
 void PhyphoxBLE::start() {
@@ -146,7 +146,7 @@ void PhyphoxBLE::addExperiment(PhyphoxBleExperiment& exp)
     }
   }
   exp.getLastBytes(buffer);
-  
+
 	memcpy(&EXPARRAY[length],&buffer[0],strlen(buffer));
   length += strlen(buffer);
 	p_exp = &EXPARRAY[0];
@@ -233,7 +233,7 @@ void PhyphoxBLE::poll(){
         }
         port.flushInput();
     }
-    
+
 }
 
 void PhyphoxBLE::controlCharacteristicWritten() {
@@ -245,9 +245,9 @@ void PhyphoxBLE::controlCharacteristicWritten() {
   } else {
     //experiment transfered
     exploaded=true;
-    
+
   }
-  
+
 }
 
 void PhyphoxBLE::transferExperiment(){
@@ -267,19 +267,19 @@ void PhyphoxBLE::transferExperiment(){
   experimentSizeArray[0]=  (arrayLength >> 24);
   experimentSizeArray[1]=  (arrayLength >> 16);
   experimentSizeArray[2]=  (arrayLength >> 8);
-  experimentSizeArray[3]=  arrayLength; 
+  experimentSizeArray[3]=  arrayLength;
 
   uint8_t checksumArray[4] = {0};
   checksumArray[0]= (checksum >> 24) & 0xFF;
-  checksumArray[1]= (checksum >> 16) & 0xFF;  
+  checksumArray[1]= (checksum >> 16) & 0xFF;
   checksumArray[2]= (checksum >> 8) & 0xFF;
-  checksumArray[3]= checksum & 0xFF; 
+  checksumArray[3]= checksum & 0xFF;
 
   memcpy(&header[0],&phyphox[0],7);
   memcpy(&header[0]+7,&experimentSizeArray[0],4);
   memcpy(&header[0]+7+4,&checksumArray[0],4);
   port.writeValue(h_experimentCharacteristic,header,sizeof(header));
-  
+
   for(size_t i = 0; i < exp_len/20; ++i){
     memcpy(&header[0],&exp[0]+i*20,20);
     port.writeValue(h_experimentCharacteristic,header,sizeof(header));
@@ -293,7 +293,7 @@ if(exp_len%20 != 0){
   port.writeValue(h_experimentCharacteristic,slice,sizeof(slice));
 }
   exploaded=true;
-    
+
   port.advertise();
 }
 
