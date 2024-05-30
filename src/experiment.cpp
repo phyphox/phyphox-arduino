@@ -154,7 +154,7 @@ void PhyphoxBleExperiment::getFirstBytes(char *buffArray, const char *DEVICENAME
 	strcat(buffArray, DEVICENAME);
 	
 	if(MTU!=20){
-		char add[0];
+		char add[10];
 		sprintf(add, "\" mtu=\"%i", MTU);
 		strcat(buffArray, add);
 	}

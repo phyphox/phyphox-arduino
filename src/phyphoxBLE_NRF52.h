@@ -1,6 +1,8 @@
 #ifndef PHYPHOXBLE_NRF52_H
 #define PHYPHOXBLE_NRF52_H
-#define NDEBUG
+#if !defined(NDEBUG) && defined(ARDUINO_ARCH_MBED)
+	#define NDEBUG
+#endif
 
 #include <phyphoxBle.h>
 #include <mbed.h>
