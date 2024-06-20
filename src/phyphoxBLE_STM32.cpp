@@ -97,9 +97,9 @@ uint16_t PhyphoxBLE::timeout = 50;
 uint16_t PhyphoxBLE::MTU = 20;
 uint16_t PhyphoxBleExperiment::MTU = 20;
 
-int64_t PhyphoxBLE::experimentTime = NULL;
-int64_t PhyphoxBLE::systemTime = NULL;
-uint8_t PhyphoxBLE::eventType = NULL;
+int64_t PhyphoxBLE::experimentTime = 0;
+int64_t PhyphoxBLE::systemTime = 0;
+uint8_t PhyphoxBLE::eventType = 0;
 
 uint8_t* PhyphoxBLE::data = nullptr; //this pointer points to the data the user wants to write in the characteristic
 uint8_t* PhyphoxBLE::p_exp = nullptr; //this pointer will point to the byte array which holds an experiment
