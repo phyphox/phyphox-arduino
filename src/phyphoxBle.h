@@ -56,6 +56,8 @@ static const char *deviceName = "phyphox-Arduino";
 #elif defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_UNOR4_WIFI)
     #include <ArduinoBLE.h>
     #include "phyphoxBLE_NanoIOT.h"
+#elif defined(ARDUINO_ARCH_STM32)
+    #include "phyphoxBLE_STM32.h"
 #else
 #error "Unsupported board selected!"
 #endif

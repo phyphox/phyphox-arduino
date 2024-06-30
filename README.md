@@ -10,10 +10,14 @@ The purpose of this library is to use the phyphox app (see www.phyphox.org) to p
 - Arduino Uno R4 Wifi (see note below)
 - senseBox MCU with NINA-B31 module
 - ESP 32
+- STM32 (e.g. STM32WB55)
 
 Note: The Arduino Nano 33 IoT and the Arduino uno R4 are somewhat unusual. You will need to install the ArduinoBLE library to use it and you will need to call "PhyphoxBLE::poll()" periodically for it to work.
 
 Note: When using the NINA-B31 module you must call PhyphoxBLE::poll() periodically (in loop() ) or the library will not work.
+        The same applies to STM32
+
+Note: to use STM32 BLE, you need the STM32duinoBLE library, and (at least for the STM32WBx5) the appropriate BLE stack (see Copro binaries)
 
 ## Concept of phyphox
 
@@ -29,6 +33,7 @@ Alternatively, you can download this repository here as a zip file from github a
 
 You will may also need to install an BLE library specific to your board:
 - ArduinoBLE for the Arduino Nano 33 IoT
+- STM32duinoBLE for an STM32
 
 ## Usage
 
