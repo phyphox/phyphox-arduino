@@ -259,7 +259,7 @@ void PhyphoxBLE::staticStartTask(void* _this){
 
 void PhyphoxBLE::startTask()
 {
-	xTaskCreatePinnedToCore(staticStartTask, "TaskTransfer",10000, NULL,1, &TaskTransfer, 1);
+	xTaskCreatePinnedToCore(staticStartTask, "TaskTransfer",10000, NULL,1, &TaskTransfer, tskNO_AFFINITY);
   delay(1);
 }
 
