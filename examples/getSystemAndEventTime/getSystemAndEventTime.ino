@@ -20,7 +20,7 @@ void newExperimentEvent(){
   Serial.println("New experiment event received:");
   Serial.print("Event type: ");
   Serial.print(PhyphoxBLE::eventType);
-  Serial.println(" (0 = Paused, 1 = Started, 255 = SYNC)");
+  Serial.println(" (0 = Paused, 1 = Started, 2 = Clear, 255 = SYNC)");
   Serial.print("Experiment time [ms]: ");
   Serial.println(PhyphoxBLE::experimentTime);
   Serial.print("Unix system time [ms]: ");
