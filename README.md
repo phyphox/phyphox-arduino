@@ -103,10 +103,25 @@ Here are some useful methods to create your own experiment:
 | Value      | setColor(char*)          | Sets the font color (use a 6 digit hexadecimal code)              |
 | Value      | setChannel(int)          | As explained above, just with one parameter (1-5)                 |
 | Edit       | setLabel(char*)          | Sets label for the editfield                                      |
+| Edit       | setDefault(float)        | Sets the default value (initial value) for the editfield          |
 | Edit       | setUnit(char*)           | Sets unit                                                         |
 | Edit       | setSigned(bool)          | true = signed values allowed                                      |
 | Edit       | setDecimal(bool)         | true = decimal values allowed                                     |
 | Edit       | setChannel(int)          | As explained above, just with one parameter (1-5)                 |
+| Toggle     | setLabel(char*)          | Sets label for the toggle                                         |
+| Toggle     | setDefault(float)        | Sets the default value (initial value) for the editfield (0 = off, 1 = on) |
+| Toggle     | setChannel(int)          | As explained above, just with one parameter (1-5)        
+| Slider     | setLabel(char*)          | Sets label for the slider                                         |
+| Slider     | setDefault(float)        | Sets the default value (initial value) for the slider             |
+| Slider     | setMinValue(float)       | Sets the lower limit for the slider                               |
+| Slider     | setMaxValue(float)       | Sets the upper limit for the slider                               |
+| Slider     | setStepSize(float)       | Sets the step size for the slider                                 |
+| Slider     | setPrecision(int)        | Sets precision of the current value of the slider                 |
+| Slider     | setShowValue(bool)       | Show or hide the current value next to the slider                 |
+| Slider     | setChannel(int)          | As explained above, just with one parameter (1-5)                 |
+| Dropdown   | setLabel(char*)          | Sets label for the dropdown                                       |
+| Dropdown   | setOptions(int, char **, float*) | Sets the options and values of the dropdown element. See example getDataFromSmartphone.ino for usage. |
+| Dropdown   | setChannel(int)          | As explained above, just with one parameter (1-5)                 |
 | ExportSet  | setLabel(char*)          | Sets a label for the exportSet (Used to export to Excel, etc.)    |
 | ExportData | setLabel(char*)          | Sets a label for the exportData                                   |
 | ExportData | setDatachannel(int)      | Defines which channel should be exported for this dataset (1-5)   |
