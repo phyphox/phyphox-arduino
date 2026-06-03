@@ -320,6 +320,82 @@ class PhyphoxBleExperiment {
 	private:
 	};
 
+	class Toggle : public Element
+	{
+	public:
+		Toggle(){};
+		Toggle(const Toggle &) = delete;
+		Toggle &operator=(const Toggle &) = delete;
+		~Toggle() = default;
+
+		void setDefault(float v);
+		void setXMLAttribute(const char *);
+		void setChannel(int);
+		void getBytes(char *);
+
+		char* DEFAULT = NULL;
+		char* XMLAttribute = NULL;
+		char* BUFFER = NULL;
+	
+	private:
+	};
+
+	class Slider : public Element
+	{
+	public:
+		Slider(){};
+		Slider(const Slider &) = delete;
+		Slider &operator=(const Slider &) = delete;
+		~Slider() = default;
+
+		void setDefault(float v);
+		void setMinValue(float v);
+		void setMaxValue(float v);
+		void setStepSize(float v);
+		void setPrecision(int n);
+		void setShowValue(bool b);
+		void setXMLAttribute(const char *);
+		void setChannel(int);
+		void getBytes(char *);
+
+		char* DEFAULT = NULL;
+		char* MINV = NULL;
+		char* MAXV = NULL;
+		char* STEPSIZE = NULL;
+		char* PRECISION = NULL;
+		char* SHOWVALUE = NULL;
+		char* XMLAttribute = NULL;
+		char* BUFFER = NULL;
+	
+	private:
+	};
+
+    class Dropdown : public Element
+	{
+	public:
+		Dropdown(){};
+		Dropdown(const Dropdown &) = delete;
+		Dropdown &operator=(const Dropdown &) = delete;
+		~Dropdown() = default;
+
+		void setDefault(float v);
+		void setOptions(int n, const char * const labels[], const float * values);
+		void setXMLAttribute(const char *);
+		void setChannel(int);
+		void getBytes(char *);
+
+		char* DEFAULT = NULL;
+		int N_OPTIONS = 0;
+		char** LABELS = NULL;
+		char** VALUES = NULL;
+		char* PRECISION = NULL;
+		char* SHOWVALUE = NULL;
+		char* XMLAttribute = NULL;
+		char* BUFFER = NULL;
+	
+	private:
+	};
+
 	void setTitle(const char *);
 	void setCategory(const char *);
 	void setDescription(const char *);
