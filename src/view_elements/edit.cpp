@@ -1,6 +1,13 @@
 #include "phyphoxBleExperiment.h"
 #include "copyToMem.h"
 
+void PhyphoxBleExperiment::Edit::setDefault(float v)
+{
+    char tmp[20];
+	sprintf(tmp, "%f", v);
+	copyToMem(&DEFAULT, tmp);
+}
+
 void PhyphoxBleExperiment::Edit::setUnit(const char *u)
 {
     ERROR = ERROR.MESSAGE == NULL ? err_checkLength(u, 12, "setUnit") : ERROR;
@@ -40,6 +47,11 @@ void PhyphoxBleExperiment::Edit::getBytes(char *buffArray)
         strcat(buffArray,"\"");
     } else {
         strcat(buffArray," label=\"label\"");
+    }
+    if(DEFAULT){
+        strcat(buffArray," default=\"");
+        strcat(buffArray,DEFAULT);
+        strcat(buffArray,"\"");
     }
     if(SIGNED){
         strcat(buffArray," signed=\"");

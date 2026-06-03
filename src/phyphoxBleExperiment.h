@@ -302,6 +302,7 @@ class PhyphoxBleExperiment {
 		Edit &operator=(const Edit &) = delete;
 		~Edit() = default;
 
+		void setDefault(float v);
 		void setUnit(const char *);
 		void setSigned(bool);
 		void setDecimal(bool);
@@ -309,6 +310,7 @@ class PhyphoxBleExperiment {
 		void setChannel(int);
 		void getBytes(char *);
 
+		char* DEFAULT = NULL;
 		char* UNIT = NULL;
 		char* SIGNED = NULL;
 		char* DECIMAL = NULL;
