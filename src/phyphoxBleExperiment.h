@@ -310,7 +310,7 @@ class PhyphoxBleExperiment {
 		void setChannel(int);
 		void getBytes(char *);
 
-		char* DEFAULT = NULL;
+		char* DEFAULT_VALUE = NULL;
 		char* UNIT = NULL;
 		char* SIGNED = NULL;
 		char* DECIMAL = NULL;
@@ -333,7 +333,7 @@ class PhyphoxBleExperiment {
 		void setChannel(int);
 		void getBytes(char *);
 
-		char* DEFAULT = NULL;
+		char* DEFAULT_VALUE = NULL;
 		char* XMLAttribute = NULL;
 		char* BUFFER = NULL;
 	
@@ -358,7 +358,7 @@ class PhyphoxBleExperiment {
 		void setChannel(int);
 		void getBytes(char *);
 
-		char* DEFAULT = NULL;
+		char* DEFAULT_VALUE = NULL;
 		char* MINV = NULL;
 		char* MAXV = NULL;
 		char* STEPSIZE = NULL;
@@ -384,7 +384,7 @@ class PhyphoxBleExperiment {
 		void setChannel(int);
 		void getBytes(char *);
 
-		char* DEFAULT = NULL;
+		char* DEFAULT_VALUE = NULL;
 		int N_OPTIONS = 0;
 		char** LABELS = NULL;
 		char** VALUES = NULL;

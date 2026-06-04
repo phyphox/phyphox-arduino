@@ -5,7 +5,7 @@ void PhyphoxBleExperiment::Edit::setDefault(float v)
 {
     char tmp[20];
 	sprintf(tmp, "%f", v);
-	copyToMem(&DEFAULT, tmp);
+	copyToMem(&DEFAULT_VALUE, tmp);
 }
 
 void PhyphoxBleExperiment::Edit::setUnit(const char *u)
@@ -48,9 +48,9 @@ void PhyphoxBleExperiment::Edit::getBytes(char *buffArray)
     } else {
         strcat(buffArray," label=\"label\"");
     }
-    if(DEFAULT){
+    if(DEFAULT_VALUE){
         strcat(buffArray," default=\"");
-        strcat(buffArray,DEFAULT);
+        strcat(buffArray,DEFAULT_VALUE);
         strcat(buffArray,"\"");
     }
     if(SIGNED){

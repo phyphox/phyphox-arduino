@@ -4,7 +4,7 @@
 void PhyphoxBleExperiment::Toggle::setDefault(float v) {
     char tmp[20];
 	sprintf(tmp, "%f", v);
-	copyToMem(&DEFAULT, tmp);
+	copyToMem(&DEFAULT_VALUE, tmp);
 }
 
 void PhyphoxBleExperiment::Toggle::setXMLAttribute(const char *xml) {
@@ -28,9 +28,9 @@ void PhyphoxBleExperiment::Toggle::getBytes(char *buffArray) {
     } else {
         strcat(buffArray," label=\"label\"");
     }
-    if (DEFAULT) {
+    if (DEFAULT_VALUE) {
         strcat(buffArray," default=\"");
-        strcat(buffArray,DEFAULT);
+        strcat(buffArray,DEFAULT_VALUE);
         strcat(buffArray,"\"");
     }
     if (XMLAttribute) {

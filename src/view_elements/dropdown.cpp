@@ -4,7 +4,7 @@
 void PhyphoxBleExperiment::Dropdown::setDefault(float v) {
     char tmp[20];
 	sprintf(tmp, "%f", v);
-	copyToMem(&DEFAULT, tmp);
+	copyToMem(&DEFAULT_VALUE, tmp);
 }
 
 void PhyphoxBleExperiment::Dropdown::setOptions(int n, const char * const labels[], const float * values) {
@@ -41,9 +41,9 @@ void PhyphoxBleExperiment::Dropdown::getBytes(char *buffArray) {
     } else {
         strcat(buffArray, " label=\"label\"");
     }
-    if (DEFAULT) {
+    if (DEFAULT_VALUE) {
         strcat(buffArray, " default=\"");
-        strcat(buffArray, DEFAULT);
+        strcat(buffArray, DEFAULT_VALUE);
         strcat(buffArray, "\"");
     }
     if (XMLAttribute) {
