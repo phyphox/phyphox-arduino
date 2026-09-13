@@ -26,6 +26,7 @@ public:
     void requestMtu(uint16_t payload) override;
     void requestConnectionParameters(uint16_t, uint16_t, uint16_t, uint16_t) override;
     void poll() override {}
+    bool drivesTransfer() const override { return true; }
     void restartAdvertising() override;
     const char* name() const override { return "ESP32"; }
     static Esp32CoreBleTransport& instance();

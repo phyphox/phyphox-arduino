@@ -83,6 +83,7 @@ public:
     void onSubscribe(CharId id, bool enabled) override;
     void onWrite(CharId id, const uint8_t* data, uint16_t len) override;
     void onNotifyStatus(CharId id, bool accepted) override;
+    void pump() override { pumpTransfer(); }
 
 private:
     Transport& transport_;

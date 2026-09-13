@@ -76,7 +76,7 @@ bool Server::start() {
 
 void Server::poll() {
     transport_.poll();
-    pumpTransfer();
+    if (!transport_.drivesTransfer()) pumpTransfer();
 }
 
 // ---------------------------------------------------------------- data to the phone
@@ -118,7 +118,7 @@ void Server::startTransfer() {
     if (payload > packetCap_) payload = packetCap_;
     transfer_.begin(customXml_ ? (const ByteSource&)customSource_ : (const ByteSource&)serializerSource_, payload);
     stats_.transfers++;
-    pumpTransfer();
+    // no packet is sent here: the trigger arrives inside a stack callback; pump() sends
 }
 
 void Server::pumpTransfer() {

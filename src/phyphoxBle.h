@@ -47,30 +47,16 @@
 #define COLOR_MAGENTA "eb46f4"
 
 // ---------------------------------------------------------------- transport selection
-// One transport per BLE library. Boards not listed can force one with
-// -DPHYPHOX_BLE_TRANSPORT_ARDUINOBLE (any board ArduinoBLE supports).
-#if defined(PHYPHOX_BLE_TRANSPORT_ARDUINOBLE)
-  #include <ArduinoBLE.h>
-  #include "transport/ArduinoBleTransport.h"
-  #define PHYPHOX_BLE_TRANSPORT phyphox::ArduinoBleTransport
-#elif defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SENSEBOX_MCU_ESP32S2)
-  #include "transport/NinaB31Transport.h"
-  #define PHYPHOX_BLE_TRANSPORT phyphox::NinaB31Transport
-#elif defined(ESP32)
+#include "transport/Select.h"
+#if defined(PHYPHOX_BLE_USE_ESP32)
   #include "transport/Esp32CoreBleTransport.h"
   #define PHYPHOX_BLE_TRANSPORT phyphox::Esp32CoreBleTransport
-#elif defined(ARDUINO_ARCH_STM32)
-  #include <STM32duinoBLE.h>
+#elif defined(PHYPHOX_BLE_USE_NINAB31)
+  #include "transport/NinaB31Transport.h"
+  #define PHYPHOX_BLE_TRANSPORT phyphox::NinaB31Transport
+#elif defined(PHYPHOX_BLE_USE_ARDUINOBLE)
   #include "transport/ArduinoBleTransport.h"
   #define PHYPHOX_BLE_TRANSPORT phyphox::ArduinoBleTransport
-#elif defined(ARDUINO_ARCH_MBED) || defined(ARDUINO_ARCH_SAMD) || defined(ARDUINO_ARCH_RENESAS_UNO) || \
-      defined(ARDUINO_ARCH_MBED_NANO) || defined(ARDUINO_ARCH_MBED_PORTENTA) || defined(ARDUINO_ARCH_MBED_GIGA) || \
-      defined(ARDUINO_ARCH_MBED_NICLA) || defined(ARDUINO_ARCH_MEGAAVR)
-  #include <ArduinoBLE.h>
-  #include "transport/ArduinoBleTransport.h"
-  #define PHYPHOX_BLE_TRANSPORT phyphox::ArduinoBleTransport
-#else
-  #error "phyphox BLE: unsupported board. See docs/getting-started.md; boards ArduinoBLE supports can define PHYPHOX_BLE_TRANSPORT_ARDUINOBLE."
 #endif
 
 // ---------------------------------------------------------------- the simple API

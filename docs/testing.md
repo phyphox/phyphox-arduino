@@ -8,7 +8,11 @@ cmake -S tests/host -B tests/host/build && cmake --build tests/host/build -j
 tests/host/build/phyphox_tests            # the core unit tests (doctest)
 tests/conformance/run.py                  # generated documents vs. the phyphox file-format spec
 tools/check_surface.py                    # api/surface.yml vs. the spec
+arduino-cli compile --fqbn esp32:esp32:esp32 --library . examples/randomNumbers   # one row of the compile matrix
 ```
+
+`.github/workflows/compile.yml` compiles every example for nine boards with a size report per
+pull request (arduino/compile-sketches).
 
 The conformance step needs `phyphox-docs` checked out beside this repository and `lxml`; it
 uses that repository's own validators (RELAX NG, Schematron, `validate_experiments.py`), with

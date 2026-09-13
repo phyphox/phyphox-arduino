@@ -31,8 +31,9 @@ of them):
    the transfer; a second trigger during a transfer is ignored.
 2. The board sends one header packet: `phyphox` (7 ASCII bytes), the document size as a
    big-endian `uint32`, its CRC-32 as a big-endian `uint32`.
-3. Then the document, in notifications of MTU − 3 bytes (20 by default), back to back as fast
-   as the local Bluetooth stack accepts them. A packet the stack refuses is re-sent after a few
+3. Then the document, in notifications of MTU − 3 bytes (20 by default; on the ArduinoBLE
+   boards always 20, because that library does not expose the negotiated MTU), back to back as
+   fast as the local Bluetooth stack accepts them. A packet the stack refuses is re-sent after a few
    milliseconds; after 50 consecutive refusals the transfer is abandoned. There is no fixed
    delay between packets.
 4. A disconnect aborts the transfer; the app then offers to retry.

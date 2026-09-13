@@ -21,7 +21,7 @@ rows:
       (tools/check_surface.py, active now).
   - id: compile-matrix
     tier: T0
-    status: planned
+    status: active
     summary: >-
       arduino/compile-sketches over examples/* × every Tier-1/2 FQBN, with flash/RAM size
       report per PR. ESP32 rows use the default partition on purpose.

@@ -46,9 +46,13 @@ public:
     virtual void onSubscribe(CharId id, bool enabled) = 0;
     /// The central wrote `len` bytes to `id`.
     virtual void onWrite(CharId id, const uint8_t* data, uint16_t len) = 0;
-    /// Asynchronous verdict on the last notify() for stacks that report it later (ESP32
-    /// onStatus). Transports whose notify() is synchronous never call this.
+    /// Asynchronous verdict on the last notify() for stacks that report it later. Transports
+    /// whose notify() is synchronous never call this.
     virtual void onNotifyStatus(CharId id, bool accepted) = 0;
+    /// Drive the transfer: send what is due. Called by the core from poll(), or by a transport
+    /// that runs the transfer in its own task (ESP32, see drivesTransfer()). Never called from
+    /// inside a stack callback.
+    virtual void pump() = 0;
 };
 
 class Transport {
@@ -81,6 +85,10 @@ public:
     /// Give the stack CPU time. Called from PhyphoxBLE::poll(); a no-op where the stack runs
     /// on its own (ESP32).
     virtual void poll() = 0;
+    /// True if the transport calls listener.pump() from a task of its own, so the core must not
+    /// also pump from poll() (ESP32: the sketch's loop() may be slow, and a transfer must not
+    /// run inside a stack callback).
+    virtual bool drivesTransfer() const { return false; }
     virtual void restartAdvertising() = 0;
     virtual const char* name() const = 0;   ///< "ArduinoBLE", "ESP32", "NINA-B31" — for printXML/debug
 };

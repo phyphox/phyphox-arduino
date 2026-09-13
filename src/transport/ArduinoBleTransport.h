@@ -17,6 +17,7 @@ public:
     void setValue(CharId id, const uint8_t* data, uint16_t len) override;
     bool connected() const override;
     uint16_t mtuPayload() const override;
+    void requestMtu(uint16_t payload) override;
     void requestConnectionParameters(uint16_t, uint16_t, uint16_t, uint16_t) override;
     void poll() override;
     void restartAdvertising() override;

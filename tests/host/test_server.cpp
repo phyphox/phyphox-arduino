@@ -47,9 +47,9 @@ TEST_CASE("Asynchronous verdicts (the ESP32 path)") {
     FakeTransport t; t.async = true; Server s(t); s.setDeviceName("d"); s.setClock(clockFn); s.start();
     StringSink full; s.printXml(full);
     t.subscribeExperiment();
-    // one packet is out; the core waits for the status callback
-    size_t sent = t.experimentPackets.size();
-    CHECK(sent == 1);
+    CHECK(t.experimentPackets.size() == 0);              // nothing is sent inside the trigger callback
+    s.poll();                                            // one packet is out; the core waits for the status callback
+    CHECK(t.experimentPackets.size() == 1);
     s.poll(); CHECK(t.experimentPackets.size() == 1);
     int guard = 0;
     while (s.transfer().active() && guard++ < 5000) {
