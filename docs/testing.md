@@ -48,7 +48,13 @@ tools/bench/examples.py --fqbn esp32:esp32:esp32 --port /dev/ttyUSB0 --label esp
 
 Flashes every shipped example as it is and lets both real apps load and start it, checking
 what the example is about: the board's data arriving in the app, or the board's own serial
-output for the examples that only receive. Run it per board before a release.
+output for the examples that only receive. Run it per board before a release. Every other
+board on the desk must be off the air — an example flashed earlier keeps advertising its name,
+and the phone connects to whichever `phyphox-Arduino` it sees first — so the sweep flashes a
+do-nothing sketch to the board under test and to every board named in `--silence PORT=FQBN`,
+then scans and refuses to start while an example's name is still in the air. `--capture DIR`
+keeps each document exactly as the Android phone received it (the way the phyphox-docs corpus
+freezes library-generated XML).
 
 ### Transfer robustness
 

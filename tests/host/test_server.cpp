@@ -34,6 +34,18 @@ TEST_CASE("Both triggers start the transfer, a second one is ignored, disconnect
     CHECK(!s.transfer().active());
 }
 
+TEST_CASE("A sketch that only writes still serves the transfer (write services the stack)") {
+    FakeTransport t; Server s(t); s.setDeviceName("d"); s.setClock(clockFn); s.start();
+    float v = 1;
+    s.writeFloats(&v, 1);                                // the lazy start happens here
+    t.subscribeExperiment();
+    fakeNow += PHYPHOX_BLE_TRANSFER_START_DELAY_MS + 1;
+    for (int i = 0; i < 200 && s.transfer().active(); ++i) { fakeNow += 1; s.writeFloats(&v, 1); }   // never poll()
+    CHECK(s.stats().transfersCompleted == 1);
+    StringSink full; s.printXml(full);
+    CHECK(t.received() == full.out);
+}
+
 TEST_CASE("A stalled transfer is abandoned and the next trigger starts fresh") {
     FakeTransport t; Server s(t); s.setDeviceName("d"); s.setClock(clockFn); s.start(); s.poll();
     t.refuseNext = 1000000;                              // the stack refuses everything

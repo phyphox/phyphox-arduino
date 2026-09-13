@@ -49,6 +49,15 @@ One notification carries five floats (20 bytes). For more data per second use a 
 unpacks several samples per notification. iOS always negotiates the largest MTU; Android honours
 the request.
 
+## Polling
+
+`PhyphoxBLE::poll()` gives the Bluetooth stack CPU time on the boards that need it (every
+ArduinoBLE and NINA-B31 board) and drives the transfer there; on the ESP32 the stack runs in
+its own tasks and `poll()` is a no-op. `PhyphoxBLE::write()` services the stack as well, so a
+sketch that writes regularly and never polls still answers the phone — the 1.x ESP32 examples
+were written that way — but the callbacks of input elements and buttons then run from inside
+`write()`. Call `poll()` once per `loop()` and none of this matters.
+
 ## The transfer
 
 The experiment document is sent in packets on the phyphox experiment characteristic as soon as

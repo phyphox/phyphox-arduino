@@ -24,6 +24,8 @@ void loop() {
   PhyphoxBLE::write(value);            // channel 1
   delay(50);
   PhyphoxBLE::poll();                  // required on every board; a no-op where not needed
+                                       // (write() services the stack too, so a sketch that
+                                       // only writes keeps working — but call poll())
 }
 ```
 

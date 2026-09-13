@@ -114,8 +114,17 @@ void Server::poll() {
 
 // ---------------------------------------------------------------- data to the phone
 
+/// A write also services the stack and the transfer (what poll() does), so a sketch that
+/// only writes — the 1.x ESP32 examples had no poll() — still answers the phone on the
+/// transports that need polling. Callbacks may therefore run from inside write() as well.
+void Server::serviceFromWrite() {
+    transport_.poll();
+    if (!transport_.drivesTransfer()) pumpTransfer();
+}
+
 bool Server::writeFloats(const float* values, uint8_t count) {
     if (!ensureStarted()) return false;
+    serviceFromWrite();
     uint8_t buf[PHYPHOX_BLE_DATA_CHANNELS * 4] = {0};
     if (count > PHYPHOX_BLE_DATA_CHANNELS) count = PHYPHOX_BLE_DATA_CHANNELS;
     memcpy(buf, values, count * 4);      // float32 little-endian on every supported board
@@ -127,6 +136,7 @@ bool Server::writeFloats(const float* values, uint8_t count) {
 
 bool Server::writeBytes(const uint8_t* bytes, uint16_t len) {
     if (!ensureStarted()) return false;
+    serviceFromWrite();
     if (len > mtu_) len = mtu_;
     stats_.dataNotifications++;
     bool ok = transport_.notify(CharId{CH_DATA, 0}, bytes, len);

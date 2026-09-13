@@ -129,6 +129,7 @@ private:
     bool ensurePacket(uint16_t payload);
     void startTransfer();
     void pumpTransfer();
+    void serviceFromWrite();
     void deliverInput(uint8_t channel, const uint8_t* data, uint16_t len);
     void deliverSensor(uint8_t sensor, const uint8_t* data, uint16_t len);
     void deliverLegacyConfig(const uint8_t* data, uint16_t len);

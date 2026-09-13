@@ -12,7 +12,10 @@ import argparse, json, os, socket, sys, time
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from bench import SerialLog, Report, ROOT, WORKROOT, flash as flash_sketch, wait_port   # noqa: E402
-from phones import Android, IOS, api_json, control, since               # noqa: E402
+from phones import Android, IOS, api_json, control, since, sh, ANDROID_PACKAGE   # noqa: E402
+import asyncio
+from bleak import BleakScanner
+CAPTURE_DIR = None; CAPTURE_TAG = ""
 import subprocess
 
 # example -> (advertised name, expectation)
@@ -47,6 +50,17 @@ def run_example(example, name, expect, phones, port, rep):
             try:
                 if not phone.connect(name, rep, timeout=120):
                     continue
+                if CAPTURE_DIR and p == "android":
+                    # the document exactly as the phone received it (Android keeps the transfer
+                    # at files/temp_bt/bt.phyphox; the debug build lets run-as read it) — the
+                    # way the phyphox-docs corpus freezes library-generated XML
+                    r = sh(phone.adb + ["shell", "run-as", ANDROID_PACKAGE, "cat", "files/temp_bt/bt.phyphox"], timeout=30)
+                    body = (r.stdout or "") if r.returncode == 0 else ""
+                    ok = body.startswith("<phyphox")
+                    if ok:
+                        os.makedirs(CAPTURE_DIR, exist_ok=True)
+                        open(os.path.join(CAPTURE_DIR, f"{example}-{CAPTURE_TAG}.phyphox"), "w").write(body)
+                    rep.check(f"{tag}: received document captured", ok, f"{len(body)} bytes")
                 time.sleep(4)
                 started = False
                 for _ in range(30):                 # iOS can take >15 s to reconnect for the experiment
@@ -79,12 +93,25 @@ def run_example(example, name, expect, phones, port, rep):
     finally:
         log.close()
 
+def names_in_the_air(names, seconds=6):
+    """Which of `names` some device is advertising right now. Every board on the desk has just
+    been flashed quiet, so a hit is a foreign device — and the phone would connect to it."""
+    async def scan():
+        found = await BleakScanner.discover(timeout=seconds)
+        return sorted({d.name for d in found if d.name in names})
+    return asyncio.run(scan())
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--fqbn", required=True); ap.add_argument("--port", required=True); ap.add_argument("--label", required=True)
     ap.add_argument("--android"); ap.add_argument("--ios"); ap.add_argument("--only")
     ap.add_argument("--android-port", type=int, default=8091); ap.add_argument("--ios-port", type=int, default=8081)
+    ap.add_argument("--capture", metavar="DIR", help="save the document as the Android phone received it, <example>-<label>.phyphox")
+    ap.add_argument("--silence", action="append", default=[], metavar="PORT=FQBN",
+                    help="another board on the desk: flash it quiet first, so it does not advertise an example's name")
     args = ap.parse_args()
+    global CAPTURE_DIR, CAPTURE_TAG
+    CAPTURE_DIR, CAPTURE_TAG = args.capture, args.label
     lock = os.path.join(WORKROOT, ".bench-lock-" + socket.gethostname())
     if os.path.exists(lock): sys.exit(f"bench in use: {open(lock).read().strip()}")
     open(lock, "w").write(f"phyphox-arduino examples {args.label} pid {os.getpid()} since {time.strftime('%Y-%m-%d %H:%M')}\n")
@@ -94,6 +121,20 @@ def main():
         if args.android: phones.append(Android(args.android, args.android_port))
         if args.ios: phones.append(IOS(args.ios, args.ios_port))
         names = [e.strip() for e in args.only.split(",")] if args.only else list(EXAMPLES)
+        # Nobody else may advertise an example's name: the board under test and every board
+        # named in --silence go quiet, then a scan must find none of the names in the air.
+        for spec in args.silence:
+            sport, sfqbn = spec.split("=", 1)
+            print(f"== silencing {sport} ({sfqbn})")
+            flash_sketch(sfqbn, sport, "", sketch="quiet")
+        print(f"== silencing the board under test ({args.port})")
+        flash_sketch(args.fqbn, args.port, "", sketch="quiet")
+        time.sleep(3)
+        advertised = {EXAMPLES[e][0] for e in names}
+        foreign = names_in_the_air(advertised)
+        rep.check("no other device advertises an example's name", not foreign, ", ".join(foreign))
+        if foreign:
+            sys.exit(f"another device advertises {foreign}: silence it (--silence PORT=FQBN, or unplug it)")
         for example in names:
             name, expect = EXAMPLES[example]
             extra = "-DLED_BUILTIN=2" if (args.fqbn.startswith("esp32:esp32:esp32") and example == "getDataFromSmartphone") else ""

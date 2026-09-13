@@ -1,7 +1,15 @@
 #include <phyphoxBle.h>
 
-int ADC_GPIO = 25;    // ESP32
-//int ADC_GPIO = A0;  // Arduino Nano 33 BLE
+// The pin to measure and the ADC's full scale. Pin 25 is an ADC input on the ESP32 only:
+// on the Nano 33 IoT it is one of the pins that talk to the Bluetooth module, and reading
+// it as an analogue input silences the radio (found on the bench, 2026-09-13).
+#if defined(ESP32)
+int ADC_GPIO = 25;
+const float ADC_MAX = 4095;   // 12 bit
+#else
+int ADC_GPIO = A0;
+const float ADC_MAX = 1023;   // 10 bit by default on the Arduino boards
+#endif
 
 void setup() {
 
@@ -47,7 +55,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  float voltage = 3.3 * analogRead(ADC_GPIO)/4095;
+  float voltage = 3.3 * analogRead(ADC_GPIO) / ADC_MAX;
   delay(1);
   
   PhyphoxBLE::write(voltage);
@@ -56,4 +64,5 @@ void loop() {
   Serial.println(voltage);
 
   delay(20);
+  PhyphoxBLE::poll();                          //Required on the boards with ArduinoBLE; harmless elsewhere
 }
