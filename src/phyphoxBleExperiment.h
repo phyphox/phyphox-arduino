@@ -293,6 +293,14 @@ public:
         void setType(const char*);                ///< a SENSOR_* constant (phyphox file-format name)
         void setAverage(bool);
         void setRate(int hz);
+        /// How the phone reconciles the requested rate with what its sensor offers:
+        /// "auto", "request", "generate" or "limit" (format 1.14).
+        void setRateStrategy(const char*);
+        void setStride(int n);                    ///< use only every n-th reading (1.14)
+        /// Select a sensor by name (the app's device info lists them) — needed for
+        /// SENSOR_CUSTOM, useful when a phone has several sensors of one type (1.19, Android).
+        void setNameFilter(const char*);
+        void setTypeFilter(int androidSensorType);   ///< select by Android sensor type constant (1.19)
         /// Deliver component ("x", "y", "z", "abs", "accuracy", "t") into input channel `ch`.
         void mapChannel(const char* component, int ch);
         void setComponent(const char*);           ///< 1.x: like mapChannel(component, next free)

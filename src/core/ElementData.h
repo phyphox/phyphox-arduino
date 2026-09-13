@@ -193,6 +193,10 @@ struct SensorData {
     const char* xmlAttribute = nullptr;
     uint16_t rate = 0;           ///< 0 = not set (1.x emitted 80 by default; 2.0 emits nothing = fastest)
     bool average = false, averageSet = false;
+    const char* rateStrategy = nullptr;  ///< auto | request | generate | limit (format 1.14)
+    uint16_t stride = 0;         ///< use every n-th reading; 0 = not set
+    const char* nameFilter = nullptr;    ///< for type "custom" or to pick one of several sensors (1.19)
+    int32_t typeFilter = -1;     ///< Android sensor type constant; −1 = not set (1.19)
     SensorComponent components[PHYPHOX_BLE_SENSOR_COMPONENTS];
     uint8_t channels[PHYPHOX_BLE_SENSOR_COMPONENTS];  ///< input channel each component lands in
     uint8_t componentCount = 0;

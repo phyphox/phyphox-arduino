@@ -200,10 +200,14 @@ elements:
     setters:
       setType:
         attribute: type
-        values: [accelerometer, linear_acceleration, gravity, gyroscope, magnetic_field, pressure, light, proximity, temperature, humidity, attitude]
+        values: [accelerometer, linear_acceleration, gravity, gyroscope, magnetic_field, pressure, light, proximity, temperature, humidity, attitude, custom]
         check: subset
       setRate: { attribute: rate, type: float }
       setAverage: { attribute: average, type: boolean }
+      setRateStrategy: { attribute: rateStrategy, values: [auto, request, generate, limit], check: subset }
+      setStride: { attribute: stride, type: integer }
+      setNameFilter: { attribute: nameFilter }
+      setTypeFilter: { attribute: typeFilter, type: integer }
       mapChannel: { child: output, attribute: component, values: [x, y, z, abs, accuracy, t], check: subset }
       setXMLAttribute: { attribute: "*" }
 

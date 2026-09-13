@@ -30,6 +30,9 @@
 #define SENSOR_TEMPERATURE "temperature"
 #define SENSOR_HUMIDITY "humidity"
 #define SENSOR_ATTITUDE "attitude"
+/// A sensor phyphox does not name: select it with Sensor::setNameFilter() / setTypeFilter()
+/// (Android; the app's device info lists the names). Format 1.19.
+#define SENSOR_CUSTOM "custom"
 /// 1.x spelled the magnetometer "magnetometer", which is not a phyphox sensor name, so that
 /// sensor never worked. Deprecated alias: emits the correct name; removed in 2.1.
 #define SENSOR_MAGNETOMETER SENSOR_MAGNETIC_FIELD
