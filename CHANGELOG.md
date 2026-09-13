@@ -39,7 +39,7 @@ with reasons is in [docs/whats-new-2.0.md](docs/whats-new-2.0.md), the migration
   Bluedroid stack discarded after accepting them. Retries are paced by the stack, no fixed
   delays; a stalled transfer is abandoned after 3 s and the next request starts afresh.
 - Separator colour, line width and value factor take effect (1.x emitted them under
-  misspelled attribute names); labels containing `&`, `<` or `"` load.
+  misspelled attribute names); labels containing an ampersand, a less-than sign or a quotation mark load.
 - Connection-parameter requests use values iOS accepts.
 - No 16 KB XML buffer, no per-string heap allocation, no fixed limits on views, elements,
   sensors or export sets: the description is copied once into a block of exactly its size and

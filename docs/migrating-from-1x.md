@@ -28,7 +28,7 @@ not a phyphox sensor, so that sensor never delivered data. The old macro still c
   Nano 33 BLE it used to be the graph alone.
 - **Bugs that now take effect:** separator colour, line width and value factor were emitted
   under misspelled attribute names and silently ignored by the app; labels containing `&`,
-  `<` or `"` broke the document. Both are fixed, so a project that set them sees them now.
+  a less-than sign or a quotation mark broke the document. Both are fixed, so a project that set them sees them now.
 - The ArduinoBLE-based boards also start the transfer on subscription, not only on the control
   write. Invisible from the app.
 

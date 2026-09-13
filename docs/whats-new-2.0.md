@@ -27,7 +27,7 @@ anything you have always wanted the library to do.
   not temporaries. No published sketch we know of does otherwise.
 - Small visible differences: the default experiment (no `addExperiment`) is graph plus value
   on every board; separator colour, line width and value factor now take effect (1.x emitted
-  them under misspelled names); labels containing `&`, `<` or `"` now load.
+  them under misspelled names); labels containing an ampersand, a less-than sign or a quotation mark now load.
 
 ## What you gain
 

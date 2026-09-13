@@ -21,8 +21,12 @@ jobs:
       - name: Generate the reference
         run: |
           doxygen -v
-          doxygen Doxyfile 2> doxygen-warnings.txt
-          cat doxygen-warnings.txt
+          mkdir -p build/doxygen        # Doxygen creates only the last path component itself
+          status=0
+          doxygen Doxyfile > doxygen-output.txt 2> doxygen-warnings.txt || status=$?
+          echo "--- doxygen output"; cat doxygen-output.txt
+          echo "--- doxygen warnings"; cat doxygen-warnings.txt
+          test "$status" = 0
           test ! -s doxygen-warnings.txt   # a warning is a documentation bug
           test -f build/doxygen/html/index.html
       - uses: actions/upload-pages-artifact@v3

@@ -1,9 +1,12 @@
 # Doxygen configuration for the generated API reference (published to GitHub Pages by CI).
-# Generate locally with: doxygen  → build/doxygen/html/index.html
+# Generate locally with: mkdir -p build/doxygen && doxygen  → build/doxygen/html/index.html
+# (Doxygen creates only the last component of OUTPUT_DIRECTORY itself.)
 PROJECT_NAME           = "phyphox BLE"
 PROJECT_BRIEF          = "Plot your Arduino's data in the phyphox app and control the board from the phone"
 OUTPUT_DIRECTORY       = build/doxygen
-INPUT                  = src/phyphoxBle.h src/phyphoxBleExperiment.h src/core src/transport docs/README.md
+# The prose pages are included too, so the links between them resolve and the published
+# reference carries the whole documentation, not only the headers.
+INPUT                  = src/phyphoxBle.h src/phyphoxBleExperiment.h src/core src/transport docs README.md CHANGELOG.md
 FILE_PATTERNS          = *.h *.md
 USE_MDFILE_AS_MAINPAGE = docs/README.md
 RECURSIVE              = YES
