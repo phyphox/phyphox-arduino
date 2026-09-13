@@ -37,7 +37,9 @@ TEST_CASE("Input channels produce containers, outputs and the change detector") 
     CHECK(x.find("<container size=\"1\" init=\"100\">last1</container>") != std::string::npos);
     CHECK(x.find("<container size=\"1\">send1</container>") != std::string::npos);
     CHECK(x.find("conversion=\"float32LittleEndian\" keep=\"false\">send1</input>") != std::string::npos);
-    CHECK(x.find("<input as=\"a\">in1</input>") != std::string::npos);
+    CHECK(x.find("<input as=\"a\" keep=\"true\">in1</input>") != std::string::npos);
+    CHECK(x.find("<input as=\"in\" keep=\"true\">in1</input>") != std::string::npos);
+    CHECK(x.find("<input as=\"b\" keep=\"true\">last1</input>") != std::string::npos);
     CHECK(x.find("<output as=\"result\">send1</output>") != std::string::npos);
     CHECK(x.find("<output as=\"out\">last1</output>") != std::string::npos);
     // channel 4: the button — no detector, keep=false on in4, a trigger because channel 5 submits with it

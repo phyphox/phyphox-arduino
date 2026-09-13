@@ -58,43 +58,43 @@
 </output>
 <analysis sleep="0">
 	<if less="true" greater="true">
-		<input as="a">in1</input>
-		<input as="b">last1</input>
-		<input as="true">in1</input>
+		<input as="a" keep="true">in1</input>
+		<input as="b" keep="true">last1</input>
+		<input as="true" keep="true">in1</input>
 		<output as="result">send1</output>
 	</if>
 	<append>
-		<input as="in">in1</input>
+		<input as="in" keep="true">in1</input>
 		<output as="out">last1</output>
 	</append>
 	<if less="true" greater="true">
-		<input as="a">in2</input>
-		<input as="b">last2</input>
-		<input as="true">in2</input>
+		<input as="a" keep="true">in2</input>
+		<input as="b" keep="true">last2</input>
+		<input as="true" keep="true">in2</input>
 		<output as="result">send2</output>
 	</if>
 	<append>
-		<input as="in">in2</input>
+		<input as="in" keep="true">in2</input>
 		<output as="out">last2</output>
 	</append>
 	<if less="true" greater="true">
-		<input as="a">in3</input>
-		<input as="b">last3</input>
-		<input as="true">in3</input>
+		<input as="a" keep="true">in3</input>
+		<input as="b" keep="true">last3</input>
+		<input as="true" keep="true">in3</input>
 		<output as="result">send3</output>
 	</if>
 	<append>
-		<input as="in">in3</input>
+		<input as="in" keep="true">in3</input>
 		<output as="out">last3</output>
 	</append>
 	<if less="true" greater="true">
-		<input as="a">in4</input>
-		<input as="b">last4</input>
-		<input as="true">in4</input>
+		<input as="a" keep="true">in4</input>
+		<input as="b" keep="true">last4</input>
+		<input as="true" keep="true">in4</input>
 		<output as="result">send4</output>
 	</if>
 	<append>
-		<input as="in">in4</input>
+		<input as="in" keep="true">in4</input>
 		<output as="out">last4</output>
 	</append>
 </analysis>

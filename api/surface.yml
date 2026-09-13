@@ -27,8 +27,10 @@ document:
     - { element: output/bluetooth, attributes: [name, id] }
     - { element: output/bluetooth/input, attributes: [char, conversion, offset, keep, triggerId], note: "one per input channel (keep=false unless setResendUnchanged) and per sensor component; triggerId from Edit::submitWith" }
     - { element: analysis, attributes: [sleep], note: "sleep=0 as in 1.x (no onUserInput); holds the change detector" }
-    - { element: analysis/if, attributes: [less, greater], note: "per input channel: a=in{k} b=last{k} true=in{k} -> send{k}" }
-    - { element: analysis/append, note: "per input channel: in{k} -> last{k}" }
+    - { element: analysis/if, attributes: [less, greater], note: "per input channel: a=in{k} b=last{k} true=in{k} -> send{k}; every input keep=true (the format's default keep=false empties the container after reading)" }
+    - { element: analysis/if/input, attributes: [as, keep] }
+    - { element: analysis/append, note: "per input channel: in{k} -> last{k}, input keep=true" }
+    - { element: analysis/append/input, attributes: [as, keep] }
     - { element: export/set, attributes: [name] }
     - { element: export/set/data, attributes: [name] }
 

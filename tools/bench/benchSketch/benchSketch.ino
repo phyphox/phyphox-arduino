@@ -66,8 +66,15 @@ void setup() {
 
 static float counter = 0;
 static unsigned long lastWrite = 0;
+static uint16_t lastConnections = 0;
+static bool lastSubscribed = false;
 
 void loop() {
+  if (PhyphoxBLE::currentConnections != lastConnections || PhyphoxBLE::isSubscribed != lastSubscribed) {
+    lastConnections = PhyphoxBLE::currentConnections; lastSubscribed = PhyphoxBLE::isSubscribed;
+    Serial.print("LINK connections="); Serial.print(lastConnections);
+    Serial.print(" subscribed="); Serial.println(lastSubscribed ? 1 : 0);
+  }
   if (Serial.available()) {
     char c = (char)Serial.read();
     if (c == 'x') { Serial.println("XML-BEGIN"); PhyphoxBLE::printXML(&Serial); Serial.println("XML-END"); }

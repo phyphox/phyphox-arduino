@@ -46,6 +46,14 @@ def load_spec(docs):
                 el["attributes"] = []
             names = {a.get("name") for a in el["attributes"]}
             el["attributes"] += [a for a in common if a.get("name") not in names]
+    # analysis modules: their <input>/<output> children carry the block's common attributes
+    # (spec/analysis.yml `common`), not per-module elements — synthesise them.
+    analysis = yaml.safe_load(open(os.path.join(docs, "spec", "analysis.yml")))
+    common = analysis.get("common") or {}
+    for path, el in list(elements.items()):
+        if "/analysis/" in path and path.count("/") == 2 and "analysis.yml" not in path:
+            elements[path + "/input"] = {"name": "input", "since": el.get("since"), "attributes": list(common.get("input_attributes") or [])}
+            elements[path + "/output"] = {"name": "output", "since": el.get("since"), "attributes": list(common.get("output_attributes") or [])}
     # slot children: an element with `outputs: {attribute, components}` (the sensor) models its
     # <output component=…> children as slots, not as a separate element — synthesise one.
     for path, el in list(elements.items()):

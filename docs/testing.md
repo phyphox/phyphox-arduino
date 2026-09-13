@@ -21,6 +21,27 @@ tools/bench/bench.py --fqbn esp32:esp32:esp32 --port /dev/ttyUSB0 --label esp32 
 tools/bench/bench.py --fqbn arduino:samd:nano_33_iot --port /dev/ttyACM0 --label nano33iot --name bench_nano33iot
 ```
 
+## The phones (T2)
+
+```
+tools/bench/phones.py --board-port /dev/ttyUSB0 --board-name bench_esp32 --label esp32 \
+    --android <adb serial> --ios <udid>
+```
+
+Drives a real phyphox app on an Android phone and on an iPhone against a board running the
+bench sketch, from this Linux host. Android needs the app's debug and androidTest APKs
+installed (`./gradlew installRegularDebug installRegularDebugAndroidTest` in phyphox-android);
+the connect step is the app's `BleCompatConnectTest` seam. iOS needs a development build of
+the app on the phone, developer mode, and `sudo pymobiledevice3 remote tunneld` running; the
+app is launched with its `-phyphoxBleConnect` seam through the tunnel. Everything after the
+connect goes through the remote-access API: start and stop, buffer writes, button triggers,
+readings — with the board's serial echo as the other half of each assertion. It checks
+change-only delivery of every input element, buttons, submit-with-button, the phone's
+accelerometer streaming to the board, start/pause/clear events, and whether an input set while
+paused reaches the board (it does not, on either app).
+
+## The bench sketch
+
 Flashes `tools/bench/benchSketch` (a rich experiment that echoes every callback on serial), then
 plays the phone from this machine's Bluetooth adapter with `bleak`: discovery, the expected
 characteristics, the transfer on subscription and on the control write, byte-for-byte equality

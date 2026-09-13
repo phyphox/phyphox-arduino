@@ -52,11 +52,11 @@ rows:
     summary: Event characteristic writes decoded into type/experimentTime/systemTime.
   - id: phones-transfer
     tier: T2
-    status: planned
+    status: active
     summary: One Android and one iOS phone load the experiment from every board (the ble-compat seams of the apps).
   - id: phones-change-detector
     tier: T2
-    status: planned
+    status: active
     summary: >-
       The if/append change detector and keep="false" behave identically on both apps with
       size-1 buffers: no send on the first cycle, one per change, button once per press,

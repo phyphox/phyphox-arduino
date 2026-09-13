@@ -281,14 +281,18 @@ void Serializer::emitPrologue(Sink& s) const {
     // analysis: the change detector per input channel. No onUserInput: the analysis runs at
     // its default rate anyway (10 ms is irrelevant for user input), and the attribute would
     // not help sensor data the phone sends (maintainer, 2026-09-13).
+    // keep="true" on every input: an analysis input defaults to keep="false" in the format,
+    // i.e. the module EMPTIES the container after reading it (spec/analysis.yml, common input
+    // attributes). Without it the edit's own buffer and the "last sent" buffer vanished every
+    // cycle — found on both phones on the first phase-5 run (2026-09-13).
     s.write("<analysis sleep=\"0\">\n");
     for (uint8_t k = 1; k <= store_->inputChannelsUsed(); ++k) {
         if (!detector(*store_, k)) continue;
-        s.write("\t<if less=\"true\" greater=\"true\">\n\t\t<input as=\"a\">"); bufIn(s, k);
-        s.write("</input>\n\t\t<input as=\"b\">"); bufLast(s, k);
-        s.write("</input>\n\t\t<input as=\"true\">"); bufIn(s, k);
+        s.write("\t<if less=\"true\" greater=\"true\">\n\t\t<input as=\"a\" keep=\"true\">"); bufIn(s, k);
+        s.write("</input>\n\t\t<input as=\"b\" keep=\"true\">"); bufLast(s, k);
+        s.write("</input>\n\t\t<input as=\"true\" keep=\"true\">"); bufIn(s, k);
         s.write("</input>\n\t\t<output as=\"result\">"); bufSend(s, k); s.write("</output>\n\t</if>\n");
-        s.write("\t<append>\n\t\t<input as=\"in\">"); bufIn(s, k);
+        s.write("\t<append>\n\t\t<input as=\"in\" keep=\"true\">"); bufIn(s, k);
         s.write("</input>\n\t\t<output as=\"out\">"); bufLast(s, k); s.write("</output>\n\t</append>\n");
     }
     s.write("</analysis>\n<views>\n");
