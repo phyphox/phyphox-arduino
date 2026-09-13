@@ -96,6 +96,17 @@ public:
     void onDisconnect(BLEServer*) override {
         if (connections) connections--;
         negotiatedMtu = 23;
+#if !defined(PHYPHOX_BLE_NIMBLE)
+        // Bluedroid keeps a CCCD's value across connections. After a phone that had subscribed
+        // disconnects, the next phone would be notified from its first moment on — during its
+        // service discovery — and iOS then fails with "Services could not be discovered"
+        // (4 of 7 loads on an iPhone 14 Pro, 2026-09-13). NimBLE keeps CCCDs per connection.
+        for (uint8_t k = 0; k < 8; ++k) {
+            if (!chars[k]) continue;
+            BLE2902* d = (BLE2902*)chars[k]->getDescriptorByUUID((uint16_t)0x2902);
+            if (d) { d->setNotifications(false); d->setIndications(false); }
+        }
+#endif
         if (listener) listener->onDisconnect();
     }
 };

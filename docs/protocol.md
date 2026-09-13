@@ -50,7 +50,10 @@ One stack needs more than the return value: on the classic ESP32 (Bluedroid) a n
 can still be dropped *after* the stack accepted it, inside the stack's own task, and that is
 reported only through a confirmation event the Arduino core ignores for notifications. The
 ESP32 transport listens for that event itself and re-sends such packets. Those silent drops
-were the Android timeouts at 80–90 % seen during the 2.0 test sweep.
+were the Android timeouts at 80–90 % seen during the 2.0 test sweep. The same stack also
+keeps a subscription's state across connections; the transport clears it on every disconnect,
+because a phone notified during its service discovery — iOS in particular — fails to discover
+the services at all.
 
 ## Connection parameters
 

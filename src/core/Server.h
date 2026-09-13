@@ -17,6 +17,7 @@ namespace phyphox {
 /// Statistics a bench or a curious sketch can read (PhyphoxBLE::stats()).
 struct ServerStats {
     uint32_t transfers = 0, transfersCompleted = 0, transfersAborted = 0;
+    uint32_t transfersStalled = 0;   ///< the aborted ones the watchdog gave up on (the rest: disconnect, control 0)
     uint32_t packetsRefused = 0, dataNotifications = 0, dataRefused = 0;
     uint32_t inputWrites = 0, events = 0;
 };

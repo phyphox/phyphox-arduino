@@ -55,6 +55,7 @@ TEST_CASE("A stalled transfer is abandoned and the next trigger starts fresh") {
     fakeNow += PHYPHOX_BLE_TRANSFER_STALL_MS + 100; s.poll();
     CHECK(!s.transfer().active());
     CHECK(s.stats().transfersAborted == 1);
+    CHECK(s.stats().transfersStalled == 1);
     t.refuseNext = 0; t.experimentPackets.clear();
     t.subscribeExperiment();                             // a new trigger is not ignored
     for (int i = 0; i < 400 && s.transfer().active(); ++i) { fakeNow += 1; s.poll(); }

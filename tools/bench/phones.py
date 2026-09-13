@@ -249,10 +249,12 @@ def transfer_loop(phone, board_name, n, log, rep):
     log.drain(); log.send("s")
     after = expect_line(log, lambda l: l.startswith("STATS"), 3)
     kv1 = dict(x.split("=") for x in after.split()[1:]) if after else {}
-    d = {k: int(kv1.get(k, 0)) - int(kv0.get(k, 0)) for k in ("transfers", "completed", "aborted", "refused")}
+    d = {k: int(kv1.get(k, 0)) - int(kv0.get(k, 0)) for k in ("transfers", "completed", "aborted", "stalled", "refused")}
     rep.check(f"{p}: {n} loads succeeded", loads == n, f"{loads} of {n}, median {sorted(times)[len(times)//2]:.1f} s" if times else "none")
-    rep.check(f"{p}: board completed every transfer", d["completed"] >= loads and d["aborted"] == 0,
-              f"transfers +{d['transfers']} completed +{d['completed']} aborted +{d['aborted']} packets refused and retried +{d['refused']}")
+    # an abort by the phone's own disconnect (iOS drops its scan-time connections mid-transfer)
+    # is not the board's failure; a stall — the watchdog giving up — is
+    rep.check(f"{p}: board completed every transfer it could", d["completed"] >= loads and d["stalled"] == 0,
+              f"transfers +{d['transfers']} completed +{d['completed']} aborted by the phone +{d['aborted'] - d['stalled']} stalled +{d['stalled']} packets refused and retried +{d['refused']}")
 
 def main():
     ap = argparse.ArgumentParser()

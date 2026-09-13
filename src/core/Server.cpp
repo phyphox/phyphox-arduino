@@ -188,7 +188,7 @@ void Server::pumpTransfer() {
     }
     // bookkeeping once per finished transfer (the session then goes idle)
     if (transfer_.state() == TransferSession::DONE) { stats_.transfersCompleted++; transport_.restartAdvertising(); transfer_.reset(); }
-    else if (transfer_.state() == TransferSession::ABORTED) { stats_.transfersAborted++; transfer_.reset(); }
+    else if (transfer_.state() == TransferSession::ABORTED) { stats_.transfersAborted++; stats_.transfersStalled++; transfer_.reset(); }
 }
 
 // ---------------------------------------------------------------- transport events

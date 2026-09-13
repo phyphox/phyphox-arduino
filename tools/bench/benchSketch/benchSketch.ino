@@ -32,6 +32,7 @@ static void printStats() {
   Serial.print("STATS transfers="); Serial.print(s.transfers);
   Serial.print(" completed="); Serial.print(s.transfersCompleted);
   Serial.print(" aborted="); Serial.print(s.transfersAborted);
+  Serial.print(" stalled="); Serial.print(s.transfersStalled);
   Serial.print(" refused="); Serial.print(s.packetsRefused);
   Serial.print(" data="); Serial.print(s.dataNotifications);
   Serial.print(" dataRefused="); Serial.print(s.dataRefused);
