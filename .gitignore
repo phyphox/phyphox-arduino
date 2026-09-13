@@ -1,3 +1,4 @@
 .vscode/*
 build/
 tests/host/build/
+tests/conformance/out/

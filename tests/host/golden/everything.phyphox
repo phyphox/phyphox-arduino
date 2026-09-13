@@ -1,0 +1,146 @@
+<phyphox version="1.20">
+<title>Everything &amp; &quot;more&quot;</title>
+<category>Arduino &lt;Experiments&gt;</category>
+<color>ff7e22</color>
+<description>Every setter, once.</description>
+<data-containers>
+	<container size="0">CH0</container>
+	<container size="0">CH1</container>
+	<container size="0">CH2</container>
+	<container size="0">CH3</container>
+	<container size="0">CH4</container>
+	<container size="0">CH5</container>
+	<container size="1" init="-2.5">in1</container>
+	<container size="1" init="-2.5">last1</container>
+	<container size="1">send1</container>
+	<container size="1" init="0.5">in2</container>
+	<container size="1" init="0.5">last2</container>
+	<container size="1">send2</container>
+	<container size="1" init="0">in3</container>
+	<container size="1" init="0">last3</container>
+	<container size="1">send3</container>
+	<container size="1" init="1">in4</container>
+	<container size="1" init="1">last4</container>
+	<container size="1">send4</container>
+	<container size="1">in5</container>
+	<container size="1">sen1x</container>
+	<container size="1">sen1abs</container>
+	<container size="1">sen2x</container>
+</data-containers>
+<input>
+	<bluetooth name="phyphox-Arduino" id="phyphoxBLE" mode="notification" subscribeOnStart="true" mtu="179">
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="0">CH1</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="4">CH2</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="8">CH3</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="12">CH4</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="16">CH5</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" extra="time">CH0</output>
+	</bluetooth>
+	<sensor type="attitude" rate="10" rateStrategy="limit" stride="2">
+		<output component="x">sen1x</output>
+		<output component="abs">sen1abs</output>
+	</sensor>
+	<sensor type="custom" nameFilter="BMI160" typeFilter="65600">
+		<output component="x">sen2x</output>
+	</sensor>
+</input>
+<output>
+	<bluetooth id="phyphoxBLE" name="phyphox-Arduino">
+		<input char="cddf2001-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" keep="false">send1</input>
+		<input char="cddf2002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" keep="false">send2</input>
+		<input char="cddf2003-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" keep="false">send3</input>
+		<input char="cddf2004-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" keep="false">send4</input>
+		<input char="cddf2005-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" keep="false">in5</input>
+		<input char="cddf3001-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="0">sen1x</input>
+		<input char="cddf3001-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="4">sen1abs</input>
+		<input char="cddf3002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="0">sen2x</input>
+	</bluetooth>
+</output>
+<analysis sleep="0" onUserInput="true">
+	<if less="true" greater="true">
+		<input as="a">in1</input>
+		<input as="b">last1</input>
+		<input as="true">in1</input>
+		<output as="result">send1</output>
+	</if>
+	<append>
+		<input as="in">in1</input>
+		<output as="out">last1</output>
+	</append>
+	<if less="true" greater="true">
+		<input as="a">in2</input>
+		<input as="b">last2</input>
+		<input as="true">in2</input>
+		<output as="result">send2</output>
+	</if>
+	<append>
+		<input as="in">in2</input>
+		<output as="out">last2</output>
+	</append>
+	<if less="true" greater="true">
+		<input as="a">in3</input>
+		<input as="b">last3</input>
+		<input as="true">in3</input>
+		<output as="result">send3</output>
+	</if>
+	<append>
+		<input as="in">in3</input>
+		<output as="out">last3</output>
+	</append>
+	<if less="true" greater="true">
+		<input as="a">in4</input>
+		<input as="b">last4</input>
+		<input as="true">in4</input>
+		<output as="result">send4</output>
+	</if>
+	<append>
+		<input as="in">in4</input>
+		<output as="out">last4</output>
+	</append>
+</analysis>
+<views>
+	<view label="View 1" >
+		<graph label="G" labelX="x" labelY="y" unitX="s" unitY="V" unitYperX="V/s" xPrecision="2" yPrecision="3" scaleMinX="auto" minX="-1" scaleMaxX="extend" maxX="10.5" scaleMinY="fixed" minY="0.001" scaleMaxY="fixed" maxY="1e12" timeOnX="true" timeOnY="false" systemTime="true" linearTime="true" logX="true" logY="true" followX="true" partialUpdate="true" showColorScale="false" hideTimeMarkers="true" suppressScientificNotation="true" aspectRatio="1.5" visibility="in3">
+			<input axis="x">CH1</input>
+			<input axis="y" color="00ff00" style="map" lineWidth="2.5">CH2</input>
+			<input axis="x">CH0</input>
+			<input axis="y" style="hbars" lineWidth="0.5">CH3</input>
+		</graph>
+		<value label="Val" precision="4" unit="°C" color="ff0000" size="2" factor="0.001" scientific="true">
+			<input>CH2</input>
+			<map min="0" max="10">cold</map>
+		</value>
+		<edit label="Ed" default="-2.5" signed="true" decimal="true" min="-10" max="10" unit="u" factor="2">
+			<output>in1</output>
+		</edit>
+		<slider label="Sl" default="0.5" minValue="0" maxValue="1" stepSize="0.1" precision="1" showValue="false" color="0000ff">
+			<output>in2</output>
+		</slider>
+		<toggle label="Tg" default="0">
+			<output>in3</output>
+		</toggle>
+		<dropdown label="Dd" default="1" color="123456">
+			<output>in4</output>
+			<map value="1">a</map>
+			<map value="2.5">b &amp; c</map>
+		</dropdown>
+		<button label="Bt">
+			<input type="value">7</input>
+			<output>in5</output>
+		</button>
+		<info label="Info" color="101010" size="1.2" align="center" bold="true" italic="true"></info>
+		<separator height="0.2" color="202020"></separator>
+	</view>
+	<view label="View 2">
+		<value label="Other">
+			<input>CH5</input>
+		</value>
+	</view>
+</views>
+<export>
+	<set name="Set">
+		<data name="t">CH0</data>
+		<data name="v">CH1</data>
+	</set>
+</export>
+</phyphox>

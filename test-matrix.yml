@@ -5,7 +5,7 @@
 rows:
   - id: core-unit
     tier: T0
-    status: planned
+    status: active
     summary: >-
       Host unit tests of src/core: serializer golden files, part table ≡ full document, every
       window ≡ slice, CRC-32 reference, XML escaping, float formatting, channel codec, transfer
@@ -13,7 +13,7 @@ rows:
       disconnect, header bytes), channel store and callbacks, event decoding.
   - id: format-conformance
     tier: T0
-    status: planned
+    status: active
     summary: >-
       Every example configuration and every element with every setter → .phyphox documents →
       validated by phyphox-docs' validators (RELAX NG, Schematron, validate_experiments.py),

@@ -23,6 +23,7 @@ public:
 /// transfer header (size, CRC) and the part table.
 class CountingSink : public Sink {
 public:
+    using Sink::write;
     void write(const uint8_t* data, size_t len) override { count_ += len; crc_.update(data, len); }
     size_t count() const { return count_; }
     uint32_t crc() const { return crc_.value(); }
@@ -38,6 +39,7 @@ private:
 class WindowSink : public Sink {
 public:
     WindowSink(uint8_t* out, size_t capacity, size_t skip) : out_(out), cap_(capacity), skip_(skip) {}
+    using Sink::write;
     void write(const uint8_t* data, size_t len) override;
     size_t produced() const { return filled_; }
     bool full() const { return filled_ >= cap_; }

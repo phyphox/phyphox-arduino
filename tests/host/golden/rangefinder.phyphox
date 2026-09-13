@@ -1,0 +1,53 @@
+<phyphox version="1.20">
+<title>Rangefinder</title>
+<category>Arduino Experiments</category>
+<description>Plot the distance from a time-of-flight sensor over time.</description>
+<data-containers>
+	<container size="0">CH0</container>
+	<container size="0">CH1</container>
+	<container size="0">CH2</container>
+	<container size="0">CH3</container>
+	<container size="0">CH4</container>
+	<container size="0">CH5</container>
+</data-containers>
+<input>
+	<bluetooth name="Rangefinder" id="phyphoxBLE" mode="notification" subscribeOnStart="false">
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="0">CH1</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="4">CH2</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="8">CH3</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="12">CH4</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="16">CH5</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" extra="time">CH0</output>
+	</bluetooth>
+</input>
+<output>
+	<bluetooth id="phyphoxBLE" name="Rangefinder">
+	</bluetooth>
+</output>
+<analysis sleep="0" onUserInput="true">
+</analysis>
+<views>
+	<view label="Distance">
+		<graph label="Distance" labelX="time" labelY="distance" unitX="s" unitY="mm" scaleMinY="fixed" minY="0" scaleMaxY="extend" maxY="2000" logY="false" followX="true">
+			<input axis="x">CH0</input>
+			<input axis="y">CH1</input>
+		</graph>
+		<value label="Distance" precision="0" unit="mm">
+			<input>CH1</input>
+			<map max="50">too close</map>
+			<map min="50" max="1500">in range</map>
+			<map min="1500">far</map>
+		</value>
+	</view>
+</views>
+<export>
+	<set name="mySet">
+		<data name="myData0">CH0</data>
+		<data name="myData1">CH1</data>
+		<data name="myData2">CH2</data>
+		<data name="myData3">CH3</data>
+		<data name="myData4">CH4</data>
+		<data name="myData5">CH5</data>
+	</set>
+</export>
+</phyphox>

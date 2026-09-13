@@ -57,9 +57,10 @@ public:
         void setVisibility(int inputChannel);
         phyphox::ElementData& data() { return data_; }
         const phyphox::ElementData& data() const { return data_; }
+        virtual bool isExportData() const { return false; }
         Element* next = nullptr;      ///< intrusive list link, set by View::addElement()
     protected:
-        explicit Element(phyphox::ElementType t) { data_.type = t; }
+        explicit Element(phyphox::ElementType t) { data_.init(t); }
         phyphox::ElementData data_;
     };
 
@@ -142,7 +143,10 @@ public:
         void setMaps(int n, const float* mins, const float* maxs, const char* const texts[]);
 
         phyphox::MapEntry inlineMaps[PHYPHOX_BLE_INLINE_OPTIONS];
-        const phyphox::MapEntry* mapsArray = nullptr;   ///< setMaps(): the caller's arrays, read at addExperiment
+        const phyphox::MapEntry* mapsArray = nullptr;   ///< reserved
+        const float* mapsMins = nullptr;                ///< setMaps(): the caller's arrays, read at addExperiment
+        const float* mapsMaxs = nullptr;
+        const char* const* mapsTexts = nullptr;
         uint8_t mapCount = 0;
     };
 
@@ -262,6 +266,8 @@ public:
         ExportData(const char* label, int channel) : ExportData() { setLabel(label); setDatachannel(channel); }
         void setDatachannel(int);                 ///< 0 = time, 1…5 = data channels
         void setDataChannel(int c) { setDatachannel(c); }
+        void setLabel(const char*) override;
+        bool isExportData() const override { return true; }
         phyphox::ExportDataData exportData;
         ExportData* nextEntry = nullptr;
     };

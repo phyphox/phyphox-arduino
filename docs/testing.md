@@ -1,6 +1,20 @@
 # Testing
 
-*Skeleton — the suites are built in phases 2, 4 and 5 of the rewrite plan.*
+T0 exists and runs in CI (`.github/workflows/t0.yml`); T1 and T2 are built in phases 4 and 5 of
+the rewrite plan.
+
+```
+cmake -S tests/host -B tests/host/build && cmake --build tests/host/build -j
+tests/host/build/phyphox_tests            # the core unit tests (doctest)
+tests/conformance/run.py                  # generated documents vs. the phyphox file-format spec
+tools/check_surface.py                    # api/surface.yml vs. the spec
+```
+
+The conformance step needs `phyphox-docs` checked out beside this repository and `lxml`; it
+uses that repository's own validators (RELAX NG, Schematron, `validate_experiments.py`), with
+the Schematron's version-gate warnings counted as failures. `tests/host/golden/` holds the
+documents the example configurations must produce byte for byte; regenerate them with
+`tests/host/build/gen_examples tests/host/golden` and review the diff before committing.
 
 | tier | what | runs where |
 |---|---|---|

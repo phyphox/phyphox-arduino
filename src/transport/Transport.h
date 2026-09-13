@@ -61,6 +61,9 @@ public:
     /// A transport that only learns the verdict later (ESP32) returns true and reports via
     /// onNotifyStatus().
     virtual bool notify(CharId id, const uint8_t* data, uint16_t len) = 0;
+    /// True if the verdict on notify() arrives later through onNotifyStatus() (ESP32);
+    /// false if notify()'s return value is the verdict (ArduinoBLE, NINA-B31).
+    virtual bool asyncNotifyStatus() const { return false; }
     /// Set a characteristic's value without notifying (initial values, the legacy config).
     virtual void setValue(CharId id, const uint8_t* data, uint16_t len) = 0;
     virtual bool connected() const = 0;

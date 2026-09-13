@@ -35,6 +35,9 @@ public:
     };
 
     Server(Transport& transport) : transport_(transport), serializerSource_(serializer_) {}
+    ~Server();
+    /// Millisecond clock for the transfer's retry timing (the façade passes millis).
+    void setClock(uint32_t (*nowMs)()) { clock_ = nowMs; }
 
     // ---- configuration (before start)
     void setDeviceName(const char* name) { deviceName_ = name; }
@@ -49,7 +52,8 @@ public:
 
     // ---- lifecycle
     bool start();
-    void poll(uint32_t nowMs);      ///< drives the transfer retries; calls transport_.poll()
+    void poll();                    ///< drives the transfer; calls transport_.poll()
+    bool started() const { return started_; }
 
     // ---- data to the phone
     bool writeFloats(const float* values, uint8_t count);      ///< 1…5 floats → data characteristic
@@ -60,6 +64,11 @@ public:
     const ExperimentEvent& lastEvent() const { return lastEvent_; }
     void setConfigHandler(void (*h)()) { configHandler_ = h; }
     void setEventHandler(void (*h)()) { eventHandler_ = h; }
+    /// User-XML mode: the raw last value of the 1.x config characteristic.
+    const uint8_t* legacyConfig() const { return legacyConfig_; }
+    const TransferSession& transfer() const { return transfer_; }
+    bool customXml() const { return customXml_; }
+    uint16_t mtu() const { return mtu_; }
 
     // ---- introspection
     void printXml(Sink& sink) const { serializer_.writeAll(sink); }
@@ -92,10 +101,19 @@ private:
     bool dataSubscribed_ = false;
     void (*configHandler_)() = nullptr;
     void (*eventHandler_)() = nullptr;
-    uint8_t* packet_ = nullptr;   ///< the one transmit buffer, MTU payload bytes, allocated at start()
+    uint8_t* packet_ = nullptr;   ///< the one transmit buffer, sized to the largest MTU payload seen
+    uint16_t packetCap_ = 0;
+    uint8_t* sensorSizes_ = nullptr;
+    uint8_t legacyConfig_[20] = {0};
+    uint8_t legacySlots_[6 * 32] = {0};   ///< ChannelStore storage in user-XML mode (5 channels)
+    uint32_t (*clock_)() = nullptr;
+    bool started_ = false;
+    uint32_t now() const { return clock_ ? clock_() : 0; }
 
+    void rebuild();
+    bool ensurePacket(uint16_t payload);
     void startTransfer();
-    void pumpTransfer(uint32_t nowMs);
+    void pumpTransfer();
     void deliverInput(uint8_t channel, const uint8_t* data, uint16_t len);
     void deliverSensor(uint8_t sensor, const uint8_t* data, uint16_t len);
     void deliverLegacyConfig(const uint8_t* data, uint16_t len);

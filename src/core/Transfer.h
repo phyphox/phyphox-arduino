@@ -47,6 +47,7 @@ public:
     /// Start a transfer of `source` with `payload` bytes per packet (MTU − 3).
     void begin(const ByteSource& source, uint16_t payload);
     void abort() { state_ = ABORTED; }
+    void reset() { state_ = IDLE; pending_ = false; }   ///< back to idle after the bookkeeping
     bool active() const { return state_ == HEADER || state_ == BODY; }
     State state() const { return state_; }
 

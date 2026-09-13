@@ -161,6 +161,8 @@ struct ElementData {
         SeparatorData separator;
     };
     ElementData() : graph() {}
+    /// Activate the union member for `t` with its defaults (the builders call this).
+    void init(ElementType t);
     /// The input-channel part, if this element has one; nullptr otherwise.
     InputCommon* input();
     const InputCommon* input() const;
@@ -220,6 +222,7 @@ struct ExperimentData {
     uint8_t exportSetCount = 0;
     const SensorData* sensors = nullptr;
     uint8_t sensorCount = 0;
+    uint8_t exportDataCount_ = 0; ///< internal: entries placed so far during the copy
     ErrorRecord error;           ///< experiment-level errors (capacity, channel conflicts)
 };
 

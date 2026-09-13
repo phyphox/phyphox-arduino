@@ -1,0 +1,31 @@
+# Tier T0: host tests of the core, conformance of the generated documents against the
+# phyphox file-format spec, and the API surface check. Runs on every push and pull request.
+# The compile matrix over the boards is a separate workflow (compile.yml, phase 3).
+name: T0 host tests and conformance
+
+on: [push, pull_request]
+
+jobs:
+  host:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: phyphox-arduino
+      - uses: actions/checkout@v4
+        with:
+          repository: phyphox/phyphox-docs
+          path: phyphox-docs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install lxml pyyaml rnc2rng
+      - name: Build and run the host tests
+        working-directory: phyphox-arduino
+        run: |
+          cmake -S tests/host -B tests/host/build -DCMAKE_BUILD_TYPE=Debug
+          cmake --build tests/host/build -j
+          tests/host/build/phyphox_tests
+      - name: Conformance against the file-format spec
+        working-directory: phyphox-arduino
+        run: python3 tests/conformance/run.py --docs ../phyphox-docs --skip-build --build-dir tests/host/build

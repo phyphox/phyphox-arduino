@@ -48,12 +48,19 @@ public:
     /// Highest input channel in use (so the serializer emits only what exists).
     uint8_t inputChannelsUsed() const { return inputChannelsUsed_; }
     size_t blockSize() const { return blockSize_; }         ///< bytes allocated
+    /// Storage inside the block for the ChannelStore (ChannelStore::bytesNeeded(inputChannelsUsed())).
+    void* channelStorage() const { return channelStorage_; }
+    /// Storage inside the block for the serializer's part table (viewCount + 3 entries).
+    uint16_t* partTable() const { return partTable_; }
+    ~ExperimentStore() { clear(); }
 
 private:
     ExperimentData data_;
     uint8_t* block_ = nullptr;         ///< the one allocation; holds every counted array
     size_t blockSize_ = 0;
     InputChannelInfo* inputs_ = nullptr; ///< in the block, 1-based, inputChannelsUsed_ + 1 entries
+    void* channelStorage_ = nullptr;
+    uint16_t* partTable_ = nullptr;
     uint8_t inputChannelsUsed_ = 0;
 };
 
