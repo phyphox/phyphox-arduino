@@ -280,7 +280,7 @@ void Serializer::emitPrologue(Sink& s) const {
 
     // analysis: the change detector per input channel. No onUserInput: the analysis runs at
     // its default rate anyway (10 ms is irrelevant for user input), and the attribute would
-    // not help sensor data the phone sends (maintainer, 2026-09-14).
+    // not help sensor data the phone sends (maintainer, 2026-09-13).
     s.write("<analysis sleep=\"0\">\n");
     for (uint8_t k = 1; k <= store_->inputChannelsUsed(); ++k) {
         if (!detector(*store_, k)) continue;
