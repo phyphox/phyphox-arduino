@@ -1,0 +1,69 @@
+# Test matrix of phyphox BLE 2.0 — the same shape as phyphox-docs/test-matrix.yml, so the
+# maintainer reads one scheme across the phyphox repositories. Rows start `planned` and become
+# `active` when the suite exists and runs; tiers: T0 host/CI, T1 bench (host BLE client),
+# T2 phones. See docs/testing.md and REWRITE-PLAN.md §6.
+rows:
+  - id: core-unit
+    tier: T0
+    status: planned
+    summary: >-
+      Host unit tests of src/core: serializer golden files, part table ≡ full document, every
+      window ≡ slice, CRC-32 reference, XML escaping, float formatting, channel codec, transfer
+      state machine with a fake transport (trigger de-dup, retry on refusal, abort on
+      disconnect, header bytes), channel store and callbacks, event decoding.
+  - id: format-conformance
+    tier: T0
+    status: planned
+    summary: >-
+      Every example configuration and every element with every setter → .phyphox documents →
+      validated by phyphox-docs' validators (RELAX NG, Schematron, validate_experiments.py),
+      version-gate warnings treated as failures; api/surface.yml checked against spec/*.yml
+      (tools/check_surface.py, active now).
+  - id: compile-matrix
+    tier: T0
+    status: planned
+    summary: >-
+      arduino/compile-sketches over examples/* × every Tier-1/2 FQBN, with flash/RAM size
+      report per PR. ESP32 rows use the default partition on purpose.
+  - id: api-doc-parity
+    tier: T0
+    status: planned
+    summary: Every public method in the headers appears in docs/api.md.
+  - id: bench-transfer
+    tier: T1
+    status: planned
+    summary: >-
+      Per board: discovery by name and service; transfer via subscription and via control
+      write, CRC-verified; re-trigger during a transfer ignored; abort on disconnect; slow
+      connection interval; MTU 23 and a negotiated larger MTU.
+  - id: bench-data
+    tier: T1
+    status: planned
+    summary: Data notifications at the expected rate for write(1…5), the array write and setRepeating.
+  - id: bench-inputs
+    tier: T1
+    status: planned
+    summary: >-
+      Writes to input and sensor characteristics → board serial echo → exactly one callback
+      per delivered value, one per button press; read() defaults; setResendUnchanged path.
+  - id: bench-events
+    tier: T1
+    status: planned
+    summary: Event characteristic writes decoded into type/experimentTime/systemTime.
+  - id: phones-transfer
+    tier: T2
+    status: planned
+    summary: One Android and one iOS phone load the experiment from every board (the ble-compat seams of the apps).
+  - id: phones-change-detector
+    tier: T2
+    status: planned
+    summary: >-
+      The if/append change detector and keep="false" behave identically on both apps with
+      size-1 buffers: no send on the first cycle, one per change, button once per press,
+      submitWith only on press. A platform difference is an inconsistencies.yml finding.
+  - id: phones-transfer-robustness
+    tier: T2
+    status: planned
+    summary: >-
+      iPhone and a deliberately bad link (distance, microwave, a second board): transfer
+      completes, slowly; the decision on any future chunked protocol rests on this row.

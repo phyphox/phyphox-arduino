@@ -1,0 +1,219 @@
+# The formal API surface of phyphox BLE 2.0: every library element and setter, mapped to the
+# phyphox XML it emits. tools/check_surface.py checks this file against the file-format spec in
+# ../phyphox-docs/spec (element and attribute names exist, enumerated values are a subset of
+# the spec's, nothing needs a format version newer than `format_version`). The library's own
+# documentation lives in docs/; this file is the link to the canon, not a copy of it.
+#
+# Shape:
+#   elements:  library class -> XML element (block/parent path as in the spec) -> setters
+#   each setter names the attribute (or child element) it writes and the values it enforces.
+#   `values` lists the strings the library accepts; `check: subset` means they must all be in
+#   the spec's allowed values. `emits` documents fixed output the library always writes.
+
+format_version: "1.20"
+
+document:
+  root: phyphox
+  emits:
+    - { element: title,       from: setTitle,       default: "Arduino-Experiment" }
+    - { element: category,    from: setCategory,    default: "Arduino Experiments" }
+    - { element: description, from: setDescription, default: "An experiment created with the phyphox BLE library for Arduino-compatible micro controllers." }
+    - { element: color,       from: setColor,       optional: true }
+    - { element: data-containers/container, attributes: [size, static], note: "CH0…CH5 for data, in{k}/last{k}/send{k} per input channel, sen{s}{c} per sensor component" }
+    - { element: input/bluetooth, attributes: [name, id, mode, subscribeOnStart, mtu], note: "mode=notification; mtu only when setMTU() > 20" }
+    - { element: input/bluetooth/output, attributes: [char, conversion, offset, repeating, extra], note: "float32LittleEndian at offset 4*(k-1); extra=time for CH0; repeating from setRepeating()" }
+    - { element: input/sensor, attributes: [type, rate, average], from: Sensor }
+    - { element: input/sensor/output, attributes: [component] }
+    - { element: output/bluetooth, attributes: [name, id] }
+    - { element: output/bluetooth/input, attributes: [char, conversion, offset, keep, triggerId], note: "one per input channel (keep=false unless setResendUnchanged) and per sensor component; triggerId from Edit::submitWith" }
+    - { element: analysis, attributes: [sleep, onUserInput], note: "sleep=0 onUserInput=true; holds the change detector" }
+    - { element: analysis/if, attributes: [less, greater], note: "per input channel: a=in{k} b=last{k} true=in{k} -> send{k}" }
+    - { element: analysis/append, note: "per input channel: in{k} -> last{k}" }
+    - { element: export/set, attributes: [name] }
+    - { element: export/set/data, attributes: [name] }
+
+elements:
+
+  PhyphoxBleExperiment::View:
+    xml: views/view
+    setters:
+      setLabel: { attribute: label }
+      setXMLAttribute: { attribute: "*", note: "verbatim, unchecked" }
+
+  PhyphoxBleExperiment::Graph:
+    xml: views/view/graph
+    setters:
+      setLabel:  { attribute: label }
+      setLabelX: { attribute: labelX }
+      setLabelY: { attribute: labelY }
+      setUnitX:  { attribute: unitX }
+      setUnitY:  { attribute: unitY }
+      setUnitYperX: { attribute: unitYperX }
+      setXPrecision: { attribute: xPrecision, type: integer }
+      setYPrecision: { attribute: yPrecision, type: integer }
+      setTimeOnX: { attribute: timeOnX, type: boolean }
+      setTimeOnY: { attribute: timeOnY, type: boolean }
+      setSystemTime: { attribute: systemTime, type: boolean }
+      setLinearTime: { attribute: linearTime, type: boolean }
+      setLogX: { attribute: logX, type: boolean }
+      setLogY: { attribute: logY, type: boolean }
+      setFollowX: { attribute: followX, type: boolean }
+      setPartialUpdate: { attribute: partialUpdate, type: boolean }
+      setHideTimeMarkers: { attribute: hideTimeMarkers, type: boolean }
+      setSuppressScientificNotation: { attribute: suppressScientificNotation, type: boolean }
+      setShowColorScale: { attribute: showColorScale, type: boolean }
+      setAspectRatio: { attribute: aspectRatio, type: float }
+      setMinX: { attributes: [minX, scaleMinX], values: [auto, extend, fixed], check: subset, of: scaleMinX }
+      setMaxX: { attributes: [maxX, scaleMaxX], values: [auto, extend, fixed], check: subset, of: scaleMaxX }
+      setMinY: { attributes: [minY, scaleMinY], values: [auto, extend, fixed], check: subset, of: scaleMinY }
+      setMaxY: { attributes: [maxY, scaleMaxY], values: [auto, extend, fixed], check: subset, of: scaleMaxY }
+      setVisibility: { attribute: visibility }
+      setXMLAttribute: { attribute: "*" }
+      # first curve (also Subgraph)
+      setChannel: { child: input, attributes: [axis], note: "two <input axis=x|y>CHn</input>" }
+      setStyle: { child: input, attribute: style, values: [lines, dots, vbars, hbars, map], check: subset }
+      setColor: { child: input, attribute: color, type: color }
+      setLinewidth: { child: input, attribute: lineWidth, type: float }
+
+  PhyphoxBleExperiment::Graph::Subgraph:
+    xml: views/view/graph/input
+    setters:
+      setChannel: { attribute: axis, values: [x, y], check: subset }
+      setStyle: { attribute: style, values: [lines, dots, vbars, hbars, map], check: subset }
+      setColor: { attribute: color, type: color }
+      setLinewidth: { attribute: lineWidth, type: float }
+
+  PhyphoxBleExperiment::Value:
+    xml: views/view/value
+    setters:
+      setLabel: { attribute: label }
+      setPrecision: { attribute: precision, type: integer }
+      setUnit: { attribute: unit }
+      setColor: { attribute: color, type: color }
+      setSize: { attribute: size, type: float }
+      setFactor: { attribute: factor, type: float }
+      setScientific: { attribute: scientific, type: boolean }
+      setChannel: { child: input, note: "<input>CHn</input>" }
+      addMap: { child: map, attributes: [min, max] }
+      setVisibility: { attribute: visibility }
+      setXMLAttribute: { attribute: "*" }
+
+  PhyphoxBleExperiment::Edit:
+    xml: views/view/edit
+    setters:
+      setLabel: { attribute: label }
+      setDefault: { attribute: default, type: float }
+      setUnit: { attribute: unit }
+      setSigned: { attribute: signed, type: boolean }
+      setDecimal: { attribute: decimal, type: boolean }
+      setMin: { attribute: min, type: float }
+      setMax: { attribute: max, type: float }
+      setFactor: { attribute: factor, type: float }
+      setChannel: { child: output, note: "<output>in{k}</output>" }
+      submitWith: { xml: output/bluetooth/input, attribute: triggerId, note: "plus <trigger> in the button" }
+      setVisibility: { attribute: visibility }
+      setXMLAttribute: { attribute: "*" }
+
+  PhyphoxBleExperiment::Slider:
+    xml: views/view/slider
+    setters:
+      setLabel: { attribute: label }
+      setDefault: { attribute: default, type: float }
+      setMinValue: { attribute: minValue, type: float }
+      setMaxValue: { attribute: maxValue, type: float }
+      setStepSize: { attribute: stepSize, type: float }
+      setPrecision: { attribute: precision, type: integer }
+      setShowValue: { attribute: showValue, type: boolean }
+      setColor: { attribute: color, type: color }
+      setChannel: { child: output }
+      setVisibility: { attribute: visibility }
+      setXMLAttribute: { attribute: "*" }
+
+  PhyphoxBleExperiment::Dropdown:
+    xml: views/view/dropdown
+    setters:
+      setLabel: { attribute: label }
+      setDefault: { attribute: default, type: float }
+      setColor: { attribute: color, type: color }
+      setOptions: { child: map, attributes: [value] }
+      addOption: { child: map, attributes: [value] }
+      setChannel: { child: output }
+      setVisibility: { attribute: visibility }
+      setXMLAttribute: { attribute: "*" }
+
+  PhyphoxBleExperiment::Toggle:
+    xml: views/view/toggle
+    setters:
+      setLabel: { attribute: label }
+      setDefault: { attribute: default, type: float }
+      setChannel: { child: output }
+      setVisibility: { attribute: visibility }
+      setXMLAttribute: { attribute: "*" }
+
+  PhyphoxBleExperiment::Button:
+    xml: views/view/button
+    setters:
+      setLabel: { attribute: label }
+      setValue: { child: input, attributes: [type], values: [value], check: subset, of: type }
+      setChannel: { child: output }
+      onPress: { note: "board-side only" }
+      setVisibility: { attribute: visibility }
+      setXMLAttribute: { attribute: "*" }
+    emits:
+      - { child: trigger, note: "only when an Edit submits with this button" }
+
+  PhyphoxBleExperiment::InfoField:
+    xml: views/view/info
+    setters:
+      setInfo: { attribute: label }
+      setColor: { attribute: color, type: color }
+      setSize: { attribute: size, type: float }
+      setAlign: { attribute: align, values: [left, right, center], check: subset }
+      setBold: { attribute: bold, type: boolean }
+      setItalic: { attribute: italic, type: boolean }
+      setVisibility: { attribute: visibility }
+      setXMLAttribute: { attribute: "*" }
+
+  PhyphoxBleExperiment::Separator:
+    xml: views/view/separator
+    setters:
+      setHeight: { attribute: height, type: float }
+      setColor: { attribute: color, type: color }
+      setVisibility: { attribute: visibility }
+      setXMLAttribute: { attribute: "*" }
+
+  PhyphoxBleExperiment::ExportSet:
+    xml: export/set
+    setters:
+      setLabel: { attribute: name }
+      setXMLAttribute: { attribute: "*" }
+
+  PhyphoxBleExperiment::ExportData:
+    xml: export/set/data
+    setters:
+      setLabel: { attribute: name }
+      setDatachannel: { note: "content: CHn" }
+      setXMLAttribute: { attribute: "*" }
+
+  PhyphoxBleExperiment::Sensor:
+    xml: input/sensor
+    setters:
+      setType:
+        attribute: type
+        values: [accelerometer, linear_acceleration, gravity, gyroscope, magnetic_field, pressure, light, proximity, temperature, humidity, attitude]
+        check: subset
+      setRate: { attribute: rate, type: float }
+      setAverage: { attribute: average, type: boolean }
+      mapChannel: { child: output, attribute: component, values: [x, y, z, abs, accuracy, t], check: subset }
+      setXMLAttribute: { attribute: "*" }
+
+  PhyphoxBleExperiment:
+    xml: phyphox
+    setters:
+      setTitle: { child: title }
+      setCategory: { child: category }
+      setDescription: { child: description }
+      setColor: { child: color, type: color }
+      setRepeating: { xml: input/bluetooth/output, attribute: repeating, type: integer }
+      setSubscribeOnStart: { xml: input/bluetooth, attribute: subscribeOnStart, type: boolean }
+      setResendUnchanged: { xml: output/bluetooth/input, attribute: keep, note: "true omits keep=false and the change detector" }
