@@ -24,7 +24,10 @@ def main():
     ap.add_argument("--build-dir", default=os.path.join(ROOT, "tests", "host", "build"))
     ap.add_argument("--out", default=os.path.join(HERE, "out"))
     ap.add_argument("--skip-build", action="store_true")
+    ap.add_argument("--validate-only", metavar="DIR", help="validate the .phyphox files in DIR (e.g. what a board served) instead of generating")
     args = ap.parse_args()
+    if args.validate_only:
+        args.out = args.validate_only; args.skip_build = True
     docs = os.path.abspath(args.docs)
     if not os.path.isdir(os.path.join(docs, "spec")):
         sys.exit(f"phyphox-docs not found at {docs}")
@@ -45,7 +48,8 @@ def main():
                               stdout=subprocess.DEVNULL)
         subprocess.check_call(["cmake", "--build", args.build_dir, "-j"], stdout=subprocess.DEVNULL)
     os.makedirs(args.out, exist_ok=True)
-    subprocess.check_call([os.path.join(args.build_dir, "gen_examples"), args.out])
+    if not args.validate_only:
+        subprocess.check_call([os.path.join(args.build_dir, "gen_examples"), args.out])
 
     # validators: the docs build publishes them under docs/assets/validators; regenerate if absent
     vdir = os.path.join(docs, "docs", "assets", "validators")
@@ -82,6 +86,8 @@ def main():
     if r.returncode != 0:
         problems.append("check_surface.py:\n" + r.stdout.strip())
 
+    if not files:
+        problems.append(f"no .phyphox files in {args.out}")
     print(f"{len(files)} documents validated against {vdir}")
     if problems:
         print("\n".join(problems))

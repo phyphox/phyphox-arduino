@@ -28,7 +28,8 @@ struct CharId {
 /// What the core asks the transport to create at begin().
 struct GattLayout {
     const char* deviceName;
-    uint8_t inputChannels;       ///< characteristics cddf2001 … cddf20nn (0 in user-XML mode)
+    uint8_t inputChannels;       ///< highest input channel (0 in user-XML mode)
+    uint32_t inputChannelMask;   ///< bit k set: create characteristic cddf20kk (sensor-fed channels have none)
     uint8_t sensors;             ///< characteristics cddf3001 … cddf30ss
     const uint8_t* sensorValueSize; ///< bytes each sensor characteristic holds (`sensors` entries)
     bool legacyConfig;           ///< also create cddf1003 (20 bytes) — user-XML mode

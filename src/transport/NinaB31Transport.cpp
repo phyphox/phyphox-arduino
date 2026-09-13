@@ -154,7 +154,8 @@ bool NinaB31Transport::begin(const GattLayout& layout, TransportListener& li) {
     addCharacteristic(0x00, 0x04, CharId{CH_EVENT, 0});
     parseResponse(String("AT+UBTGSER=") + uuidHex(0x10, 0x01), 1000);
     addCharacteristic(0x10, 0x02, CharId{CH_DATA, 0});
-    for (uint8_t k = 1; k <= layout.inputChannels; ++k) addCharacteristic(0x20, k, CharId{CH_INPUT, k});
+    for (uint8_t k = 1; k <= layout.inputChannels; ++k)
+        if (layout.inputChannelMask & (1u << k)) addCharacteristic(0x20, k, CharId{CH_INPUT, k});
     for (uint8_t s = 1; s <= layout.sensors; ++s) addCharacteristic(0x30, s, CharId{CH_SENSOR, s});
     if (layout.legacyConfig) addCharacteristic(0x10, 0x03, CharId{CH_LEGACY_CONFIG, 0});
 

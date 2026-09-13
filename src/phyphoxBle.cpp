@@ -93,8 +93,8 @@ void PhyphoxBLE::read(uint8_t* bytes, unsigned int len) {
 }
 float PhyphoxBLE::readChannel(int channel) { return server().channels().value((uint8_t)channel); }
 bool PhyphoxBLE::changed(int channel) { return server().channels().changed((uint8_t)channel); }
-void PhyphoxBLE::onChange(int channel, ChangeCallback cb) { server().channels().setCallbacks((uint8_t)channel, cb, nullptr); }
-void PhyphoxBLE::onPress(int channel, PressCallback cb) { server().channels().setCallbacks((uint8_t)channel, nullptr, cb); }
+void PhyphoxBLE::onChange(int channel, ChangeCallback cb) { server().setChannelCallbacks((uint8_t)channel, cb, nullptr); }
+void PhyphoxBLE::onPress(int channel, PressCallback cb) { server().setChannelCallbacks((uint8_t)channel, nullptr, cb); }
 const ExperimentEvent& PhyphoxBLE::lastEvent() { return server().lastEvent(); }
 
 void PhyphoxBLE::setMTU(uint16_t payload) { server().setMtu(payload); }

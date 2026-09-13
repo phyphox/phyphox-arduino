@@ -61,6 +61,8 @@ public:
 
     // ---- data from the phone
     ChannelStore& channels() { return channels_; }
+    /// Attach callbacks to a channel at any time, before or after the experiment was added.
+    void setChannelCallbacks(uint8_t channel, ChangeCallback onChange, PressCallback onPress);
     const ExperimentEvent& lastEvent() const { return lastEvent_; }
     void setConfigHandler(void (*h)()) { configHandler_ = h; }
     void setEventHandler(void (*h)()) { eventHandler_ = h; }
@@ -109,6 +111,9 @@ private:
     uint8_t legacySlots_[6 * 32] = {0};   ///< ChannelStore storage in user-XML mode (5 channels)
     uint32_t (*clock_)() = nullptr;
     bool started_ = false;
+    /// Callbacks registered through the façade before the channel store exists; applied by rebuild().
+    ChangeCallback pendingChange_[PHYPHOX_BLE_MAX_INPUT_CHANNEL + 1] = {nullptr};
+    PressCallback pendingPress_[PHYPHOX_BLE_MAX_INPUT_CHANNEL + 1] = {nullptr};
     uint32_t now() const { return clock_ ? clock_() : 0; }
 
     void rebuild();

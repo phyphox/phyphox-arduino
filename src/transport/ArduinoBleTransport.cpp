@@ -92,7 +92,8 @@ bool ArduinoBleTransport::begin(const GattLayout& layout, TransportListener& li)
     add(*expService, 0x00, 0x04, CharId{CH_EVENT, 0}, BLERead | BLEWrite | BLEWriteWithoutResponse, 20);
     add(*dataService, 0x10, 0x02, CharId{CH_DATA, 0}, BLERead | BLENotify, layout.dataValueSize < 20 ? 20 : layout.dataValueSize);
     for (uint8_t k = 1; k <= layout.inputChannels; ++k)
-        add(*dataService, 0x20, k, CharId{CH_INPUT, k}, BLERead | BLEWrite | BLEWriteWithoutResponse, 4);
+        if (layout.inputChannelMask & (1u << k))
+            add(*dataService, 0x20, k, CharId{CH_INPUT, k}, BLERead | BLEWrite | BLEWriteWithoutResponse, 4);
     for (uint8_t s = 1; s <= layout.sensors; ++s)
         add(*dataService, 0x30, s, CharId{CH_SENSOR, s}, BLERead | BLEWrite | BLEWriteWithoutResponse, layout.sensorValueSize[s - 1]);
     if (layout.legacyConfig)

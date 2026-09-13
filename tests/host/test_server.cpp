@@ -79,12 +79,25 @@ TEST_CASE("Input writes reach the channel store and the callbacks") {
     CHECK(s.stats().inputWrites == 3);
 }
 
-TEST_CASE("Sensor writes fan out to the mapped channels") {
-    FakeTransport t; Server s(t); s.setDeviceName("d"); exampleGetSensorDataFromSmartphone(s); s.start();
+static float sensorSeen = 0; static void onCh3(float v) { sensorSeen = v; }
+
+TEST_CASE("Sensor writes fan out to the mapped channels, and callbacks may be registered before start") {
+    FakeTransport t; Server s(t); s.setDeviceName("d");
+    s.setChannelCallbacks(3, onCh3, nullptr);           // before the experiment exists
+    exampleGetSensorDataFromSmartphone(s); s.start();
     CHECK(t.layout.sensors == 1);
+    CHECK(t.layout.inputChannels == 3);
+    CHECK(t.layout.inputChannelMask == 0);              // all three channels are sensor-fed: no input characteristics
     CHECK(t.layout.sensorValueSize[0] == 12);
     t.writeSensor(1, {1.5f, -2.5f, 9.81f});
     CHECK(s.channels().value(1) == 1.5f); CHECK(s.channels().value(2) == -2.5f); CHECK(s.channels().value(3) == 9.81f);
+    CHECK(sensorSeen == 9.81f);
+}
+
+TEST_CASE("The layout mask names only channels with an element") {
+    FakeTransport t; Server s(t); s.setDeviceName("d"); exampleGetDataFromSmartphone(s); s.start();
+    CHECK(t.layout.inputChannels == 5);
+    CHECK(t.layout.inputChannelMask == ((1u << 1) | (1u << 2) | (1u << 3) | (1u << 4) | (1u << 5)));
 }
 
 TEST_CASE("User XML: served verbatim with the 1.x config layout") {

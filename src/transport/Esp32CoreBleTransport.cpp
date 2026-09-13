@@ -45,7 +45,10 @@ public:
         if (listener) listener->onWrite(id, c->getData(), (uint16_t)c->getLength());
     }
     void onStatus(BLECharacteristic*, Status s, uint32_t) override {
-        lastStatusOk = (s == SUCCESS_NOTIFY || s == SUCCESS_INDICATE);
+        // Only a send the stack refused counts as "not accepted" (the transfer retries it).
+        // "Nobody subscribed" is not a refusal: data written while no phone listens is simply
+        // dropped, as on every transport.
+        lastStatusOk = (s != ERROR_GATT);
     }
 #if defined(PHYPHOX_BLE_NIMBLE)
     void onSubscribe(BLECharacteristic*, ble_gap_conn_desc*, uint16_t subValue) override {
@@ -138,12 +141,15 @@ bool Esp32CoreBleTransport::begin(const GattLayout& layout, TransportListener& l
     exp->start();
 
     inputCount = layout.inputChannels; sensorCount = layout.sensors;
-    uint32_t handles = 1 + 3 + 2 * (inputCount + sensorCount) + (layout.legacyConfig ? 2 : 0) + 2;
+    uint8_t inputCharCount = 0;
+    for (uint8_t k = 1; k <= inputCount; ++k) if (layout.inputChannelMask & (1u << k)) inputCharCount++;
+    uint32_t handles = 1 + 3 + 2 * (inputCharCount + sensorCount) + (layout.legacyConfig ? 2 : 0) + 2;
     BLEService* data = server->createService(BLEUUID("cddf1001-30f7-4671-8b43-5e40ba53514a"), handles);
     chars[CH_DATA] = make(data, 0x10, 0x02, CharId{CH_DATA, 0}, NOTIFY, true);
     inputChars = (BLECharacteristic**)calloc(inputCount + 1, sizeof(BLECharacteristic*));
     for (uint8_t k = 1; k <= inputCount; ++k)
-        inputChars[k] = make(data, 0x20, k, CharId{CH_INPUT, k}, BLECharacteristic::PROPERTY_READ | WRITE, false);
+        if (layout.inputChannelMask & (1u << k))
+            inputChars[k] = make(data, 0x20, k, CharId{CH_INPUT, k}, BLECharacteristic::PROPERTY_READ | WRITE, false);
     sensorChars = (BLECharacteristic**)calloc(sensorCount + 1, sizeof(BLECharacteristic*));
     for (uint8_t s = 1; s <= sensorCount; ++s)
         sensorChars[s] = make(data, 0x30, s, CharId{CH_SENSOR, s}, BLECharacteristic::PROPERTY_READ | WRITE, false);

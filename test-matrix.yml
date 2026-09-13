@@ -31,24 +31,24 @@ rows:
     summary: Every public method in the headers appears in docs/api.md.
   - id: bench-transfer
     tier: T1
-    status: planned
+    status: active
     summary: >-
       Per board: discovery by name and service; transfer via subscription and via control
       write, CRC-verified; re-trigger during a transfer ignored; abort on disconnect; slow
       connection interval; MTU 23 and a negotiated larger MTU.
   - id: bench-data
     tier: T1
-    status: planned
+    status: active
     summary: Data notifications at the expected rate for write(1…5), the array write and setRepeating.
   - id: bench-inputs
     tier: T1
-    status: planned
+    status: active
     summary: >-
       Writes to input and sensor characteristics → board serial echo → exactly one callback
       per delivered value, one per button press; read() defaults; setResendUnchanged path.
   - id: bench-events
     tier: T1
-    status: planned
+    status: active
     summary: Event characteristic writes decoded into type/experimentTime/systemTime.
   - id: phones-transfer
     tier: T2

@@ -46,6 +46,15 @@ void Server::rebuild() {
             if (!in || !in->channel) continue;
             channels_.setCallbacks(in->channel, in->onChange, e.type == EL_BUTTON ? e.button.onPress : nullptr);
         }
+    for (uint8_t k = 1; k <= PHYPHOX_BLE_MAX_INPUT_CHANNEL; ++k)
+        if (pendingChange_[k] || pendingPress_[k]) channels_.setCallbacks(k, pendingChange_[k], pendingPress_[k]);
+}
+
+void Server::setChannelCallbacks(uint8_t channel, ChangeCallback onChange, PressCallback onPress) {
+    if (channel == 0 || channel > PHYPHOX_BLE_MAX_INPUT_CHANNEL) return;
+    if (onChange) pendingChange_[channel] = onChange;
+    if (onPress) pendingPress_[channel] = onPress;
+    channels_.setCallbacks(channel, onChange, onPress);   // a no-op until the store exists
 }
 
 bool Server::start() {
@@ -55,6 +64,9 @@ bool Server::start() {
     GattLayout layout;
     layout.deviceName = deviceName_ ? deviceName_ : "phyphox-Arduino";
     layout.inputChannels = customXml_ ? 0 : store_.inputChannelsUsed();
+    layout.inputChannelMask = 0;
+    for (uint8_t k = 1; k <= layout.inputChannels; ++k)
+        if (store_.input(k).used && !store_.input(k).fromSensor) layout.inputChannelMask |= (1u << k);
     const ExperimentData& d = store_.data();
     layout.sensors = customXml_ ? 0 : d.sensorCount;
     if (sensorSizes_) free(sensorSizes_);
