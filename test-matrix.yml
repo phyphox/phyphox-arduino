@@ -63,7 +63,9 @@ rows:
       submitWith only on press. A platform difference is an inconsistencies.yml finding.
   - id: phones-transfer-robustness
     tier: T2
-    status: planned
+    status: active
     summary: >-
-      iPhone and a deliberately bad link (distance, microwave, a second board): transfer
-      completes, slowly; the decision on any future chunked protocol rests on this row.
+      phones.py --transfer-loop: repeated fresh loads by the real apps, the board counting
+      refused/retried and abandoned packets. Android against the ESP32 is what found the
+      Bluedroid drop (2026-09-13); the iPhone and a deliberately bad link (distance, microwave,
+      a second board) still to run — the decision on any future chunked protocol rests on it.

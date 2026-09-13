@@ -27,7 +27,7 @@ TEST_CASE("Header packet and body packets") {
     CHECK(t.packetsSent() == 1 + (strlen(doc) + 19) / 20);
 }
 
-TEST_CASE("A refused packet is re-sent after the delay, then abandoned") {
+TEST_CASE("A refused packet is re-sent with a growing pause and never given up by count") {
     const char* doc = "0123456789";
     BufferSource src; src.set((const uint8_t*)doc, 10);
     TransferSession t; t.begin(src, 20);
@@ -38,8 +38,15 @@ TEST_CASE("A refused packet is re-sent after the delay, then abandoned") {
     CHECK(t.nextPacket(p, 100) == 0);                 // backing off
     CHECK(t.nextPacket(p, 100 + PHYPHOX_BLE_TRANSFER_RETRY_DELAY_MS) == 10);   // same packet again
     CHECK(std::string((char*)p, 10) == doc);
-    for (int i = 0; i < PHYPHOX_BLE_TRANSFER_RETRIES + 1; ++i) { t.refused(1000 + i * 100); t.nextPacket(p, 2000 + i * 100); }
-    CHECK(t.state() == TransferSession::ABORTED);
+    t.refused(200);                                   // the second refusal in a row: twice the pause
+    CHECK(t.nextPacket(p, 200 + PHYPHOX_BLE_TRANSFER_RETRY_DELAY_MS) == 0);
+    CHECK(t.nextPacket(p, 200 + 2 * PHYPHOX_BLE_TRANSFER_RETRY_DELAY_MS) == 10);
+    uint32_t now = 1000;                              // a congested stack refusing for 25 s
+    for (int i = 0; i < 500; ++i) { t.refused(now); now += PHYPHOX_BLE_TRANSFER_RETRY_MAX_MS; REQUIRE(t.nextPacket(p, now) == 10); }
+    CHECK(t.state() == TransferSession::BODY);        // abandoning is the Server's watchdog's job
+    CHECK(t.retries() == 502);
+    t.accepted();
+    CHECK(t.state() == TransferSession::DONE);
 }
 
 TEST_CASE("The header is one 20-byte packet whatever the MTU") {

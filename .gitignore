@@ -3,3 +3,4 @@ build/
 tests/host/build/
 tests/conformance/out/
 tools/bench/results/
+__pycache__/

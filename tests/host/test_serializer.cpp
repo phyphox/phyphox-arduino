@@ -13,7 +13,7 @@ static size_t countOf(const std::string& hay, const std::string& needle) {
 }
 
 TEST_CASE("The default document has the expected shape") {
-    FakeTransport t; Server s(t); s.setDeviceName("phyphox-Arduino"); s.start();
+    FakeTransport t; Server s(t); s.setDeviceName("phyphox-Arduino"); s.start(); s.poll();
     std::string x = document(s);
     CHECK(x.find("<phyphox version=\"1.20\">") == 0);
     CHECK(x.find("<title>Arduino-Experiment</title>") != std::string::npos);
@@ -100,9 +100,11 @@ TEST_CASE("Part table and windows are consistent with the full document") {
     // the transfer reads the document through the part table in MTU-sized windows: for every
     // MTU the reassembled packets must equal the document written in one go
     for (uint16_t mtu : {20, 23, 64, 185, 512}) {
-        FakeTransport t3; t3.mtu = mtu; Server s3(t3); s3.setDeviceName("d"); s3.setClock([]() -> uint32_t { return 0; }); exampleEverything(s3);
-        s3.start(); t3.subscribeExperiment();
-        for (int i = 0; i < 1000 && s3.transfer().active(); ++i) s3.poll();
+        static uint32_t ticks = 0;
+        FakeTransport t3; t3.mtu = mtu; Server s3(t3); s3.setDeviceName("d"); s3.setClock([]() -> uint32_t { return ticks; }); exampleEverything(s3);
+        s3.start(); s3.poll(); t3.subscribeExperiment();
+        ticks += PHYPHOX_BLE_TRANSFER_START_DELAY_MS + 1;
+        for (int i = 0; i < 2000 && s3.transfer().active(); ++i) { ticks += 1; s3.poll(); }
         CHECK(t3.received() == full);
         REQUIRE(t3.experimentPackets.size() >= 2);
         const std::vector<uint8_t>& h = t3.experimentPackets[0];
@@ -130,7 +132,7 @@ TEST_CASE("Golden documents") {
         {"everything", [](Server& s) { exampleEverything(s); }, "phyphox-Arduino", 176},
     };
     for (const Row& r : rows) {
-        FakeTransport t; Server s(t); s.setDeviceName(r.device); s.setMtu(r.mtu); r.build(s); s.start();
+        FakeTransport t; Server s(t); s.setDeviceName(r.device); s.setMtu(r.mtu); r.build(s); s.start(); s.poll();
         std::ifstream f(std::string(GOLDEN_DIR) + "/" + r.name + ".phyphox", std::ios::binary);
         REQUIRE_MESSAGE(f.good(), r.name);
         std::stringstream buf; buf << f.rdbuf();

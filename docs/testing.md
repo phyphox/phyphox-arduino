@@ -59,6 +59,9 @@ tools/bench/phones.py ... --transfer-loop 20
 Loads the experiment from the board twenty times per phone over fresh connections and reports
 the board's transfer statistics (refused and retried packets, abandoned transfers). Run it with
 the phone far from the board or with other boards advertising to see the flow control at work.
+Set `PHYPHOX_BENCH_SERIAL_LOG=<file>` to keep everything the board prints; on the ESP32, build
+the bench sketch with `-DPHYPHOX_BLE_ESP32_TRACE` in the extra flags to see the Bluetooth
+stack's refused confirmations as well (`[phyphoxBLE] conf ...` lines).
 
 ### The user-XML mode
 

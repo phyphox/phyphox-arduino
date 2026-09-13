@@ -51,7 +51,12 @@ public:
     void setCustomXml(const uint8_t* xml, uint32_t len);
 
     // ---- lifecycle
+    /// Request the start. The transport is brought up LAZILY, at the first poll() or write():
+    /// the 1.x examples call start() before addExperiment(), and the characteristic layout
+    /// depends on the experiment, so the stack must not be configured before setup() is done.
     bool start();
+    /// Bring the transport up now if start() was requested and it is not up yet.
+    bool ensureStarted();
     void poll();                    ///< drives the transfer; calls transport_.poll()
     bool started() const { return started_; }
 
@@ -73,7 +78,8 @@ public:
     uint16_t mtu() const { return mtu_; }
 
     // ---- introspection
-    void printXml(Sink& sink) const { serializer_.writeAll(sink); }
+    void printXml(Sink& sink) { ensureDocument(); serializer_.writeAll(sink); }
+    void ensureDocument();
     const ExperimentStore& store() const { return store_; }
     const ServerStats& stats() const { return stats_; }
     uint16_t connections() const { return transport_.connected() ? 1 : 0; }
@@ -111,6 +117,9 @@ private:
     uint8_t legacySlots_[6 * 32] = {0};   ///< ChannelStore storage in user-XML mode (5 channels)
     uint32_t (*clock_)() = nullptr;
     bool started_ = false;
+    bool startRequested_ = false;
+    uint32_t layoutMask_ = 0;      ///< the input channels the transport was given at begin()
+    uint8_t layoutSensors_ = 0;
     /// Callbacks registered through the façade before the channel store exists; applied by rebuild().
     ChangeCallback pendingChange_[PHYPHOX_BLE_MAX_INPUT_CHANNEL + 1] = {nullptr};
     PressCallback pendingPress_[PHYPHOX_BLE_MAX_INPUT_CHANNEL + 1] = {nullptr};

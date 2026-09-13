@@ -27,13 +27,14 @@ void TransferSession::begin(const ByteSource& source, uint16_t payload) {
     retries_ = 0;
     retryAt_ = 0;
     pending_ = false;
+    lastProgress_ = 0;
     state_ = HEADER;
 }
 
 uint16_t TransferSession::nextPacket(uint8_t* out, uint32_t nowMs) {
     if (!source_ || !(state_ == HEADER || state_ == BODY)) return 0;
     if (pending_) return 0;                                   // awaiting a verdict
-    if (retries_ && (int32_t)(nowMs - retryAt_) < 0) return 0; // backing off
+    if ((int32_t)(nowMs - retryAt_) < 0) return 0;            // backing off, or the start delay
     uint16_t len = 0;
     if (state_ == HEADER) {
         // "phyphox" + u32 size + u32 crc, big endian; the rest of the packet is zero.
@@ -57,6 +58,7 @@ void TransferSession::accepted() {
     if (!pending_) return;
     pending_ = false;
     retries_ = 0;
+    retryAt_ = 0;
     packets_++;
     if (state_ == HEADER) {
         state_ = BODY;
@@ -69,8 +71,11 @@ void TransferSession::accepted() {
 void TransferSession::refused(uint32_t nowMs) {
     if (!pending_) return;
     pending_ = false;
-    if (++retries_ > PHYPHOX_BLE_TRANSFER_RETRIES) { state_ = ABORTED; return; }
-    retryAt_ = nowMs + PHYPHOX_BLE_TRANSFER_RETRY_DELAY_MS;
+    if (retries_ < 0xffff) retries_++;
+    uint32_t delay = PHYPHOX_BLE_TRANSFER_RETRY_DELAY_MS;
+    for (uint16_t i = 1; i < retries_ && delay < PHYPHOX_BLE_TRANSFER_RETRY_MAX_MS; ++i) delay *= 2;
+    if (delay > PHYPHOX_BLE_TRANSFER_RETRY_MAX_MS) delay = PHYPHOX_BLE_TRANSFER_RETRY_MAX_MS;
+    retryAt_ = nowMs + delay;
 }
 
 } // namespace phyphox

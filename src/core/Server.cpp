@@ -24,6 +24,19 @@ void Server::addExperiment(const PhyphoxBleExperiment& exp) {
     customXml_ = false;
     store_.copyFrom(exp);
     rebuild();
+    // After the transport is up the characteristic layout cannot change any more: the new
+    // document is served, but input channels or sensors it adds have no characteristic.
+    if (started_) {
+        const ExperimentData& d = store_.data();
+        bool fits = d.sensorCount <= layoutSensors_;
+        for (uint8_t k = 1; k <= store_.inputChannelsUsed() && fits; ++k)
+            if (store_.input(k).used && !store_.input(k).fromSensor && !(layoutMask_ & (1u << k))) fits = false;
+        if (!fits) store_.data().error.record(ERR_02_ABOVE_LIMIT, "addExperiment after the first poll()/write()");
+    }
+}
+
+void Server::ensureDocument() {
+    if (!customXml_ && store_.data().viewCount == 0) { store_.buildDefault(); rebuild(); }
 }
 
 void Server::setCustomXml(const uint8_t* xml, uint32_t len) {
@@ -58,7 +71,13 @@ void Server::setChannelCallbacks(uint8_t channel, ChangeCallback onChange, Press
 }
 
 bool Server::start() {
-    if (!customXml_ && store_.data().viewCount == 0) { store_.buildDefault(); rebuild(); }
+    startRequested_ = true;
+    return true;
+}
+
+bool Server::ensureStarted() {
+    if (started_ || !startRequested_) return started_;
+    ensureDocument();
     if (!ensurePacket(mtu_)) return false;
 
     GattLayout layout;
@@ -78,6 +97,7 @@ bool Server::start() {
     layout.sensorValueSize = sensorSizes_;
     layout.legacyConfig = customXml_;
     layout.dataValueSize = mtu_;
+    layoutMask_ = layout.inputChannelMask; layoutSensors_ = layout.sensors;
 
     if (mtu_ > PHYPHOX_BLE_DEFAULT_MTU) transport_.requestMtu(mtu_);
     if (!transport_.begin(layout, *this)) return false;
@@ -87,6 +107,7 @@ bool Server::start() {
 }
 
 void Server::poll() {
+    if (!ensureStarted()) return;
     transport_.poll();
     if (!transport_.drivesTransfer()) pumpTransfer();
 }
@@ -94,6 +115,7 @@ void Server::poll() {
 // ---------------------------------------------------------------- data to the phone
 
 bool Server::writeFloats(const float* values, uint8_t count) {
+    if (!ensureStarted()) return false;
     uint8_t buf[PHYPHOX_BLE_DATA_CHANNELS * 4] = {0};
     if (count > PHYPHOX_BLE_DATA_CHANNELS) count = PHYPHOX_BLE_DATA_CHANNELS;
     memcpy(buf, values, count * 4);      // float32 little-endian on every supported board
@@ -104,6 +126,7 @@ bool Server::writeFloats(const float* values, uint8_t count) {
 }
 
 bool Server::writeBytes(const uint8_t* bytes, uint16_t len) {
+    if (!ensureStarted()) return false;
     if (len > mtu_) len = mtu_;
     stats_.dataNotifications++;
     bool ok = transport_.notify(CharId{CH_DATA, 0}, bytes, len);
@@ -129,13 +152,20 @@ void Server::startTransfer() {
     if (!ensurePacket(payload)) return;
     if (payload > packetCap_) payload = packetCap_;
     transfer_.begin(customXml_ ? (const ByteSource&)customSource_ : (const ByteSource&)serializerSource_, payload);
+    transfer_.noteProgress(now());
+    if (clock_) transfer_.holdUntil(now() + PHYPHOX_BLE_TRANSFER_START_DELAY_MS);
     stats_.transfers++;
     // no packet is sent here: the trigger arrives inside a stack callback; pump() sends
 }
 
 void Server::pumpTransfer() {
     if (!packet_) return;
-    for (int i = 0; i < 32 && transfer_.active(); ++i) {
+    // watchdog: a session that has not moved for PHYPHOX_BLE_TRANSFER_STALL_MS is abandoned,
+    // so whatever wedged it cannot also swallow every later trigger
+    if (transfer_.active() && clock_ && (int32_t)(now() - transfer_.lastProgressMs()) > (int32_t)PHYPHOX_BLE_TRANSFER_STALL_MS) {
+        transfer_.abort();
+    }
+    for (int i = 0; i < PHYPHOX_BLE_TRANSFER_BURST && transfer_.active(); ++i) {
         uint16_t len = transfer_.nextPacket(packet_, now());
         if (!len) break;
         bool ok = transport_.notify(CharId{CH_EXPERIMENT, 0}, packet_, len);
@@ -143,7 +173,8 @@ void Server::pumpTransfer() {
             if (!ok) { stats_.packetsRefused++; transfer_.refused(now()); }
             break;                           // the verdict arrives through onNotifyStatus()
         }
-        if (ok) transfer_.accepted(); else { stats_.packetsRefused++; transfer_.refused(now()); }
+        if (ok) { transfer_.accepted(); transfer_.noteProgress(now()); }
+        else { stats_.packetsRefused++; transfer_.refused(now()); }
     }
     // bookkeeping once per finished transfer (the session then goes idle)
     if (transfer_.state() == TransferSession::DONE) { stats_.transfersCompleted++; transport_.restartAdvertising(); transfer_.reset(); }
@@ -167,7 +198,8 @@ void Server::onSubscribe(CharId id, bool enabled) {
 
 void Server::onNotifyStatus(CharId id, bool accepted) {
     if (id.kind != CH_EXPERIMENT) return;
-    if (accepted) transfer_.accepted(); else { stats_.packetsRefused++; transfer_.refused(now()); }
+    if (accepted) { transfer_.accepted(); transfer_.noteProgress(now()); }
+    else { stats_.packetsRefused++; transfer_.refused(now()); }
     pumpTransfer();
 }
 

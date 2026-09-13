@@ -22,6 +22,15 @@ curious or something does not load.
   field and a slider for the same value, say); a button owns its channel.
 - **Phone sensors** land in input channels too: `sensor.mapChannel("x", 1)`.
 
+## When the radio comes up
+
+`PhyphoxBLE::start()` records the name and the request; the Bluetooth stack is brought up at
+the first `PhyphoxBLE::poll()` or `PhyphoxBLE::write()`, which always happens after `setup()`
+has finished. So the 1.x order — `start()` first, `addExperiment()` afterwards — keeps
+working: the experiment is known before the characteristics are created. An experiment added
+later, from `loop()`, is served, but input channels or phone sensors it adds beyond the first
+one have no characteristic; `printErrors()` says so.
+
 ## Only changes are sent
 
 The phone sends an input channel's value when it changes, not continuously. That is a change
@@ -46,7 +55,9 @@ The experiment document is sent in packets on the phyphox experiment characteris
 the phone subscribes to it (or asks for it on the control characteristic). The board sends as
 fast as its Bluetooth stack accepts and retries a packet the stack refuses — no fixed pacing.
 On a slow or noisy link the transfer takes longer but arrives complete; only a disconnect
-aborts it, and then the app offers to retry. Details in [Protocol](protocol.md).
+aborts it, and then the app offers to retry. The first packet waits 150 ms after the trigger
+so the app's own control write is answered before the notifications start, and packets go out
+in short bursts so the phone's writes are never starved. Details in [Protocol](protocol.md).
 
 ## Events
 

@@ -5,8 +5,10 @@
 // ignored; a disconnect aborts.
 //
 // Flow control (plan §3.4): the transport reports whether the stack accepted a packet. A
-// refused packet is re-sent after PHYPHOX_BLE_TRANSFER_RETRY_DELAY_MS, up to
-// PHYPHOX_BLE_TRANSFER_RETRIES times; no fixed pacing delay anywhere.
+// refused packet is re-sent after PHYPHOX_BLE_TRANSFER_RETRY_DELAY_MS, the pause doubling per
+// consecutive refusal up to PHYPHOX_BLE_TRANSFER_RETRY_MAX_MS; no retry count and no fixed
+// pacing delay anywhere — the Server's stall watchdog is the only thing that abandons a
+// transfer.
 //
 // This class is transport-independent: it only hands out the next packet and takes the
 // verdict back. The Server drives it from poll() / the transport's callbacks.
@@ -46,6 +48,8 @@ public:
 
     /// Start a transfer of `source` with `payload` bytes per packet (MTU − 3).
     void begin(const ByteSource& source, uint16_t payload);
+    /// Do not send before `untilMs` (the start delay).
+    void holdUntil(uint32_t untilMs) { retryAt_ = untilMs; }
     void abort() { state_ = ABORTED; }
     void reset() { state_ = IDLE; pending_ = false; }   ///< back to idle after the bookkeeping
     bool active() const { return state_ == HEADER || state_ == BODY; }
@@ -59,6 +63,9 @@ public:
     void refused(uint32_t nowMs);
 
     uint32_t bytesSent() const { return offset_; }
+    /// Milliseconds of the last accepted packet (or of begin()); the Server's stall watchdog.
+    uint32_t lastProgressMs() const { return lastProgress_; }
+    void noteProgress(uint32_t nowMs) { lastProgress_ = nowMs; }
     uint16_t packetsSent() const { return packets_; }
     uint16_t retries() const { return retries_; }
 
@@ -69,8 +76,9 @@ private:
     uint32_t offset_ = 0;        ///< next body byte to send
     uint16_t lastLen_ = 0;       ///< length of the packet awaiting a verdict
     uint16_t packets_ = 0;
-    uint16_t retries_ = 0;       ///< consecutive refusals of the current packet
+    uint16_t retries_ = 0;       ///< consecutive refusals of the current packet (saturating)
     uint32_t retryAt_ = 0;       ///< millis() before which nextPacket() stays quiet
+    uint32_t lastProgress_ = 0;
     bool pending_ = false;       ///< a packet is out, verdict not yet in
 };
 

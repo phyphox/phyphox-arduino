@@ -52,9 +52,22 @@
 #define PHYPHOX_BLE_DEFAULT_MTU 20
 #define PHYPHOX_BLE_MAX_MTU 512
 
-/// Transfer flow control: how often a refused notification is re-sent before the transfer is
-/// abandoned, and the pause before each retry (milliseconds).
-#define PHYPHOX_BLE_TRANSFER_RETRIES 50
+/// Transfer flow control: a refused notification is re-sent after RETRY_DELAY_MS, the pause
+/// doubling with every consecutive refusal up to RETRY_MAX_MS. There is no retry count — a
+/// congested stack can refuse for hundreds of milliseconds in a row and the packet must still
+/// go out; only the stall watchdog below abandons a transfer.
 #define PHYPHOX_BLE_TRANSFER_RETRY_DELAY_MS 5
+#define PHYPHOX_BLE_TRANSFER_RETRY_MAX_MS 50
+/// A transfer that has not moved (no packet accepted) for this long is abandoned, so a stuck
+/// session can never block the next trigger. The app's own transfer timeout is longer.
+#define PHYPHOX_BLE_TRANSFER_STALL_MS 3000
+/// The first packet waits this long after the trigger. The apps subscribe and then at once
+/// write 1 to the control characteristic; a board that floods notifications the moment the
+/// subscription arrives starves the stack's response to that write, and Android abandons the
+/// transfer after 5 s with "could not write" (seen on a Pixel 9 Pro, 2026-09-13).
+#define PHYPHOX_BLE_TRANSFER_START_DELAY_MS 150
+/// Packets sent back to back per pump before the stack gets a breather (the ESP32 task pumps
+/// every 2 ms). Far faster than any link, but leaves room for the phone's writes and reads.
+#define PHYPHOX_BLE_TRANSFER_BURST 8
 
 #endif

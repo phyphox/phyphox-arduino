@@ -5,10 +5,13 @@
 // write to the CCCD descriptor; NimBLE: BLECharacteristicCallbacks::onSubscribe) — the
 // 1.x fix in commit 42bad88. Never pins a task to a core (1.x commit ca630b9, single-core C3).
 //
-// notify() returns void in this library on both stacks; a refused send arrives asynchronously
-// as BLECharacteristicCallbacks::onStatus(ERROR_GATT, rc), which this transport forwards as
-// onNotifyStatus(false). That is the signal the transfer's retry hangs off (plan §3.4).
-// poll() is a no-op: the stack runs in its own tasks.
+// notify() returns void in this library on both stacks; a send refused up front arrives as
+// BLECharacteristicCallbacks::onStatus(ERROR_GATT, rc) from inside notify(), which this
+// transport turns into a synchronous false. On Bluedroid a packet can still be dropped later,
+// in the stack's own task, so for the experiment characteristic the transport also waits for
+// the stack's confirmation event (see the .cpp). Those are the signals the transfer's retry
+// hangs off (plan §3.4). Build with -DPHYPHOX_BLE_ESP32_TRACE to see refused confirmations on
+// Serial. poll() is a no-op: the stack runs in its own tasks.
 #ifndef PHYPHOX_BLE_TRANSPORT_ESP32COREBLE_H
 #define PHYPHOX_BLE_TRANSPORT_ESP32COREBLE_H
 

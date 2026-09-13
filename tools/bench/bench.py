@@ -43,6 +43,8 @@ class SerialLog:
     def __init__(self, port, baud=115200):
         self.ser = serial.Serial(port, baud, timeout=0.1)
         self.q = queue.Queue(); self.lines = []; self.stop = False
+        # PHYPHOX_BENCH_SERIAL_LOG=<file>: also append every line the board prints (diagnosis)
+        self.dump = open(os.environ["PHYPHOX_BENCH_SERIAL_LOG"], "a") if os.environ.get("PHYPHOX_BENCH_SERIAL_LOG") else None
         self.t = threading.Thread(target=self.run, daemon=True); self.t.start()
     def run(self):
         buf = b""
@@ -55,6 +57,7 @@ class SerialLog:
                 line, buf = buf.split(b"\n", 1)
                 s = line.decode("utf-8", "replace").rstrip("\r")
                 self.lines.append(s); self.q.put(s)
+                if self.dump: self.dump.write(s + "\n"); self.dump.flush()
     def send(self, text): self.ser.write(text.encode()); self.ser.flush()
     def wait_for(self, predicate, timeout):
         end = time.time() + timeout

@@ -17,7 +17,7 @@ static void dump(phyphox::Server& s, const std::string& dir, const char* name) {
 int main(int argc, char** argv) {
     if (argc < 2) { fprintf(stderr, "usage: gen_examples <dir>\n"); return 2; }
     std::string dir = argv[1];
-    { FakeTransport t; phyphox::Server s(t); s.setDeviceName("phyphox-Arduino"); s.start(); dump(s, dir, "default"); }
+    { FakeTransport t; phyphox::Server s(t); s.setDeviceName("phyphox-Arduino"); s.start(); s.poll(); dump(s, dir, "default"); }
     { FakeTransport t; phyphox::Server s(t); s.setDeviceName("create experiment"); exampleCreateExperiment(s); dump(s, dir, "CreateExperiment"); }
     { FakeTransport t; phyphox::Server s(t); s.setDeviceName("phyphox-Arduino"); exampleMultigraph(s); dump(s, dir, "multigraph"); }
     { FakeTransport t; phyphox::Server s(t); s.setDeviceName("phyphox-Arduino"); exampleGetDataFromSmartphone(s); dump(s, dir, "getDataFromSmartphone"); }

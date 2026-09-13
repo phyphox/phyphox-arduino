@@ -49,7 +49,7 @@ def run_example(example, name, expect, phones, port, rep):
                     continue
                 time.sleep(4)
                 started = False
-                for _ in range(15):
+                for _ in range(30):                 # iOS can take >15 s to reconnect for the experiment
                     control(phone.base, "start"); time.sleep(1)
                     st, d = api_json(phone.base, "/get?CH1")
                     if d and d.get("status", {}).get("measuring"): started = True; break
