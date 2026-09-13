@@ -1,0 +1,22 @@
+# Doxygen configuration for the generated API reference (published to GitHub Pages by CI).
+# Generate locally with: doxygen  → build/doxygen/html/index.html
+PROJECT_NAME           = "phyphox BLE"
+PROJECT_BRIEF          = "Plot your Arduino's data in the phyphox app and control the board from the phone"
+OUTPUT_DIRECTORY       = build/doxygen
+INPUT                  = src/phyphoxBle.h src/phyphoxBleExperiment.h src/core src/transport docs/README.md
+FILE_PATTERNS          = *.h *.md
+USE_MDFILE_AS_MAINPAGE = docs/README.md
+RECURSIVE              = YES
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = YES
+GENERATE_LATEX         = NO
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+SOURCE_BROWSER         = NO
+SHOW_INCLUDE_FILES     = NO
+QUIET                  = YES
+WARN_IF_UNDOCUMENTED   = NO
+# no third-party requests from the published pages
+SEARCHENGINE           = YES

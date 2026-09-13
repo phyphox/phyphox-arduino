@@ -40,6 +40,36 @@ change-only delivery of every input element, buttons, submit-with-button, the ph
 accelerometer streaming to the board, start/pause/clear events, and whether an input set while
 paused reaches the board (it does not, on either app).
 
+### The release sweep
+
+```
+tools/bench/examples.py --fqbn esp32:esp32:esp32 --port /dev/ttyUSB0 --label esp32 --android <serial> --ios <udid>
+```
+
+Flashes every shipped example as it is and lets both real apps load and start it, checking
+what the example is about: the board's data arriving in the app, or the board's own serial
+output for the examples that only receive. Run it per board before a release.
+
+### Transfer robustness
+
+```
+tools/bench/phones.py ... --transfer-loop 20
+```
+
+Loads the experiment from the board twenty times per phone over fresh connections and reports
+the board's transfer statistics (refused and retried packets, abandoned transfers). Run it with
+the phone far from the board or with other boards advertising to see the flow control at work.
+
+### The user-XML mode
+
+```
+tools/bench/bench.py --fqbn ... --port ... --label ... --custom-xml
+```
+
+Flashes `tools/bench/benchCustomXml`, a sketch that serves a hand-written document, and checks
+that it is served verbatim with the 1.x characteristic layout (the five-float config on
+`cddf1003`).
+
 ## The bench sketch
 
 Flashes `tools/bench/benchSketch` (a rich experiment that echoes every callback on serial), then

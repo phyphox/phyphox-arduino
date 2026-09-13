@@ -27,7 +27,7 @@ rows:
       report per PR. ESP32 rows use the default partition on purpose.
   - id: api-doc-parity
     tier: T0
-    status: planned
+    status: active
     summary: Every public method in the headers appears in docs/api.md.
   - id: bench-transfer
     tier: T1

@@ -67,10 +67,10 @@ class SerialLog:
         while not self.q.empty(): self.q.get_nowait()
     def close(self): self.stop = True; self.ser.close()
 
-def flash(fqbn, port, extra):
+def flash(fqbn, port, extra, sketch="benchSketch"):
     cmd = ["arduino-cli", "compile", "--upload", "-p", port, "--fqbn", fqbn, "--library", ROOT]
     if extra: cmd += ["--build-property", "compiler.cpp.extra_flags=" + extra]
-    cmd.append(os.path.join(HERE, "benchSketch"))
+    cmd.append(os.path.join(HERE, sketch))
     print("flashing:", " ".join(cmd))
     r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode != 0:
@@ -236,12 +236,37 @@ async def run(args, rep, log):
         rep.check("no aborted transfers", kv.get("aborted") == "0", stats)
         print(f"  (packets refused by the stack and retried: {kv.get('refused')})")
 
+LEGACY_CONFIG_CHAR = "cddf1003" + SUFFIX
+
+async def run_custom_xml(args, rep, log):
+    """User-XML mode: the document is served verbatim and the 1.x characteristics exist."""
+    dev = await find_device(args.name, 20)
+    rep.check("advertising as '%s'" % args.name, dev is not None)
+    if dev is None: return
+    xml = get_xml(log, rep)
+    rep.check("served document is the sketch's own (declares 1.15, names CB1)", xml is not None and b'version="1.15"' in xml and b"CB1" in xml)
+    async with BleakClient(dev, timeout=20) as client:
+        uuids = {c.uuid.lower() for s in client.services for c in s.characteristics}
+        for u, what in [(EXP_CHAR, "experiment"), (CTRL_CHAR, "control"), (EVENT_CHAR, "event"), (DATA_CHAR, "data"), (LEGACY_CONFIG_CHAR, "1.x config cddf1003")]:
+            rep.check(f"characteristic {what}", u in uuids)
+        rep.check("no 2.0 input characteristic", input_char(1) not in uuids)
+        await receive_transfer(client, rep, "transfer (subscription)", xml)
+        log.drain()
+        await client.write_gatt_char(LEGACY_CONFIG_CHAR, struct.pack("<fffff", 1.5, 2.5, 0, 0, 0), response=True)
+        rep.check("config write → read(a…e) sees the five floats", log.wait_for(lambda l: l == "CONFIG 1.500 2.500 0.000 0.000 0.000", 4) is not None)
+        count = [0]
+        def dcb(_, data): count[0] += 1
+        await client.start_notify(DATA_CHAR, dcb); await asyncio.sleep(2.0); await client.stop_notify(DATA_CHAR)
+        rep.check("data notifications flow", count[0] >= 20, f"{count[0]} in 2 s")
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--fqbn", required=True); ap.add_argument("--port", required=True); ap.add_argument("--label", required=True)
     ap.add_argument("--name", default="phyphox bench"); ap.add_argument("--no-flash", action="store_true")
     ap.add_argument("--extra", default=""); ap.add_argument("--transfers", type=int, default=3)
+    ap.add_argument("--custom-xml", action="store_true", help="test the user-XML mode with benchCustomXml instead")
     args = ap.parse_args()
+    if args.custom_xml and args.name == "phyphox bench": args.name = "phyphox_customxml"
     if not args.extra: args.extra = "-DBENCH_NAME=" + args.name.replace(" ", "_").replace("-", "_")
     args.name = args.name.replace(" ", "_").replace("-", "_")
     lock = os.path.join(WORKROOT, ".bench-lock-" + socket.gethostname())
@@ -250,7 +275,7 @@ def main():
     open(lock, "w").write(f"phyphox-arduino bench {args.label} pid {os.getpid()} since {time.strftime('%Y-%m-%d %H:%M')}\n")
     rep = Report()
     try:
-        if not args.no_flash: flash(args.fqbn, args.port, args.extra)
+        if not args.no_flash: flash(args.fqbn, args.port, args.extra, "benchCustomXml" if args.custom_xml else "benchSketch")
         if not wait_port(args.port): sys.exit("port did not come back after flashing")
         time.sleep(2.0)
         log = SerialLog(args.port)
@@ -259,7 +284,7 @@ def main():
             if ready is None:
                 log.send("x"); ready = log.wait_for(lambda l: l.startswith("READY") or l == "XML-BEGIN", 5)
             rep.check("sketch running", ready is not None, ready or "")
-            asyncio.run(run(args, rep, log))
+            asyncio.run(run_custom_xml(args, rep, log) if args.custom_xml else run(args, rep, log))
         finally:
             log.close()
     finally:

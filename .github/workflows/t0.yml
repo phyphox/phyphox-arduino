@@ -26,6 +26,9 @@ jobs:
           cmake -S tests/host -B tests/host/build -DCMAKE_BUILD_TYPE=Debug
           cmake --build tests/host/build -j
           tests/host/build/phyphox_tests
+      - name: Every public method is documented
+        working-directory: phyphox-arduino
+        run: python3 tools/check_api_docs.py
       - name: Conformance against the file-format spec
         working-directory: phyphox-arduino
         run: python3 tests/conformance/run.py --docs ../phyphox-docs --skip-build --build-dir tests/host/build

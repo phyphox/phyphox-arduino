@@ -225,11 +225,42 @@ def sequence(phone, base, log, rep):
         kv = dict(x.split("=") for x in stats.split()[1:])
         rep.check(f"{p}: no aborted transfers", kv.get("aborted") == "0", stats)
 
+def transfer_loop(phone, board_name, n, log, rep):
+    """The transfer-robustness row: N fresh loads of the experiment from the board by the real
+    app. Every load is a full transfer over a new connection; the board counts what its stack
+    refused and retried, and what was abandoned."""
+    p = phone.name()
+    log.drain(); log.send("s")
+    before = expect_line(log, lambda l: l.startswith("STATS"), 3)
+    kv0 = dict(x.split("=") for x in before.split()[1:]) if before else {}
+    loads = 0; times = []
+    for i in range(n):
+        t0 = time.time()
+        quiet = Report()
+        ok = False
+        try:
+            ok = phone.connect(board_name, quiet, timeout=120)
+        finally:
+            phone.release(quiet)
+        dt = time.time() - t0
+        if ok: loads += 1; times.append(dt)
+        print(f"  load {i+1}/{n}: {'ok' if ok else 'FAILED'} in {dt:.1f} s")
+        time.sleep(2)
+    log.drain(); log.send("s")
+    after = expect_line(log, lambda l: l.startswith("STATS"), 3)
+    kv1 = dict(x.split("=") for x in after.split()[1:]) if after else {}
+    d = {k: int(kv1.get(k, 0)) - int(kv0.get(k, 0)) for k in ("transfers", "completed", "aborted", "refused")}
+    rep.check(f"{p}: {n} loads succeeded", loads == n, f"{loads} of {n}, median {sorted(times)[len(times)//2]:.1f} s" if times else "none")
+    rep.check(f"{p}: board completed every transfer", d["completed"] >= loads and d["aborted"] == 0,
+              f"transfers +{d['transfers']} completed +{d['completed']} aborted +{d['aborted']} packets refused and retried +{d['refused']}")
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--board-port", required=True); ap.add_argument("--board-name", required=True); ap.add_argument("--label", required=True)
     ap.add_argument("--android"); ap.add_argument("--ios")
     ap.add_argument("--android-port", type=int, default=8091); ap.add_argument("--ios-port", type=int, default=8081)
+    ap.add_argument("--transfer-loop", type=int, default=0, metavar="N",
+                    help="instead of the sequence: load the experiment from the board N times per phone and report the board's transfer statistics (the robustness row)")
     args = ap.parse_args()
     if not args.android and not args.ios: sys.exit("give --android SERIAL and/or --ios UDID")
     lock = os.path.join(WORKROOT, ".bench-lock-" + socket.gethostname())
@@ -246,6 +277,9 @@ def main():
             if args.ios: phones.append(IOS(args.ios, args.ios_port))
             for phone in phones:
                 print(f"== {phone.name()}")
+                if args.transfer_loop:
+                    transfer_loop(phone, args.board_name, args.transfer_loop, log, rep)
+                    continue
                 try:
                     if phone.connect(args.board_name, rep):
                         sequence(phone, phone.base, log, rep)
