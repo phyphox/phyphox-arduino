@@ -143,6 +143,8 @@ TEST_CASE("User XML: served verbatim with the 1.x config layout") {
     fakeNow += PHYPHOX_BLE_TRANSFER_START_DELAY_MS + 1;
     for (int i = 0; i < 100 && s.transfer().active(); ++i) { fakeNow += 1; s.poll(); }
     CHECK(t.received() == xml);
+    StringSink dump; s.printXml(dump);
+    CHECK(dump.out == xml);                              // printXML() shows the user's bytes, not a generated document
     uint8_t cfg[20]; float f[5] = {1, 2, 3, 4, 5}; memcpy(cfg, f, 20);
     t.listener->onWrite(CharId{CH_LEGACY_CONFIG, 0}, cfg, 20);
     CHECK(s.channels().value(3) == 3);

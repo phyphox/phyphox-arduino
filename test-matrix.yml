@@ -66,6 +66,8 @@ rows:
     status: active
     summary: >-
       phones.py --transfer-loop: repeated fresh loads by the real apps, the board counting
-      refused/retried and abandoned packets. Android against the ESP32 is what found the
-      Bluedroid drop (2026-09-13); the iPhone and a deliberately bad link (distance, microwave,
-      a second board) still to run — the decision on any future chunked protocol rests on it.
+      refused/retried, abandoned and stalled transfers. Found the Bluedroid packet drop
+      (Android) and the stale subscription descriptor (iOS) on 2026-09-13; 12 of 12 loads by
+      each phone from the ESP32 and the Nano 33 IoT since. A deliberately bad link (distance,
+      microwave, a second board) is still to run — the decision on any future chunked protocol
+      rests on it.

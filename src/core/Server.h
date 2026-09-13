@@ -79,7 +79,8 @@ public:
     uint16_t mtu() const { return mtu_; }
 
     // ---- introspection
-    void printXml(Sink& sink) { ensureDocument(); serializer_.writeAll(sink); }
+    /// The document as served: the user's own bytes in user-XML mode, else the generated one.
+    void printXml(Sink& sink);
     void ensureDocument();
     const ExperimentStore& store() const { return store_; }
     const ServerStats& stats() const { return stats_; }

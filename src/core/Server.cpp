@@ -35,6 +35,20 @@ void Server::addExperiment(const PhyphoxBleExperiment& exp) {
     }
 }
 
+void Server::printXml(Sink& sink) {
+    if (customXml_) {
+        uint8_t buf[64];
+        for (uint32_t off = 0; off < customSource_.size(); ) {
+            uint32_t n = customSource_.read(off, buf, sizeof(buf));
+            if (!n) break;
+            sink.write(buf, n); off += n;
+        }
+        return;
+    }
+    ensureDocument();
+    serializer_.writeAll(sink);
+}
+
 void Server::ensureDocument() {
     if (!customXml_ && store_.data().viewCount == 0) { store_.buildDefault(); rebuild(); }
 }
