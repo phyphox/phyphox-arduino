@@ -20,7 +20,7 @@ TEST_CASE("The default document has the expected shape") {
     CHECK(x.find("<bluetooth name=\"phyphox-Arduino\" id=\"phyphoxBLE\" mode=\"notification\" subscribeOnStart=\"false\">") != std::string::npos);
     CHECK(countOf(x, "cddf1002-30f7-4671-8b43-5e40ba53514a") == 6);
     CHECK(x.find("extra=\"time\">CH0</output>") != std::string::npos);
-    CHECK(x.find("<analysis sleep=\"0\" onUserInput=\"true\">\n</analysis>") != std::string::npos);
+    CHECK(x.find("<analysis sleep=\"0\">\n</analysis>") != std::string::npos);
     CHECK(x.find("<graph label=\"Graph\" labelX=\"time\" labelY=\"value\" unitX=\"s\">") != std::string::npos);
     CHECK(x.find("<input axis=\"y\">CH1</input>") != std::string::npos);
     CHECK(x.find("<set name=\"mySet\">") != std::string::npos);

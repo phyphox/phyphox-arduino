@@ -278,8 +278,10 @@ void Serializer::emitPrologue(Sink& s) const {
     }
     s.write("\t</bluetooth>\n</output>\n");
 
-    // analysis: the change detector per input channel
-    s.write("<analysis sleep=\"0\" onUserInput=\"true\">\n");
+    // analysis: the change detector per input channel. No onUserInput: the analysis runs at
+    // its default rate anyway (10 ms is irrelevant for user input), and the attribute would
+    // not help sensor data the phone sends (maintainer, 2026-09-14).
+    s.write("<analysis sleep=\"0\">\n");
     for (uint8_t k = 1; k <= store_->inputChannelsUsed(); ++k) {
         if (!detector(*store_, k)) continue;
         s.write("\t<if less=\"true\" greater=\"true\">\n\t\t<input as=\"a\">"); bufIn(s, k);

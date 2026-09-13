@@ -24,7 +24,7 @@
 	<bluetooth id="phyphoxBLE" name="phyphox-Arduino">
 	</bluetooth>
 </output>
-<analysis sleep="0" onUserInput="true">
+<analysis sleep="0">
 </analysis>
 <views>
 	<view label="Data">

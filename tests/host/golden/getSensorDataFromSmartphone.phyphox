@@ -35,7 +35,7 @@
 		<input char="cddf3001-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="8">sen1z</input>
 	</bluetooth>
 </output>
-<analysis sleep="0" onUserInput="true">
+<analysis sleep="0">
 </analysis>
 <views>
 	<view label="FirstView">
