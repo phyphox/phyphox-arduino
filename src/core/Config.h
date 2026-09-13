@@ -1,9 +1,10 @@
-// phyphox BLE 2.0 — compile-time capacities and constants.
+// phyphox BLE 2.0 — compile-time constants.
 //
-// Everything in the library is statically sized (no heap): the experiment description lives in
-// fixed pools whose sizes are set here. A sketch may override any PHYPHOX_BLE_MAX_* before
-// including <phyphoxBle.h> to trade RAM for capacity; the defaults are generous for a phone
-// screen and small for a microcontroller (see docs/concepts.md, "Memory").
+// There are no capacity pools. The experiment description is copied into ONE exactly-sized
+// block allocated at addExperiment() and never freed (the sketch's builder objects may then
+// die), so RAM is what the experiment needs and nothing more, and a big experiment is not a
+// compile-time setting. What remains fixed here is bounded by nature: the protocol, the
+// format, or a sanity check.
 #ifndef PHYPHOX_BLE_CORE_CONFIG_H
 #define PHYPHOX_BLE_CORE_CONFIG_H
 
@@ -18,38 +19,26 @@
 /// Library version as reported by PhyphoxBLE::version(). Must match library.properties.
 #define PHYPHOX_BLE_VERSION "2.0.0"
 
-#ifndef PHYPHOX_BLE_MAX_VIEWS
-#define PHYPHOX_BLE_MAX_VIEWS 8            ///< tabs in the app
-#endif
-#ifndef PHYPHOX_BLE_MAX_ELEMENTS
-#define PHYPHOX_BLE_MAX_ELEMENTS 24        ///< view elements in total, across all views
-#endif
-#ifndef PHYPHOX_BLE_MAX_SUBGRAPHS
-#define PHYPHOX_BLE_MAX_SUBGRAPHS 4        ///< curves per graph, including the first
-#endif
-#ifndef PHYPHOX_BLE_MAX_OPTIONS
-#define PHYPHOX_BLE_MAX_OPTIONS 6          ///< dropdown options or value-map entries per element
-#endif
-#ifndef PHYPHOX_BLE_MAX_EXPORT_SETS
-#define PHYPHOX_BLE_MAX_EXPORT_SETS 4
-#endif
-#ifndef PHYPHOX_BLE_MAX_EXPORT_DATA
-#define PHYPHOX_BLE_MAX_EXPORT_DATA 16     ///< data entries in total, across all export sets
-#endif
-#ifndef PHYPHOX_BLE_MAX_SENSORS
-#define PHYPHOX_BLE_MAX_SENSORS 3          ///< phone sensors the board can request
-#endif
-#ifndef PHYPHOX_BLE_MAX_SENSOR_COMPONENTS
-#define PHYPHOX_BLE_MAX_SENSOR_COMPONENTS 4 ///< components (x, y, z, abs, …) mapped per sensor
-#endif
-
 /// Values the board streams to the phone: write(f1 … f5). Fixed at 5 as in 1.x — the data
 /// characteristic carries five float32 in one 20-byte notification. More bandwidth comes from
 /// setMTU() plus the array write and setRepeating(), not from more channels (decision D12).
 #define PHYPHOX_BLE_DATA_CHANNELS 5
 
-#ifndef PHYPHOX_BLE_INPUT_CHANNELS
-#define PHYPHOX_BLE_INPUT_CHANNELS 8       ///< values the phone can send to the board (1.x: 5)
+/// Highest input channel number a sketch may use. Every input channel is one characteristic,
+/// and the NINA-B31 module keeps a bounded GATT table (plan §3.3), so this is a protocol cap,
+/// not a pool: only the channels actually used cost anything. 1.x allowed 5.
+#ifndef PHYPHOX_BLE_MAX_INPUT_CHANNEL
+#define PHYPHOX_BLE_MAX_INPUT_CHANNEL 16
+#endif
+
+/// Components a phone sensor can deliver: x, y, z, abs, accuracy, t — the format has six.
+#define PHYPHOX_BLE_SENSOR_COMPONENTS 6
+
+/// Entries the incremental addMap()/addOption() setters keep inside the builder object before
+/// addExperiment() copies them. Only a convenience limit: setOptions(n, labels, values) and
+/// setMaps(n, …) take arrays of any length.
+#ifndef PHYPHOX_BLE_INLINE_OPTIONS
+#define PHYPHOX_BLE_INLINE_OPTIONS 8
 #endif
 
 /// Longest string a setter accepts (label, unit, description, …). Longer strings are an

@@ -1,8 +1,11 @@
-// The static copy of the experiment that outlives the sketch's builder objects.
+// The copy of the experiment that outlives the sketch's builder objects.
 //
-// PhyphoxBLE::addExperiment(exp) walks the builder's pointers (views → elements → subgraphs,
-// export sets → entries, sensors) and copies every plain-data struct into `data`. From then on
-// the builder objects may die; the serializer and the channel store read only this copy.
+// PhyphoxBLE::addExperiment(exp) walks the builder's lists (views → elements → subgraphs,
+// export sets → entries, sensors) twice: once to measure, then — after ONE malloc of exactly
+// that size — to copy every plain-data struct into the block. From then on the builder objects
+// may die; the serializer and the channel store read only this copy. The block is never freed
+// (a second addExperiment() frees and reallocates it, which is the one case where the heap is
+// touched twice). No capacity limits: RAM is what the experiment needs.
 #ifndef PHYPHOX_BLE_CORE_EXPERIMENTSTORE_H
 #define PHYPHOX_BLE_CORE_EXPERIMENTSTORE_H
 
@@ -27,10 +30,12 @@ struct InputChannelInfo {
 
 class ExperimentStore {
 public:
-    /// Deep-copies the builder into `data`, assigns characteristics, validates channels and
-    /// capacities. Returns false if an ERR_06/ERR_07 was recorded (the experiment is still
-    /// served, with the error shown in the app).
+    /// Measures, allocates and deep-copies the builder into the block; assigns characteristics;
+    /// validates channels. Returns false if the allocation failed (ERR_06) or a channel
+    /// conflict was recorded (ERR_07) — the experiment is still served with the error shown.
     bool copyFrom(const PhyphoxBleExperiment& exp);
+    /// Bytes the copy of `exp` needs (what copyFrom() would allocate) — for the size report.
+    static size_t bytesNeeded(const PhyphoxBleExperiment& exp);
     /// The experiment served when a sketch calls start() without addExperiment(): one view with
     /// a graph of channel 1 over time and a value of channel 1 — the same on every board (§3.7).
     void buildDefault();
@@ -38,14 +43,17 @@ public:
 
     const ExperimentData& data() const { return data_; }
     ExperimentData& data() { return data_; }
-    const InputChannelInfo& input(uint8_t channel) const { return inputs_[channel]; }
+    const InputChannelInfo& input(uint8_t channel) const;   ///< 1 … inputChannelsUsed()
     bool hasErrors() const;
     /// Highest input channel in use (so the serializer emits only what exists).
     uint8_t inputChannelsUsed() const { return inputChannelsUsed_; }
+    size_t blockSize() const { return blockSize_; }         ///< bytes allocated
 
 private:
     ExperimentData data_;
-    InputChannelInfo inputs_[PHYPHOX_BLE_INPUT_CHANNELS + 1];   ///< 1-based
+    uint8_t* block_ = nullptr;         ///< the one allocation; holds every counted array
+    size_t blockSize_ = 0;
+    InputChannelInfo* inputs_ = nullptr; ///< in the block, 1-based, inputChannelsUsed_ + 1 entries
     uint8_t inputChannelsUsed_ = 0;
 };
 

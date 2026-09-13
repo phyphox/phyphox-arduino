@@ -17,7 +17,7 @@ enum ErrorCode : uint8_t {
     ERR_04_INVALID_VALUE = 4,   ///< a style, component, sensor type or option is not one the format has
     ERR_05_INVALID_LAYOUT = 5,  ///< a layout is not auto, extend or fixed
     // new in 2.0
-    ERR_06_CAPACITY = 6,        ///< a pool is full (raise the PHYPHOX_BLE_MAX_* constant)
+    ERR_06_CAPACITY = 6,        ///< the experiment block could not be allocated, or an inline addMap/addOption limit was hit
     ERR_07_CHANNEL_CONFLICT = 7,///< a button shares an input channel with another element
     ERR_08_NULL_STRING = 8,     ///< a null pointer was passed where a string is required
 };

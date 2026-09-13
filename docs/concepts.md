@@ -57,12 +57,15 @@ see `examples/getSystemAndEventTime`.
 
 ## Memory
 
-Nothing is allocated on the heap. The experiment description lives in fixed pools sized by
-the `PHYPHOX_BLE_MAX_*` constants (`src/core/Config.h`); define them before including
-`<phyphoxBle.h>` to shrink or grow them. The XML document is **never** assembled in memory:
-it is streamed packet by packet from the description, so a large experiment costs flash, not
-RAM. Rough RAM budget of the description on a 32-bit board: about 170 bytes per view element
-and 4–5 KB for the whole store at the default capacities.
+There are no capacity limits: as many views, elements, curves, options and sensors as the
+board's RAM holds. `addExperiment()` measures the description, allocates **one** block of
+exactly that size and copies everything into it; the block lives until the sketch ends (a
+second `addExperiment()` replaces it). Nothing else touches the heap. The XML document is
+**never** assembled in memory: it is streamed packet by packet from the description, so a large
+experiment costs flash, not RAM. Rough budget on a 32-bit board: about 170 bytes per view
+element, so a typical experiment with a few graphs and inputs needs one to two kilobytes.
+The only bounded things are bounded by nature: input channels up to 16 (each is a Bluetooth
+characteristic), six components per phone sensor, strings up to 250 characters.
 
 ## Strings
 

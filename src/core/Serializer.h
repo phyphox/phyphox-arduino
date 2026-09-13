@@ -50,9 +50,9 @@ private:
     uint32_t totalSize_ = 0;
     uint32_t crc_ = 0;
     uint16_t partCount_ = 0;
-    /// Cumulative start offset of each part; partOffset_[partCount_] == totalSize_.
-    /// uint16_t keeps the table at 2 bytes per part; documents stay far below 64 KB.
-    uint16_t partOffset_[PHYPHOX_BLE_MAX_VIEWS + 2 + 1];
+    /// Cumulative start offset of each part; partOffset_[partCount_] == totalSize_. Lives in
+    /// the store's block (viewCount + 3 entries of uint16_t — documents stay far below 64 KB).
+    uint16_t* partOffset_ = nullptr;
 
     void emitPrologue(Sink&) const;
     void emitView(uint8_t view, Sink&) const;

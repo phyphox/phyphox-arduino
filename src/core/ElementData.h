@@ -1,8 +1,10 @@
 // The plain-data description of an experiment. This is what the sketch's builder classes in
-// phyphoxBleExperiment.h fill in, what addExperiment() copies into the static store, and what
-// the serializer turns into XML — on demand, one part at a time, never as a whole document.
+// phyphoxBleExperiment.h fill in, what addExperiment() copies into one exactly-sized block,
+// and what the serializer turns into XML — on demand, one part at a time, never as a whole
+// document.
 //
-// Everything is a POD: copying is memcpy, there is no heap, and strings are const char*
+// Everything is plain data: copying is memcpy, variable-length parts (subgraphs, maps,
+// options, elements, …) are counted pointers into that block, and strings are const char*
 // pointers to the sketch's literals (docs/concepts.md, "Strings").
 #ifndef PHYPHOX_BLE_CORE_ELEMENTDATA_H
 #define PHYPHOX_BLE_CORE_ELEMENTDATA_H
@@ -50,14 +52,13 @@ struct GraphData {
     float minX = 0, maxX = 0, minY = 0, maxY = 0;
     Layout scaleMinX = LAYOUT_NONE, scaleMaxX = LAYOUT_NONE, scaleMinY = LAYOUT_NONE, scaleMaxY = LAYOUT_NONE;
     float aspectRatio = 0;       ///< 0 = not set
-    uint16_t history = 0;        ///< never emitted (obsolete in the app, D17); kept so the field exists if that changes
     // boolean attributes, tri-state: bit set in `flagsSet` means "emit", bit in `flags` the value
     enum Flag : uint16_t { F_TIME_ON_X = 1, F_TIME_ON_Y = 2, F_SYSTEM_TIME = 4, F_LINEAR_TIME = 8,
                            F_LOG_X = 16, F_LOG_Y = 32, F_FOLLOW_X = 64, F_PARTIAL_UPDATE = 128,
                            F_SHOW_COLOR_SCALE = 256, F_HIDE_TIME_MARKERS = 512, F_SUPPRESS_SCI = 1024 };
     uint16_t flags = 0;
     uint16_t flagsSet = 0;
-    SubgraphData subgraphs[PHYPHOX_BLE_MAX_SUBGRAPHS];
+    const SubgraphData* subgraphs = nullptr;  ///< the first curve, then the added ones
     uint8_t subgraphCount = 0;
 };
 
@@ -80,14 +81,14 @@ struct ValueData {
     float size = 0;
     float factor = 0;            ///< 0 = not set (format default 1.0)
     bool scientific = false;
-    MapEntry maps[PHYPHOX_BLE_MAX_OPTIONS];
+    const MapEntry* maps = nullptr;
     uint8_t mapCount = 0;
 };
 
 /// Common part of every element that writes into an input channel (edit, slider, dropdown,
 /// toggle, button). Shared so the store can treat them alike.
 struct InputCommon {
-    uint8_t channel = 0;         ///< 1…PHYPHOX_BLE_INPUT_CHANNELS; 0 = not set (ERR at add time)
+    uint8_t channel = 0;         ///< 1…PHYPHOX_BLE_MAX_INPUT_CHANNEL; 0 = not set (ERR at add time)
     float defaultValue = 0;
     bool hasDefault = false;
     ChangeCallback onChange = nullptr;
@@ -114,7 +115,7 @@ struct SliderData {
 
 struct DropdownData {
     InputCommon in;
-    MapEntry options[PHYPHOX_BLE_MAX_OPTIONS];
+    const MapEntry* options = nullptr;
     uint8_t optionCount = 0;
     Color color = nullptr;
 };
@@ -168,7 +169,7 @@ struct ElementData {
 struct ViewData {
     const char* label = nullptr;
     const char* xmlAttribute = nullptr;
-    uint8_t firstElement = 0;    ///< index range into the store's element pool
+    const ElementData* elements = nullptr;
     uint8_t elementCount = 0;
 };
 
@@ -181,8 +182,8 @@ struct ExportDataData {
 struct ExportSetData {
     const char* label = nullptr;
     const char* xmlAttribute = nullptr;
-    uint8_t firstData = 0;
-    uint8_t dataCount = 0;
+    const ExportDataData* entries = nullptr;
+    uint8_t entryCount = 0;
 };
 
 enum SensorComponent : uint8_t { COMP_NONE = 0, COMP_X, COMP_Y, COMP_Z, COMP_ABS, COMP_ACCURACY, COMP_T };
@@ -192,14 +193,15 @@ struct SensorData {
     const char* xmlAttribute = nullptr;
     uint16_t rate = 0;           ///< 0 = not set (1.x emitted 80 by default; 2.0 emits nothing = fastest)
     bool average = false, averageSet = false;
-    SensorComponent components[PHYPHOX_BLE_MAX_SENSOR_COMPONENTS];
-    uint8_t channels[PHYPHOX_BLE_MAX_SENSOR_COMPONENTS];  ///< input channel each component lands in
+    SensorComponent components[PHYPHOX_BLE_SENSOR_COMPONENTS];
+    uint8_t channels[PHYPHOX_BLE_SENSOR_COMPONENTS];  ///< input channel each component lands in
     uint8_t componentCount = 0;
     ErrorRecord error;
 };
 
-/// The whole experiment, flattened. Filled by PhyphoxBleExperiment (the builder), copied once
-/// into the static store by PhyphoxBLE::addExperiment().
+/// The whole experiment. The experiment-level fields are filled by PhyphoxBleExperiment (the
+/// builder); the counted arrays point into the block ExperimentStore allocates at
+/// PhyphoxBLE::addExperiment().
 struct ExperimentData {
     const char* title = nullptr;
     const char* category = nullptr;
@@ -208,15 +210,11 @@ struct ExperimentData {
     uint16_t repeating = 0;      ///< samples per data notification for the array write (0 = off)
     bool subscribeOnStart = false;
     bool resendUnchanged = false; ///< D14: drop the change detector, write inputs every cycle
-    ViewData views[PHYPHOX_BLE_MAX_VIEWS];
+    const ViewData* views = nullptr;
     uint8_t viewCount = 0;
-    ElementData elements[PHYPHOX_BLE_MAX_ELEMENTS];
-    uint8_t elementCount = 0;
-    ExportSetData exportSets[PHYPHOX_BLE_MAX_EXPORT_SETS];
+    const ExportSetData* exportSets = nullptr;
     uint8_t exportSetCount = 0;
-    ExportDataData exportData[PHYPHOX_BLE_MAX_EXPORT_DATA];
-    uint8_t exportDataCount = 0;
-    SensorData sensors[PHYPHOX_BLE_MAX_SENSORS];
+    const SensorData* sensors = nullptr;
     uint8_t sensorCount = 0;
     ErrorRecord error;           ///< experiment-level errors (capacity, channel conflicts)
 };

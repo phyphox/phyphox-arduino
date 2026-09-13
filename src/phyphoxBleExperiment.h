@@ -6,8 +6,12 @@
 // transfers it when a phone connects.
 //
 // Lifetime rules (the same as 1.x): build everything in setup(), call addExperiment() while all
-// objects are still alive — it copies the description into static storage — and pass string
-// literals or static buffers, never temporaries (docs/concepts.md, "Strings").
+// objects are still alive — it copies the description into one exactly-sized block — and pass
+// string literals or static buffers, never temporaries (docs/concepts.md, "Strings").
+//
+// There are no capacity limits: views, elements, curves, options, export sets and sensors are
+// linked into intrusive lists (each object carries one `next` pointer), so an object can be in
+// one list at a time and the block is sized from what was actually added.
 //
 // This header is Arduino-independent so the core can be unit-tested on a host.
 #ifndef PHYPHOX_BLE_EXPERIMENT
@@ -53,6 +57,7 @@ public:
         void setVisibility(int inputChannel);
         phyphox::ElementData& data() { return data_; }
         const phyphox::ElementData& data() const { return data_; }
+        Element* next = nullptr;      ///< intrusive list link, set by View::addElement()
     protected:
         explicit Element(phyphox::ElementType t) { data_.type = t; }
         phyphox::ElementData data_;
@@ -73,6 +78,7 @@ public:
             void setLineWidth(float w) { setLinewidth(w); }
             phyphox::SubgraphData data;
             phyphox::ErrorRecord error;
+            Subgraph* next = nullptr;
         };
 
         Graph() : Element(phyphox::EL_GRAPH) {}
@@ -110,6 +116,10 @@ public:
         void setShowColorScale(bool);
         void setAspectRatio(float);
         void setUnitYperX(const char*);
+
+        Subgraph first;                           ///< the curve setChannel/setStyle/setColor configure
+        Subgraph* subgraphs = nullptr;            ///< added curves, in order
+        Subgraph* lastSubgraph = nullptr;
     };
 
     class Value : public Element {
@@ -124,11 +134,16 @@ public:
         void setSize(float);
         void setFactor(float);
         void setScientific(bool);
-        /// Show `text` instead of the number while min <= value <= max (D17). Call up to
-        /// PHYPHOX_BLE_MAX_OPTIONS times; the first match wins.
+        /// Show `text` instead of the number while min <= value <= max (D17); the first match
+        /// wins. Up to PHYPHOX_BLE_INLINE_OPTIONS entries this way; setMaps() takes any number.
         void addMap(float min, float max, const char* text);
         void addMapBelow(float max, const char* text);
         void addMapAbove(float min, const char* text);
+        void setMaps(int n, const float* mins, const float* maxs, const char* const texts[]);
+
+        phyphox::MapEntry inlineMaps[PHYPHOX_BLE_INLINE_OPTIONS];
+        const phyphox::MapEntry* mapsArray = nullptr;   ///< setMaps(): the caller's arrays, read at addExperiment
+        uint8_t mapCount = 0;
     };
 
     /// Common API of the elements that send a value to the board.
@@ -183,8 +198,14 @@ public:
         explicit Dropdown(const char* label, int channel = 0) : Dropdown() { setLabel(label); if (channel) setChannel(channel); }
         /// 1.x form: n options from two arrays (copied at addExperiment; the arrays may be locals).
         void setOptions(int n, const char* const labels[], const float* values);
-        void addOption(const char* label, float value);   ///< new in 2.0
+        /// New in 2.0; up to PHYPHOX_BLE_INLINE_OPTIONS this way, any number via setOptions().
+        void addOption(const char* label, float value);
         void setColor(const char*);
+
+        phyphox::MapEntry inlineOptions[PHYPHOX_BLE_INLINE_OPTIONS];
+        const char* const* optionLabels = nullptr;      ///< setOptions(): the caller's arrays
+        const float* optionValues = nullptr;
+        uint8_t optionCount = 0;
     };
 
     /// New in 2.0. Pressing the button writes `value` (default 1) into its input channel; the
@@ -217,7 +238,7 @@ public:
         void setColor(const char*);
     };
 
-    /// A tab in the app. Keeps pointers to its elements until addExperiment() copies them.
+    /// A tab in the app. Links its elements into a list until addExperiment() copies them.
     class View {
     public:
         View() = default;
@@ -227,8 +248,9 @@ public:
         void setXMLAttribute(const char*);
         View& addElement(Element&);
         phyphox::ViewData data;
-        Element* elements[PHYPHOX_BLE_MAX_ELEMENTS] = {nullptr};
-        uint8_t elementCount = 0;
+        Element* elements = nullptr;              ///< list head
+        Element* lastElement = nullptr;
+        View* next = nullptr;
         phyphox::ErrorRecord error;
     };
 
@@ -241,6 +263,7 @@ public:
         void setDatachannel(int);                 ///< 0 = time, 1…5 = data channels
         void setDataChannel(int c) { setDatachannel(c); }
         phyphox::ExportDataData exportData;
+        ExportData* nextEntry = nullptr;
     };
 
     class ExportSet {
@@ -253,8 +276,9 @@ public:
         ExportSet& addElement(ExportData&);
         void addElement(Element&);                ///< 1.x signature; must be an ExportData
         phyphox::ExportSetData data;
-        ExportData* entries[PHYPHOX_BLE_MAX_EXPORT_DATA] = {nullptr};
-        uint8_t entryCount = 0;
+        ExportData* entries = nullptr;            ///< list head
+        ExportData* lastEntry = nullptr;
+        ExportSet* next = nullptr;
         phyphox::ErrorRecord error;
     };
 
@@ -274,6 +298,7 @@ public:
         void setComponent(const char*);           ///< 1.x: like mapChannel(component, next free)
         void setXMLAttribute(const char*);
         phyphox::SensorData data;
+        Sensor* next = nullptr;
     };
 
     // ------------------------------------------------------------------ the experiment
@@ -292,13 +317,13 @@ public:
     PhyphoxBleExperiment& addSensor(Sensor&);
     PhyphoxBleExperiment& addExportSet(ExportSet&);
 
-    phyphox::ExperimentData data;                 ///< experiment-level fields; pools filled at addExperiment
-    View* views[PHYPHOX_BLE_MAX_VIEWS] = {nullptr};
-    uint8_t viewCount = 0;
-    Sensor* sensors[PHYPHOX_BLE_MAX_SENSORS] = {nullptr};
-    uint8_t sensorCount = 0;
-    ExportSet* exportSets[PHYPHOX_BLE_MAX_EXPORT_SETS] = {nullptr};
-    uint8_t exportSetCount = 0;
+    phyphox::ExperimentData data;                 ///< experiment-level fields; arrays filled at addExperiment
+    View* views = nullptr;                        ///< list heads
+    View* lastView = nullptr;
+    Sensor* sensors = nullptr;
+    Sensor* lastSensor = nullptr;
+    ExportSet* exportSets = nullptr;
+    ExportSet* lastExportSet = nullptr;
 };
 
 #endif

@@ -30,7 +30,7 @@ struct GattLayout {
     const char* deviceName;
     uint8_t inputChannels;       ///< characteristics cddf2001 … cddf20nn (0 in user-XML mode)
     uint8_t sensors;             ///< characteristics cddf3001 … cddf30ss
-    uint8_t sensorValueSize[PHYPHOX_BLE_MAX_SENSORS]; ///< bytes each sensor characteristic holds
+    const uint8_t* sensorValueSize; ///< bytes each sensor characteristic holds (`sensors` entries)
     bool legacyConfig;           ///< also create cddf1003 (20 bytes) — user-XML mode
     uint16_t dataValueSize;      ///< bytes of the data characteristic value (MTU payload)
 };

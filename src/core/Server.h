@@ -92,7 +92,7 @@ private:
     bool dataSubscribed_ = false;
     void (*configHandler_)() = nullptr;
     void (*eventHandler_)() = nullptr;
-    uint8_t packet_[PHYPHOX_BLE_MAX_MTU];   ///< the one transmit buffer
+    uint8_t* packet_ = nullptr;   ///< the one transmit buffer, MTU payload bytes, allocated at start()
 
     void startTransfer();
     void pumpTransfer(uint32_t nowMs);

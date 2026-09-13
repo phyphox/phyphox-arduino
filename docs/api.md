@@ -34,6 +34,6 @@ Elements: see [Views and graphs](views.md), [User input](inputs.md), [Phone sens
 | ERR_03 | a colour is not six hexadecimal digits |
 | ERR_04 | a style, component, sensor type or option the format does not have |
 | ERR_05 | a layout that is not `auto`, `extend` or `fixed` |
-| ERR_06 | a pool is full — raise the `PHYPHOX_BLE_MAX_*` constant |
+| ERR_06 | out of memory for the experiment block, or more than `PHYPHOX_BLE_INLINE_OPTIONS` (8) entries added with `addMap`/`addOption` — use `setMaps`/`setOptions` |
 | ERR_07 | a button shares its input channel with another element |
 | ERR_08 | a null pointer where a string is required |

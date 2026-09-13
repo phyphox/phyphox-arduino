@@ -12,6 +12,9 @@ namespace phyphox {
 
 class ChannelStore {
 public:
+    /// Size for channels 1 … `channels` (storage comes from the experiment block).
+    void attach(uint8_t channels, void* storage);
+    static size_t bytesNeeded(uint8_t channels);
     void clear();
     /// Pre-fill a channel with the element's default so read() returns it before any change.
     void setDefault(uint8_t channel, float value);
@@ -32,7 +35,8 @@ private:
         ChangeCallback onChange = nullptr;
         PressCallback onPress = nullptr;
     };
-    Slot slots_[PHYPHOX_BLE_INPUT_CHANNELS + 1];   ///< 1-based
+    Slot* slots_ = nullptr;   ///< 1-based, channels_ + 1 entries
+    uint8_t channels_ = 0;
 };
 
 /// The 17-byte block phyphox writes to the event characteristic (bluetooth-low-energy.md,
