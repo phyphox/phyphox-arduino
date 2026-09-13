@@ -14,6 +14,7 @@ Start with the repository [README](../README.md) if you have never used phyphox.
 | [Migrating from 1.x](migrating-from-1x.md) | what changed for existing sketches |
 | [Testing](testing.md) | the host tests, the compile matrix, the bench and the phone lab |
 | [API reference](api.md) | every class and method on one page |
+| [What's new in 2.0](whats-new-2.0.md), [Changelog](../CHANGELOG.md) | the changes and the reasons |
 
 The phyphox file format itself — what the generated experiment *means* — is documented in the
 phyphox documentation (the "file format" section), which is the canonical reference; this

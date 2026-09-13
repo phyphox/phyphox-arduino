@@ -1,0 +1,44 @@
+# The generated API reference: Doxygen over the public headers (Doxyfile), published to GitHub
+# Pages. Built on every push and pull request so a broken comment is caught early; deployed
+# only from master, i.e. it documents the released library. The prose documentation stays in
+# docs/ and is read on GitHub as-is (REWRITE-PLAN §7: no site generator).
+#
+# One-time setup by the maintainer: repository Settings → Pages → Source: "GitHub Actions".
+name: API reference (Doxygen → GitHub Pages)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Doxygen
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends doxygen graphviz
+      - name: Generate the reference
+        run: |
+          doxygen -v
+          doxygen Doxyfile 2> doxygen-warnings.txt
+          cat doxygen-warnings.txt
+          test ! -s doxygen-warnings.txt   # a warning is a documentation bug
+          test -f build/doxygen/html/index.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/doxygen/html
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
