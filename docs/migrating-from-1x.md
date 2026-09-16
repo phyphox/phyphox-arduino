@@ -31,6 +31,9 @@ not a phyphox sensor, so that sensor never delivered data. The old macro still c
   a less-than sign or a quotation mark broke the document. Both are fixed, so a project that set them sees them now.
 - The ArduinoBLE-based boards also start the transfer on subscription, not only on the control
   write. Invisible from the app.
+- **The same element in several views** still works (1.x copied its XML at `addElement()`;
+  2.0 links a small alias node for every view after the first). Later setters on the element
+  now reach every view, where 1.x froze each copy at the moment it was added.
 
 ## Removed internals
 

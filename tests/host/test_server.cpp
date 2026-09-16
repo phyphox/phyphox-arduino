@@ -34,6 +34,18 @@ TEST_CASE("Both triggers start the transfer, a second one is ignored, disconnect
     CHECK(!s.transfer().active());
 }
 
+TEST_CASE("The radio comes up at addExperiment() when start() came first, and at start() otherwise") {
+    { FakeTransport t; Server s(t); s.setDeviceName("d"); s.setClock(clockFn);
+      s.start(); CHECK(!t.began);                          // default experiment: waits for poll()/write()
+      PhyphoxBleExperiment e("T"); PhyphoxBleExperiment::View v("v"); PhyphoxBleExperiment::Slider sl("s", 0, 1, 0.1f); sl.setChannel(2);
+      v.addElement(sl); e.addView(v);
+      s.addExperiment(e); CHECK(t.began);                  // known now: up before loop() ever runs
+      CHECK(t.layout.inputChannels == 2); }                // with the experiment's channels
+    { FakeTransport t; Server s(t); s.setDeviceName("d"); s.setClock(clockFn);
+      PhyphoxBleExperiment e("T"); s.addExperiment(e); CHECK(!t.began);
+      s.start(); CHECK(t.began); }
+}
+
 TEST_CASE("A sketch that only writes still serves the transfer (write services the stack)") {
     FakeTransport t; Server s(t); s.setDeviceName("d"); s.setClock(clockFn); s.start();
     float v = 1;

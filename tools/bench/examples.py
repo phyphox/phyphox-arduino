@@ -16,6 +16,7 @@ from phones import Android, IOS, api_json, control, since, sh, ANDROID_PACKAGE  
 import asyncio
 from bleak import BleakScanner
 CAPTURE_DIR = None; CAPTURE_TAG = ""
+SKETCH_DIRS = {}                                  # example name -> directory, for --sketch
 import subprocess
 
 # example -> (advertised name, expectation)
@@ -37,7 +38,7 @@ EXAMPLES = {
 def flash_example(fqbn, port, example, extra):
     cmd = ["arduino-cli", "compile", "--upload", "-p", port, "--fqbn", fqbn, "--library", ROOT]
     if extra: cmd += ["--build-property", "compiler.cpp.extra_flags=" + extra]
-    cmd.append(os.path.join(ROOT, "examples", example))
+    cmd.append(SKETCH_DIRS.get(example) or os.path.join(ROOT, "examples", example))
     r = subprocess.run(cmd, capture_output=True, text=True)
     return r.returncode == 0, (r.stdout + r.stderr)[-800:]
 
@@ -107,6 +108,8 @@ def main():
     ap.add_argument("--android"); ap.add_argument("--ios"); ap.add_argument("--only")
     ap.add_argument("--android-port", type=int, default=8091); ap.add_argument("--ios-port", type=int, default=8081)
     ap.add_argument("--capture", metavar="DIR", help="save the document as the Android phone received it, <example>-<label>.phyphox")
+    ap.add_argument("--sketch", metavar="DIR", help="a sketch outside examples/ (a tester's, an article's): flashed as it is")
+    ap.add_argument("--sketch-name", metavar="NAME", help="the name that sketch advertises (with --sketch)")
     ap.add_argument("--silence", action="append", default=[], metavar="PORT=FQBN",
                     help="another board on the desk: flash it quiet first, so it does not advertise an example's name")
     args = ap.parse_args()
@@ -121,6 +124,11 @@ def main():
         if args.android: phones.append(Android(args.android, args.android_port))
         if args.ios: phones.append(IOS(args.ios, args.ios_port))
         names = [e.strip() for e in args.only.split(",")] if args.only else list(EXAMPLES)
+        if args.sketch:
+            if not args.sketch_name: sys.exit("--sketch needs --sketch-name (the advertised name)")
+            names = [os.path.basename(os.path.abspath(args.sketch))]
+            EXAMPLES[names[0]] = (args.sketch_name, "data")
+            SKETCH_DIRS[names[0]] = os.path.abspath(args.sketch)
         # Nobody else may advertise an example's name: the board under test and every board
         # named in --silence go quiet, then a scan must find none of the names in the air.
         for spec in args.silence:

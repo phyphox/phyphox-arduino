@@ -120,6 +120,7 @@ private:
     uint32_t (*clock_)() = nullptr;
     bool started_ = false;
     bool startRequested_ = false;
+    bool experimentAdded_ = false;   ///< addExperiment() was called: the layout is known
     uint32_t layoutMask_ = 0;      ///< the input channels the transport was given at begin()
     uint8_t layoutSensors_ = 0;
     /// Callbacks registered through the façade before the channel store exists; applied by rebuild().

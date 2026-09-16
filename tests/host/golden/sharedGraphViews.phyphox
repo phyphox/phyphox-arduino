@@ -1,0 +1,61 @@
+<phyphox version="1.20">
+<title>Magnetische Feldstärke mit Abstandsmessung</title>
+<category>Externer Sensor</category>
+<description>In diesem Experiment wird die Magnetische Feldstärke gegen den Abstand aufgetragen.</description>
+<data-containers>
+	<container size="0">CH0</container>
+	<container size="0">CH1</container>
+	<container size="0">CH2</container>
+	<container size="0">CH3</container>
+	<container size="0">CH4</container>
+	<container size="0">CH5</container>
+</data-containers>
+<input>
+	<bluetooth name="ESP32 Magnetfeld-Abstand" id="phyphoxBLE" mode="notification" subscribeOnStart="false">
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="0">CH1</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="4">CH2</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="8">CH3</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="12">CH4</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" conversion="float32LittleEndian" offset="16">CH5</output>
+		<output char="cddf1002-30f7-4671-8b43-5e40ba53514a" extra="time">CH0</output>
+	</bluetooth>
+</input>
+<output>
+	<bluetooth id="phyphoxBLE" name="ESP32 Magnetfeld-Abstand">
+	</bluetooth>
+</output>
+<analysis sleep="0">
+</analysis>
+<views>
+	<view label="Messung X-Komponente">
+		<graph label="X-Komponente" labelX="Distanz" labelY="Mag. Feldstärke" unitX="mm" unitY="uT" xPrecision="1" yPrecision="1" scaleMinX="fixed" minX="0" scaleMaxX="fixed" maxX="400" scaleMinY="fixed" minY="-500" scaleMaxY="extend" maxY="6500">
+			<input axis="x">CH1</input>
+			<input axis="y" style="dots">CH2</input>
+		</graph>
+	</view>
+	<view label="Messung X-Y-Z-Komponenten">
+		<graph label="X-Komponente" labelX="Distanz" labelY="Mag. Feldstärke" unitX="mm" unitY="uT" xPrecision="1" yPrecision="1" scaleMinX="fixed" minX="0" scaleMaxX="fixed" maxX="400" scaleMinY="fixed" minY="-500" scaleMaxY="extend" maxY="6500">
+			<input axis="x">CH1</input>
+			<input axis="y" style="dots">CH2</input>
+		</graph>
+		<graph label="Y-Komponente" labelX="Distanz" labelY="Mag. Feldstärke" unitX="mm" unitY="uT" xPrecision="1" yPrecision="1" scaleMinX="fixed" minX="0" scaleMaxX="fixed" maxX="400" scaleMinY="fixed" minY="-500" scaleMaxY="fixed" maxY="6500">
+			<input axis="x">CH1</input>
+			<input axis="y" style="dots">CH3</input>
+		</graph>
+		<graph label="Z-Komponente" labelX="Distanz" labelY="Mag. Feldstärke" unitX="mm" unitY="uT" xPrecision="1" yPrecision="1" scaleMinX="fixed" minX="0" scaleMaxX="fixed" maxX="400" scaleMinY="fixed" minY="-500" scaleMaxY="fixed" maxY="6500">
+			<input axis="x">CH1</input>
+			<input axis="y" style="dots">CH4</input>
+		</graph>
+	</view>
+</views>
+<export>
+	<set name="mySet">
+		<data name="myData0">CH0</data>
+		<data name="myData1">CH1</data>
+		<data name="myData2">CH2</data>
+		<data name="myData3">CH3</data>
+		<data name="myData4">CH4</data>
+		<data name="myData5">CH5</data>
+	</set>
+</export>
+</phyphox>

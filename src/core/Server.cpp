@@ -33,6 +33,8 @@ void Server::addExperiment(const PhyphoxBleExperiment& exp) {
             if (store_.input(k).used && !store_.input(k).fromSensor && !(layoutMask_ & (1u << k))) fits = false;
         if (!fits) store_.data().error.record(ERR_02_ABOVE_LIMIT, "addExperiment after the first poll()/write()");
     }
+    experimentAdded_ = true;
+    if (startRequested_ && !started_) ensureStarted();
 }
 
 void Server::printXml(Sink& sink) {
@@ -84,8 +86,14 @@ void Server::setChannelCallbacks(uint8_t channel, ChangeCallback onChange, Press
     channels_.setCallbacks(channel, onChange, onPress);   // a no-op until the store exists
 }
 
+// When the radio comes up: as soon as both start() has been called and the experiment is
+// known — at addExperiment() in the 1.x order, at start() in the other — so a sketch whose
+// loop() blocks on a sensor still advertises, as it did with 1.x. Only start() without any
+// addExperiment() (the default experiment) waits for the first poll()/write(), so that an
+// addExperiment() that follows is not locked out of its input and sensor characteristics.
 bool Server::start() {
     startRequested_ = true;
+    if (experimentAdded_) return ensureStarted();
     return true;
 }
 

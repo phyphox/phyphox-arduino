@@ -90,6 +90,30 @@ inline void exampleRangefinder(phyphox::Server& server) {
 }
 
 /// One configuration that exercises every setter once (the "everything" document).
+/// The pattern of the MNU article's sketch (2026): one Graph object added to two views, three
+/// graphs sharing axis settings, umlauts in labels. 1.x copied the XML at addElement(); 2.0
+/// links aliases. The first view must end up with one graph, the second with three.
+inline void exampleSharedGraphViews(phyphox::Server& server) {
+    E exp("Magnetische Feldstärke mit Abstandsmessung", "Externer Sensor",
+          "In diesem Experiment wird die Magnetische Feldstärke gegen den Abstand aufgetragen.");
+    E::View first("Messung X-Komponente"), second("Messung X-Y-Z-Komponenten");
+    E::Graph gx, gy, gz;
+    E::Graph* graphs[] = {&gx, &gy, &gz};
+    const char* labels[] = {"X-Komponente", "Y-Komponente", "Z-Komponente"};
+    for (int i = 0; i < 3; ++i) {
+        E::Graph& g = *graphs[i];
+        g.setMinY(-500, LAYOUT_FIXED); g.setMaxY(6500, i == 0 ? LAYOUT_EXTEND : LAYOUT_FIXED);
+        g.setMinX(0, LAYOUT_FIXED); g.setMaxX(400, LAYOUT_FIXED);
+        g.setLabel(labels[i]); g.setUnitX("mm"); g.setUnitY("uT"); g.setLabelX("Distanz"); g.setLabelY("Mag. Feldstärke");
+        g.setXPrecision(1); g.setYPrecision(1); g.setStyle(STYLE_DOTS); g.setChannel(1, 2 + i);
+    }
+    first.addElement(gx);
+    exp.addView(first);
+    second.addElement(gx); second.addElement(gy); second.addElement(gz);
+    exp.addView(second);
+    server.addExperiment(exp);
+}
+
 inline void exampleEverything(phyphox::Server& server) {
     E exp("Everything & \"more\"", "Arduino <Experiments>", "Every setter, once.");
     exp.setColor("ff7e22"); exp.setRepeating(0); exp.setSubscribeOnStart(true);

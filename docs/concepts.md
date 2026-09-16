@@ -24,10 +24,13 @@ curious or something does not load.
 
 ## When the radio comes up
 
-`PhyphoxBLE::start()` records the name and the request; the Bluetooth stack is brought up at
-the first `PhyphoxBLE::poll()` or `PhyphoxBLE::write()`, which always happens after `setup()`
-has finished. So the 1.x order — `start()` first, `addExperiment()` afterwards — keeps
-working: the experiment is known before the characteristics are created. An experiment added
+`PhyphoxBLE::start()` records the name and the request; the Bluetooth stack is brought up as
+soon as the experiment is known as well — at `addExperiment()` in the 1.x order (`start()`
+first), at `start()` in the other. So the 1.x order keeps working: the experiment is known
+before the characteristics are created, and the board advertises from `setup()` on, even if
+`loop()` then blocks on a sensor. Only a sketch that calls `start()` and never
+`addExperiment()` (the default experiment) starts the stack at its first `poll()` or
+`write()`, which happens right after `setup()` anyway. An experiment added
 later, from `loop()`, is served, but input channels or phone sensors it adds beyond the first
 one have no characteristic; `printErrors()` says so.
 

@@ -41,6 +41,8 @@ public:
 
     // ------------------------------------------------------------------ view elements
 
+    class View;
+
     /// Base of every view element. Holds the plain data the serializer reads.
     class Element {
     public:
@@ -59,6 +61,11 @@ public:
         const phyphox::ElementData& data() const { return data_; }
         virtual bool isExportData() const { return false; }
         Element* next = nullptr;      ///< intrusive list link, set by View::addElement()
+        View* owner = nullptr;        ///< the view whose list holds this object (set by addElement)
+        /// An element added to a second view is represented there by a small heap-allocated
+        /// alias that points back at the original — the store reads the original's data.
+        /// (1.x copied the XML at addElement(), so the same Graph in two views was normal.)
+        const Element* aliasOf = nullptr;
     protected:
         explicit Element(phyphox::ElementType t) { data_.init(t); }
         phyphox::ElementData data_;
@@ -248,6 +255,7 @@ public:
         View() = default;
         explicit View(const char* label) { setLabel(label); }
         View(const View&) = delete;
+        ~View();                                  ///< frees the aliases this view created
         void setLabel(const char*);
         void setXMLAttribute(const char*);
         View& addElement(Element&);

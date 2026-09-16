@@ -21,6 +21,28 @@ TEST_CASE("Setters validate and record the first error") {
     E::Dropdown d; for (int k = 0; k < 9; ++k) d.addOption("o", k); CHECK(d.data().error.code == ERR_06_CAPACITY);
 }
 
+TEST_CASE("The same element in two views appears in both (1.x copied it; the MNU article's sketch does this)") {
+    E exp("T", "C", "D");
+    E::Graph shared("shared"); shared.setChannel(1, 2);
+    E::Graph second("second"); second.setChannel(1, 3);
+    {
+        E::View v1("one"), v2("two");
+        v1.addElement(shared);
+        v2.addElement(shared); v2.addElement(second);
+        exp.addView(v1).addView(v2);
+        CHECK(v1.elements == &shared); CHECK(shared.next == nullptr);      // the first view's list is untouched
+        CHECK(v2.elements != &shared); CHECK(v2.elements->aliasOf == &shared); CHECK(v2.elements->next == &second);
+        ExperimentStore store; REQUIRE(store.copyFrom(exp));
+        REQUIRE(store.data().viewCount == 2);
+        CHECK(store.data().views[0].elementCount == 1);
+        CHECK(store.data().views[1].elementCount == 2);
+        CHECK(std::string(store.data().views[1].elements[0].label) == "shared");
+        CHECK(store.data().views[1].elements[0].graph.subgraphs[0].channelY == 2);
+        CHECK(std::string(store.data().views[1].elements[1].label) == "second");
+    }                                                                       // ~View frees the alias
+    CHECK(shared.owner == nullptr);
+}
+
 TEST_CASE("Lists link in order and the store copies them") {
     E exp("T", "C", "D");
     E::View v1("one"), v2("two");

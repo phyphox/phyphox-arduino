@@ -257,12 +257,35 @@ void PhyphoxBleExperiment::Separator::setColor(const char* c) { if (checkColor(c
 
 void PhyphoxBleExperiment::View::setLabel(const char* l) { if (checkString(l, error, "setLabel")) data.label = l; }
 void PhyphoxBleExperiment::View::setXMLAttribute(const char* a) { if (checkString(a, error, "setXMLAttribute")) data.xmlAttribute = a; }
+namespace {
+/// Stands in for an element that already sits in another view's list (or in this one twice).
+class AliasElement : public PhyphoxBleExperiment::Element {
+public:
+    explicit AliasElement(const Element& target) : Element(target.data().type) { aliasOf = &target; }
+};
+}
+
 PhyphoxBleExperiment::View& PhyphoxBleExperiment::View::addElement(Element& e) {
     if (e.isExportData()) { error.record(ERR_04_INVALID_VALUE, "addElement"); return *this; }
-    e.next = nullptr;
-    if (!elements) elements = &e; else lastElement->next = &e;
-    lastElement = &e;
+    Element* node = &e;
+    if (e.owner) {                                // already listed somewhere: link an alias instead
+        node = new AliasElement(e.aliasOf ? *e.aliasOf : e);
+        if (!node) { error.record(ERR_06_CAPACITY, "addElement"); return *this; }
+    } else {
+        e.owner = this;
+    }
+    node->next = nullptr;
+    if (!elements) elements = node; else lastElement->next = node;
+    lastElement = node;
     return *this;
+}
+
+PhyphoxBleExperiment::View::~View() {
+    for (Element* e = elements; e; ) {
+        Element* n = e->next;
+        if (e->aliasOf) delete e; else if (e->owner == this) e->owner = nullptr;
+        e = n;
+    }
 }
 
 // ---------------------------------------------------------------- export

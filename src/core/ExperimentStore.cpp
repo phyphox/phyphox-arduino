@@ -33,7 +33,8 @@ struct Counts {
 void count(const B& exp, Counts& c) {
     for (const B::View* v = exp.views; v; v = v->next) {
         c.views++;
-        for (const B::Element* e = v->elements; e; e = e->next) {
+        for (const B::Element* node = v->elements; node; node = node->next) {
+            const B::Element* e = node->aliasOf ? node->aliasOf : node;   // an alias reads its original
             c.elements++;
             const ElementData& d = e->data();
             if (d.type == EL_GRAPH) {
@@ -143,7 +144,8 @@ bool ExperimentStore::copyFrom(const PhyphoxBleExperiment& exp) {
         vd = v->data;
         vd.elements = elements + ei;
         vd.elementCount = 0;
-        for (const B::Element* e = v->elements; e; e = e->next) {
+        for (const B::Element* node = v->elements; node; node = node->next) {
+            const B::Element* e = node->aliasOf ? node->aliasOf : node;   // an alias reads its original
             ElementData& d = elements[ei++];
             memcpy(&d, &e->data(), sizeof(ElementData));
             vd.elementCount++;

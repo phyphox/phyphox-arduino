@@ -24,6 +24,7 @@ int main(int argc, char** argv) {
     { FakeTransport t; phyphox::Server s(t); s.setDeviceName("phyphox-Arduino"); exampleGetSensorDataFromSmartphone(s); dump(s, dir, "getSensorDataFromSmartphone"); }
     { FakeTransport t; phyphox::Server s(t); s.setDeviceName("Rangefinder"); exampleRangefinder(s); dump(s, dir, "rangefinder"); }
     { FakeTransport t; phyphox::Server s(t); s.setDeviceName("phyphox-Arduino"); s.setMtu(176); exampleEverything(s); dump(s, dir, "everything"); }
+    { FakeTransport t; phyphox::Server s(t); s.setDeviceName("ESP32 Magnetfeld-Abstand"); exampleSharedGraphViews(s); dump(s, dir, "sharedGraphViews"); }
     { FakeTransport t; phyphox::Server s(t); s.setDeviceName("phyphox-Arduino");
       E exp("Resend", "Arduino Experiments", "1.x behaviour"); exp.setResendUnchanged(true); exp.setRepeating(4);
       E::View v("V"); E::Slider sl("S", 0, 10, 1, 1); v.addElement(sl); exp.addView(v); s.addExperiment(exp); dump(s, dir, "resendUnchanged"); }
