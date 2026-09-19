@@ -65,7 +65,7 @@ jobs:
             extra: '-DPHYPHOX_BLE_NINA_SERIAL=Serial1'
             sketches: not-esp32
           - fqbn: sensebox:samd:sb
-            platforms: '[{"name":"sensebox:samd","source-url":"https://raw.githubusercontent.com/sensebox/senseBoxMCU-core/master/package_sensebox_index.json"}]'
+            platforms: '[{"name":"arduino:samd"},{"name":"sensebox:samd","source-url":"https://raw.githubusercontent.com/sensebox/senseBoxMCU-core/master/package_sensebox_index.json"}]'   # the senseBox core builds on arduino:samd's core and toolchain
             extra: ''
             sketches: not-esp32
     steps:
