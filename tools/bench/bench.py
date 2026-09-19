@@ -70,12 +70,52 @@ class SerialLog:
         while not self.q.empty(): self.q.get_nowait()
     def close(self): self.stop = True; self.ser.close()
 
-def flash(fqbn, port, extra, sketch="benchSketch"):
+def compile_and_upload(fqbn, port, extra, sketch_dir):
+    """arduino-cli compile --upload, except on the senseBox MCU: its core's upload recipe passes
+    `-U true`, which the bossac 1.9 that arduino-cli picks rejects, so the .bin goes through the
+    core's own bossac 1.7.0 after the 1200-baud touch (docs/testing.md)."""
+    if fqbn.startswith("sensebox:"):
+        build = os.path.join(HERE, "results", ".build-" + os.path.basename(sketch_dir))
+        cmd = ["arduino-cli", "compile", "--fqbn", fqbn, "--library", ROOT, "--build-path", build]
+        if extra: cmd += ["--build-property", "compiler.cpp.extra_flags=" + extra]
+        cmd.append(sketch_dir)
+        r = subprocess.run(cmd, capture_output=True, text=True)
+        if r.returncode == 0:
+            bins = [f for f in os.listdir(build) if f.endswith(".ino.bin")]
+            if not bins: r.returncode = 1; r.stderr += "\nno .ino.bin produced"
+        if r.returncode == 0:
+            import serial as _serial
+            try:
+                s = _serial.Serial(port, 1200); s.setDTR(False); s.close()
+            except Exception as e:
+                r.returncode = 1; r.stderr += "\n1200 baud touch: %s" % e
+        if r.returncode == 0:
+            end = time.time() + 3                      # the port node goes away, then the bootloader's appears
+            while time.time() < end and os.path.exists(port): time.sleep(0.1)
+            end = time.time() + 10
+            while time.time() < end and not os.path.exists(port): time.sleep(0.1)
+            time.sleep(0.7)
+            bossac = os.path.expanduser("~/.arduino15/packages/arduino/tools/bossac/1.7.0-arduino3/bossac")
+            for attempt in range(3):
+                up = subprocess.run([bossac, "-i", "-d", "--port=" + os.path.basename(port), "-U", "true", "-i", "-e", "-w", "-v",
+                                     os.path.join(build, bins[0]), "-R"], capture_output=True, text=True)
+                if up.returncode == 0: break
+                time.sleep(1)
+            r.returncode = up.returncode; r.stderr += up.stderr[-1500:]
+            end = time.time() + 3
+            while time.time() < end and os.path.exists(port): time.sleep(0.1)
+            end = time.time() + 10
+            while time.time() < end and not os.path.exists(port): time.sleep(0.1)
+        return r
     cmd = ["arduino-cli", "compile", "--upload", "-p", port, "--fqbn", fqbn, "--library", ROOT]
     if extra: cmd += ["--build-property", "compiler.cpp.extra_flags=" + extra]
-    cmd.append(os.path.join(HERE, sketch))
-    print("flashing:", " ".join(cmd))
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    cmd.append(sketch_dir)
+    return subprocess.run(cmd, capture_output=True, text=True)
+
+def flash(fqbn, port, extra, sketch="benchSketch"):
+    sketch_dir = os.path.join(HERE, sketch)
+    print("flashing:", sketch_dir, "on", fqbn)
+    r = compile_and_upload(fqbn, port, extra, sketch_dir)
     if r.returncode != 0:
         print(r.stdout[-3000:]); print(r.stderr[-3000:]); sys.exit("flash failed")
     for line in r.stdout.splitlines():

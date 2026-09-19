@@ -116,10 +116,19 @@ Run the surface check now: `tools/check_surface.py` compares `api/surface.yml` w
   (`~/.arduino15/packages/arduino/tools/bossac/1.7.0-arduino3/bossac -i -d --port=ttyACM0 -U true
   -i -e -w -v <sketch>.bin -R`). Native USB: the bench sketch waits up to 3 s for the host to
   open the port so the `READY` line is not lost.
-- **The Bluetooth-Bee's DSR input is unconnected on the senseBox MCU** (XBee pin 19; the socket
-  wires only TX, RX, CTS-as-INT and the SPI pins). u-connectXpress uses that line to switch the
-  module's UART off (`AT&D3`) or the module into STOP mode (`AT&D4`), and a burst of edges on it
-  is the factory reset. A Bee whose module has ended up in such a state stays silent on the UART
-  while it still advertises (`NINA-B3-xxxxxx` with the u-blox Serial Port Service), and nothing
-  the MCU can do brings it back; the pad needs a pulse or a USB-UART adapter on the Bee itself.
-  The bench Bee on the phyphox desk is in this state as of 2026-09-19.
+- **The Bluetooth-Bee must power up with the MCU's UART TX line released.** If the line is
+  driven or pulled high while the Bee's supply is off or rising, the NINA-B3 comes up with its
+  UART dead while Bluetooth works (u-connectXpress 2.0.0-025, measured 2026-09-19). The senseBox
+  bootloader leaves the pin pulled up while the core switches the rail on, so a board power-on
+  starts in that state; the transport therefore power-cycles the rail (`PIN_XB1_PWR`) with the
+  pins released at `begin()`, and the bench must never power-cycle the module with `Serial3`
+  open. A module at u-blox factory settings additionally has CTS/RTS flow control on and, in
+  this socket, does not transmit; the library's blind `AT+UMRS=115200,2,8,1,1` / `AT&W` /
+  `AT+CPWROFF` sequence turns it off. Whether that blind sequence is taken by a factory-fresh
+  module after a power-on could not be verified (the desk's Bee took it only after a software
+  reset; its stored setting is now flow control off, echo off).
+- **The Bee's DSR input** (XBee pad 19, `DSR/CS` on the Bee, unconnected on the senseBox) is
+  where u-connectXpress takes the factory-reset gesture: one second of silence, five
+  deasserted-to-asserted (high-to-low) transitions within one second, one second of silence.
+  Wired to a senseBox GPIO it reboots the module about 2.8 s later; it did not visibly restore
+  the stored UART setting, so treat it as a reset, not as a proven factory restore.

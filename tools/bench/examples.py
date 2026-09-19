@@ -11,7 +11,7 @@ Same requirements as phones.py. Results: tools/bench/results/examples-<label>.js
 import argparse, json, os, socket, sys, time
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from bench import SerialLog, Report, ROOT, WORKROOT, flash as flash_sketch, wait_port   # noqa: E402
+from bench import SerialLog, Report, ROOT, WORKROOT, flash as flash_sketch, wait_port, compile_and_upload   # noqa: E402
 from phones import Android, IOS, api_json, control, since, sh, ANDROID_PACKAGE   # noqa: E402
 import asyncio
 from bleak import BleakScanner
@@ -36,10 +36,7 @@ EXAMPLES = {
 }
 
 def flash_example(fqbn, port, example, extra):
-    cmd = ["arduino-cli", "compile", "--upload", "-p", port, "--fqbn", fqbn, "--library", ROOT]
-    if extra: cmd += ["--build-property", "compiler.cpp.extra_flags=" + extra]
-    cmd.append(SKETCH_DIRS.get(example) or os.path.join(ROOT, "examples", example))
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    r = compile_and_upload(fqbn, port, extra, SKETCH_DIRS.get(example) or os.path.join(ROOT, "examples", example))
     return r.returncode == 0, (r.stdout + r.stderr)[-800:]
 
 def run_example(example, name, expect, phones, port, rep):

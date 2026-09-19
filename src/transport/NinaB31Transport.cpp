@@ -193,11 +193,30 @@ void dispatch(const char* line) {
 NinaB31Transport& NinaB31Transport::instance() { static NinaB31Transport t; return t; }
 void NinaB31Transport::setTrace(Print* out) { trace = out; }
 
+// On the senseBox MCU the Bee's supply is switched by the MCU (PIN_XB1_PWR, low = on). The
+// module must power up with the MCU's UART TX line released: if the line is driven or pulled
+// high while the Bee's rail is off or rising, the module comes up with its UART dead although
+// Bluetooth works (measured 2026-09-19). The senseBox bootloader leaves the pin pulled up while
+// the core switches the rail on, so a board power-on starts in that state; a power cycle with the
+// pins released gives a defined module at every start. -DPHYPHOX_BLE_NINA_NO_POWER_CYCLE skips it.
+static void powerCycleModule() {
+#if defined(PIN_XB1_PWR) && !defined(PHYPHOX_BLE_NINA_NO_POWER_CYCLE)
+    SerialBLE.end();
+    pinMode(PIN_SERIAL3_RX, INPUT); pinMode(PIN_SERIAL3_TX, INPUT);
+    pinMode(PIN_XB1_PWR, OUTPUT);
+    digitalWrite(PIN_XB1_PWR, HIGH);         // off
+    delay(300);
+    digitalWrite(PIN_XB1_PWR, LOW);          // on
+    delay(1500);                             // the module's boot
+#endif
+}
+
 bool NinaB31Transport::begin(const GattLayout& layout, TransportListener& li) {
     listener = &li;
+    powerCycleModule();
     SerialBLE.begin(115200);
     delay(500);
-    command("AT", 500);                      // a throwaway in case the port was already open
+    command("AT", 500);                      // a throwaway: the line may hold junk from the reset
     bool up = false;
     for (int i = 0; i < 3 && !up; ++i) up = command("ATE0", 500) || configModule();
     if (!up) return false;
@@ -229,9 +248,12 @@ bool NinaB31Transport::begin(const GattLayout& layout, TransportListener& li) {
 
 bool NinaB31Transport::notify(CharId id, const uint8_t* data, uint16_t len) {
     Entry* e = find(id);
-    if (!e || e->handle < 0 || !isConnected) return false;
+    if (!e || e->handle < 0) return false;
     if (len > sizeof(e->value)) len = sizeof(e->value);   // the module sends 20 bytes per notification
     memcpy(e->value, data, len); e->valueLen = (uint8_t)len;
+    // No phone: a data notification is dropped as every stack drops it (not "refused", which
+    // would count in the statistics); a transfer packet is refused so the core notices.
+    if (!isConnected) return id.kind == CH_DATA;
     // Once the module has shown it reports CCCD writes, a notification nobody subscribed to is
     // not sent — as a stack would drop it — instead of costing a UART round trip per write().
     if (id.kind == CH_DATA && cccdReported && !e->subscribed) return true;

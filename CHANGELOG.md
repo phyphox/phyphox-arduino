@@ -33,8 +33,10 @@ with reasons is in [docs/whats-new-2.0.md](docs/whats-new-2.0.md), the migration
   write and connection events are never lost to a data notification in flight (1.x flushed the
   input before every command); the transfer also starts on subscription; data notifications are
   not sent before the phone subscribes; read requests are answered; `PhyphoxBLE::begin(&Serial)` (or
-  `-DPHYPHOX_BLE_NINA_TRACE`) mirrors the AT dialogue on `Serial`. A transport that does not come up is tried once and
-  reported by `printErrors()` instead of being retried from every `poll()`.
+  `-DPHYPHOX_BLE_NINA_TRACE`) mirrors the AT dialogue on `Serial`. On the senseBox MCU the Bee is power-cycled with the UART
+  lines released at start, the only way its module boots with a working UART. A transport that
+  does not come up is tried once and reported by `printErrors()` instead of being retried from
+  every `poll()`. Verified on a senseBox MCU with the bench and both phones.
 - Documentation in `docs/`, a migration page, a Doxygen reference; host tests, conformance of
   the generated XML against the phyphox file-format specification, a compile matrix, and a
   hardware bench with real Android and iOS phones.
