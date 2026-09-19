@@ -28,6 +28,13 @@ with reasons is in [docs/whats-new-2.0.md](docs/whats-new-2.0.md), the migration
 - Constructors for every element (`Graph graph("Voltage")`), every 1.x setter kept.
 - Boards: all ESP32 variants (Bluedroid and NimBLE), UNO R4 WiFi, Nano RP2040 Connect,
   Portenta, GIGA, STM32duinoBLE boards, senseBox with the Bluetooth-Bee (NINA-B31).
+- NINA-B31 (senseBox Bluetooth-Bee): the serial line is read by one line reader that queues the
+  module's unsolicited events while a command waits for its response, so the phone's control
+  write and connection events are never lost to a data notification in flight (1.x flushed the
+  input before every command); the transfer also starts on subscription; data notifications are
+  not sent before the phone subscribes; read requests are answered; `PhyphoxBLE::begin(&Serial)` (or
+  `-DPHYPHOX_BLE_NINA_TRACE`) mirrors the AT dialogue on `Serial`. A transport that does not come up is tried once and
+  reported by `printErrors()` instead of being retried from every `poll()`.
 - Documentation in `docs/`, a migration page, a Doxygen reference; host tests, conformance of
   the generated XML against the phyphox file-format specification, a compile matrix, and a
   hardware bench with real Android and iOS phones.

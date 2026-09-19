@@ -104,3 +104,22 @@ documents the example configurations must produce byte for byte; regenerate them
 | T2 | the phones: one Android and one iOS phone against every board, for what only the real app can show | the lab, release gate |
 
 Run the surface check now: `tools/check_surface.py` compares `api/surface.yml` with the spec.
+
+## Board notes for the bench
+
+- **senseBox MCU** (`sensebox:samd:sb`, board package URL
+  `https://raw.githubusercontent.com/sensebox/senseBoxMCU-core/master/package_sensebox_index.json`):
+  when the Arduino SAMD core is installed as well, `arduino-cli upload` fails with
+  `bossac: extra arguments found` because the senseBox recipe passes `-U true` and arduino-cli
+  picks bossac 1.9.1. Upload by hand: open the port at 1200 baud to enter the bootloader, wait
+  for the port to come back, then run the core's own bossac 1.7.0
+  (`~/.arduino15/packages/arduino/tools/bossac/1.7.0-arduino3/bossac -i -d --port=ttyACM0 -U true
+  -i -e -w -v <sketch>.bin -R`). Native USB: the bench sketch waits up to 3 s for the host to
+  open the port so the `READY` line is not lost.
+- **The Bluetooth-Bee's DSR input is unconnected on the senseBox MCU** (XBee pin 19; the socket
+  wires only TX, RX, CTS-as-INT and the SPI pins). u-connectXpress uses that line to switch the
+  module's UART off (`AT&D3`) or the module into STOP mode (`AT&D4`), and a burst of edges on it
+  is the factory reset. A Bee whose module has ended up in such a state stays silent on the UART
+  while it still advertises (`NINA-B3-xxxxxx` with the u-blox Serial Port Service), and nothing
+  the MCU can do brings it back; the pad needs a pulse or a USB-UART adapter on the Bee itself.
+  The bench Bee on the phyphox desk is in this state as of 2026-09-19.

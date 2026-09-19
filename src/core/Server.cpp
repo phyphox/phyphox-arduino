@@ -122,7 +122,13 @@ bool Server::ensureStarted() {
     layoutMask_ = layout.inputChannelMask; layoutSensors_ = layout.sensors;
 
     if (mtu_ > PHYPHOX_BLE_DEFAULT_MTU) transport_.requestMtu(mtu_);
-    if (!transport_.begin(layout, *this)) return false;
+    if (!transport_.begin(layout, *this)) {
+        // once: a retry from every poll() would block the sketch for the transport's whole
+        // start-up timeout each time (seconds on the NINA-B31 when no module answers)
+        startFailed_ = true;
+        startRequested_ = false;
+        return false;
+    }
     if (connMin_ || connMax_) transport_.requestConnectionParameters(connMin_, connMax_, connLatency_, connTimeout_);
     started_ = true;
     return true;

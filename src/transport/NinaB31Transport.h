@@ -9,6 +9,8 @@
 
 #include "Transport.h"
 
+class Print;
+
 namespace phyphox {
 
 class NinaB31Transport : public Transport {
@@ -22,6 +24,10 @@ public:
     void restartAdvertising() override;
     const char* name() const override { return "NINA-B31"; }
     static NinaB31Transport& instance();
+    /// Mirror the AT dialogue with the module ("> " sent, "< " received) on `out`; nullptr
+    /// stops it. PhyphoxBLE::begin(&Serial) calls this. -DPHYPHOX_BLE_NINA_TRACE does the same
+    /// at compile time.
+    void setTrace(Print* out);
 private:
     NinaB31Transport() {}
 };

@@ -20,7 +20,8 @@ target_include_directories(phyphox_core PUBLIC ${SRC})
 
 add_executable(phyphox_tests
   test_main.cpp test_crc_sink.cpp test_text.cpp test_builder_store.cpp
-  test_serializer.cpp test_transfer.cpp test_channels.cpp test_server.cpp)
+  test_serializer.cpp test_transfer.cpp test_channels.cpp test_server.cpp
+  test_nina_protocol.cpp)
 target_link_libraries(phyphox_tests phyphox_core)
 target_include_directories(phyphox_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(phyphox_tests PRIVATE GOLDEN_DIR="${CMAKE_CURRENT_SOURCE_DIR}/golden")

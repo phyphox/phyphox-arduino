@@ -70,4 +70,8 @@
 /// every 2 ms). Far faster than any link, but leaves room for the phone's writes and reads.
 #define PHYPHOX_BLE_TRANSFER_BURST 8
 
+/// NINA-B31 transport: unsolicited module events (connect, write, read request) queued while a
+/// command waits for its response, dispatched from poll(). Each slot holds one line (128 bytes).
+#define PHYPHOX_BLE_NINA_EVENT_QUEUE 8
+
 #endif

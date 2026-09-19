@@ -42,6 +42,7 @@ static void printStats() {
 
 void setup() {
   Serial.begin(115200);
+  while (!Serial && millis() < 3000) {}   // native-USB boards: give the host a moment to open the port
   PhyphoxBleExperiment exp("Bench", "Arduino Experiments", "The phyphox BLE 2.0 bench experiment.");
   PhyphoxBleExperiment::View view("Bench");
   PhyphoxBleExperiment::Graph graph("Counter"); graph.setChannel(0, 1); graph.setLabelX("time"); graph.setUnitX("s");

@@ -29,7 +29,9 @@ struct FakeTransport : phyphox::Transport {
     bool began = false;
     uint16_t reqMin = 0, reqMax = 0, reqLatency = 0, reqTimeout = 0;
 
-    bool begin(const phyphox::GattLayout& l, phyphox::TransportListener& li) override { layout = l; listener = &li; began = true; return true; }
+    bool beginResult = true;
+    int beginCalls = 0;
+    bool begin(const phyphox::GattLayout& l, phyphox::TransportListener& li) override { layout = l; listener = &li; beginCalls++; began = beginResult; return beginResult; }
     bool notify(phyphox::CharId id, const uint8_t* data, uint16_t len) override {
         if (refuseNext > 0) { refuseNext--; refusedCount++; if (!async) return false; }
         std::vector<uint8_t> p(data, data + len);

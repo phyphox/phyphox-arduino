@@ -60,6 +60,9 @@ public:
     bool ensureStarted();
     void poll();                    ///< drives the transfer; calls transport_.poll()
     bool started() const { return started_; }
+    /// The transport refused to come up (no module answered, a service could not be created).
+    /// Tried once; poll() and write() do nothing afterwards. PhyphoxBLE::printErrors() reports it.
+    bool startFailed() const { return startFailed_; }
 
     // ---- data to the phone
     bool writeFloats(const float* values, uint8_t count);      ///< 1…5 floats → data characteristic
@@ -120,6 +123,7 @@ private:
     uint32_t (*clock_)() = nullptr;
     bool started_ = false;
     bool startRequested_ = false;
+    bool startFailed_ = false;
     bool experimentAdded_ = false;   ///< addExperiment() was called: the layout is known
     uint32_t layoutMask_ = 0;      ///< the input channels the transport was given at begin()
     uint8_t layoutSensors_ = 0;

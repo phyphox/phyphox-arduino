@@ -199,3 +199,17 @@ TEST_CASE("Events") {
     CHECK(handlerCalls == before + 1);
     CHECK(s.lastEvent().type == EVENT_CLEAR); CHECK(s.lastEvent().experimentTimeMs == 5); CHECK(s.lastEvent().systemTimeMs == 9);
 }
+
+TEST_CASE("A transport that fails to start is tried once, not from every poll()") {
+    FakeTransport t; t.beginResult = false;
+    Server s(t); s.setClock([]() -> uint32_t { return 0; });
+    PhyphoxBleExperiment exp("x", "y", "z");
+    s.addExperiment(exp);
+    CHECK(!s.start());
+    CHECK(s.startFailed());
+    CHECK(t.beginCalls == 1);
+    s.poll(); s.poll();
+    float v = 1; s.writeFloats(&v, 1);
+    CHECK(t.beginCalls == 1);
+    CHECK(!s.started());
+}

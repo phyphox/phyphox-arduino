@@ -114,8 +114,16 @@ void PhyphoxBLE::printErrors(Print* out) {
     for (uint8_t v = 0; v < d.viewCount; ++v)
         for (uint8_t i = 0; i < d.views[v].elementCount; ++i) show(d.views[v].elements[i].error);
     for (uint8_t i = 0; i < d.sensorCount; ++i) show(d.sensors[i].error);
+    if (server().startFailed()) {
+        out->print("ERROR: the "); out->print(transportName()); out->println(" transport did not start (no module answered or a service could not be created)"); n++;
+    }
     if (!n) out->println("phyphox BLE: no configuration errors");
 }
 const ServerStats& PhyphoxBLE::stats() { return server().stats(); }
 const char* PhyphoxBLE::transportName() { return PHYPHOX_BLE_TRANSPORT::instance().name(); }
-void PhyphoxBLE::begin(Print* out) { debugOut = out; }
+void PhyphoxBLE::begin(Print* out) {
+    debugOut = out;
+#if defined(PHYPHOX_BLE_USE_NINAB31)
+    phyphox::NinaB31Transport::instance().setTrace(out);
+#endif
+}
