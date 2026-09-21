@@ -48,8 +48,8 @@ and ▶ starts plotting.
 Raspberry Pi Pico W is not supported (its Arduino core has no ArduinoBLE); see the plan for the
 future.
 
-Two example notes: `getDataFromSmartphone` blinks `LED_BUILTIN`, which the generic `esp32:esp32:esp32`
-board does not define — pick your DevKit variant or add `-DLED_BUILTIN=2`; `CO2kit` and
+Two example notes: `getDataFromSmartphone` blinks `LED_BUILTIN` and falls back to GPIO 2 on boards
+that do not define it (the generic `esp32:esp32:esp32` board, the senseBox MCU-S2); `CO2kit` and
 `rangefinder` need their sensor libraries (SparkFun SCD30, VL53L0X) from the Library Manager.
 
 Sizes on 2.0 (the `randomNumbers` example unless noted): ESP32 1,107 KB flash on the default

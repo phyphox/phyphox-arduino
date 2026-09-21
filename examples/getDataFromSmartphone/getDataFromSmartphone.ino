@@ -1,4 +1,10 @@
-#include <phyphoxBle.h> 
+#include <phyphoxBle.h>
+
+// Some boards define no LED_BUILTIN (the generic ESP32 board, the senseBox MCU-S2): blink
+// GPIO 2 there, or change it to the LED of your board.
+#ifndef LED_BUILTIN
+#define LED_BUILTIN 2
+#endif
 
 /*  In this example we can change the blink interval of our mikrocontroller via phyphox
  */
