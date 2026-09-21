@@ -40,6 +40,10 @@ jobs:
             platforms: '[{"name":"esp32:esp32","source-url":"https://espressif.github.io/arduino-esp32/package_esp32_index.json"}]'
             extra: ''
             sketches: all
+          - fqbn: esp32:esp32:sensebox_mcu_esp32s2
+            platforms: '[{"name":"esp32:esp32","source-url":"https://espressif.github.io/arduino-esp32/package_esp32_index.json"}]'
+            extra: ''
+            sketches: all
           - fqbn: arduino:mbed_nano:nano33ble
             platforms: '[{"name":"arduino:mbed_nano"}]'
             extra: ''

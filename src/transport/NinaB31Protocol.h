@@ -16,7 +16,8 @@ namespace phyphox {
 namespace nina {
 
 /// Longest line kept: a 20-byte write is ~62 characters, a six-component sensor write ~70.
-static const uint16_t LINE_MAX = 128;
+/// (Not LINE_MAX: that is a POSIX macro in the ESP32 toolchain's <limits.h>.)
+static const uint16_t kLineMax = 128;
 
 inline int hexVal(char c) {
     if (c >= '0' && c <= '9') return c - '0';
@@ -108,12 +109,12 @@ public:
             len_ = 0; overflow_ = false;
             return complete;
         }
-        if (len_ < LINE_MAX - 1) buf_[len_++] = c; else overflow_ = true;
+        if (len_ < kLineMax - 1) buf_[len_++] = c; else overflow_ = true;
         return false;
     }
     const char* line() const { return buf_; }
 private:
-    char buf_[LINE_MAX] = {0};
+    char buf_[kLineMax] = {0};
     uint16_t len_ = 0;
     bool overflow_ = false;
 };
@@ -125,8 +126,8 @@ class EventQueue {
 public:
     bool push(const char* line) {
         if (count_ >= N) { dropped_++; return false; }
-        strncpy(slots_[(head_ + count_) % N], line, LINE_MAX - 1);
-        slots_[(head_ + count_) % N][LINE_MAX - 1] = 0;
+        strncpy(slots_[(head_ + count_) % N], line, kLineMax - 1);
+        slots_[(head_ + count_) % N][kLineMax - 1] = 0;
         count_++;
         return true;
     }
@@ -139,7 +140,7 @@ public:
     uint8_t size() const { return count_; }
     uint32_t dropped() const { return dropped_; }
 private:
-    char slots_[N][LINE_MAX];
+    char slots_[N][kLineMax];
     uint8_t head_ = 0, count_ = 0;
     uint32_t dropped_ = 0;
 };

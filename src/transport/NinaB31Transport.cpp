@@ -73,7 +73,7 @@ bool dispatching = false;
 
 LineReader reader;
 EventQueue<PHYPHOX_BLE_NINA_EVENT_QUEUE> events;
-char response[LINE_MAX];         ///< the payload line of the command in flight (+UBTGCHA:…)
+char response[kLineMax];         ///< the payload line of the command in flight (+UBTGCHA:…)
 bool responseDone = false, responseOk = false;
 
 const char* const kSuffixHex = "30F746718B435E40BA53514A";
@@ -92,7 +92,7 @@ void feed(char c) {
     if (isEvent(line)) { events.push(line); return; }
     if (strcmp(line, "OK") == 0) { responseOk = true; responseDone = true; return; }
     if (strcmp(line, "ERROR") == 0) { responseOk = false; responseDone = true; return; }
-    strncpy(response, line, LINE_MAX - 1); response[LINE_MAX - 1] = 0;
+    strncpy(response, line, kLineMax - 1); response[kLineMax - 1] = 0;
 }
 
 void drain() { while (SerialBLE.available()) feed((char)SerialBLE.read()); }
@@ -277,7 +277,7 @@ void NinaB31Transport::poll() {
     drain();
     if (dispatching) return;                 // a callback called write() or poll(): the queue waits
     dispatching = true;
-    char line[LINE_MAX];
+    char line[kLineMax];
     while (events.pop(line)) { dispatch(line); drain(); }
     dispatching = false;
 }

@@ -17,7 +17,7 @@ TEST_CASE("Lines are assembled from CR/LF terminated input, empty lines skipped"
 
 TEST_CASE("An over-long line is dropped whole, the next one survives") {
     LineReader r;
-    std::string big(LINE_MAX + 40, 'x');
+    std::string big(kLineMax + 40, 'x');
     for (char c : big) CHECK(!r.feed(c));
     CHECK(!r.feed('\r'));
     for (char c : std::string("OK")) r.feed(c);
@@ -79,7 +79,7 @@ TEST_CASE("The event queue keeps order, bounds itself and counts drops") {
     CHECK(q.push("a")); CHECK(q.push("b")); CHECK(q.push("c"));
     CHECK(!q.push("d"));
     CHECK(q.dropped() == 1);
-    char out[LINE_MAX];
+    char out[kLineMax];
     CHECK(q.pop(out)); CHECK(std::string(out) == "a");
     CHECK(q.push("e"));
     CHECK(q.pop(out)); CHECK(std::string(out) == "b");
