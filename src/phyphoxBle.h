@@ -51,6 +51,9 @@
 #if defined(PHYPHOX_BLE_USE_ESP32)
   #include "transport/Esp32CoreBleTransport.h"
   #define PHYPHOX_BLE_TRANSPORT phyphox::Esp32CoreBleTransport
+#elif defined(PHYPHOX_BLE_USE_ESP32_BLE4)
+  #include "transport/Esp32Ble4Transport.h"
+  #define PHYPHOX_BLE_TRANSPORT phyphox::Esp32Ble4Transport
 #elif defined(PHYPHOX_BLE_USE_NINAB31)
   #include "transport/NinaB31Transport.h"
   #define PHYPHOX_BLE_TRANSPORT phyphox::NinaB31Transport

@@ -33,7 +33,7 @@ Open phyphox, tap **+** → *Bluetooth device*, pick your board: the graph appea
 
 | board | Bluetooth library | notes |
 |---|---|---|
-| ESP32 (all variants with a radio) | ESP32 core | nothing to install |
+| ESP32 (all variants with a radio) | ESP32 core (board package 3.x or 4.x) | nothing to install |
 | Arduino Nano 33 BLE / Sense / Sense Rev2 | ArduinoBLE | installed automatically; call `PhyphoxBLE::poll()` in `loop()` |
 | Arduino Nano 33 IoT, MKR WiFi 1010, Nano RP2040 Connect | ArduinoBLE | NINA firmware ≥ 3.0 (Firmware Updater); `poll()` in `loop()` |
 | Arduino UNO R4 WiFi | ArduinoBLE | `poll()` in `loop()` |

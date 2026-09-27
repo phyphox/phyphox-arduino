@@ -37,7 +37,7 @@ and ▶ starts plotting.
 
 | board | notes |
 |---|---|
-| ESP32 (any with a radio; not the S2) | nothing to install beyond the board package. Needs no `poll()` but calling it is harmless |
+| ESP32 (any with a radio; not the S2) | nothing to install beyond the board package. Works with the `esp32` board package 3.x and 4.x — 4.0 replaced the package's Bluetooth library, and the library picks the matching code by itself. Needs no `poll()` but calling it is harmless |
 | Nano 33 BLE / Sense / Sense Rev2 | uses ArduinoBLE (installed with this library). **`PhyphoxBLE::poll()` in `loop()` is required** |
 | Nano 33 IoT, MKR WiFi 1010, Nano RP2040 Connect | ArduinoBLE 2.x needs the board's NINA-W102 firmware ≥ 3.0.0: run *Tools → Firmware Updater* once if the board is older. `poll()` required |
 | UNO R4 WiFi | `poll()` required |
@@ -53,8 +53,9 @@ that do not define it (the generic `esp32:esp32:esp32` board, the senseBox MCU-S
 `rangefinder` need their sensor libraries (SparkFun SCD30, VL53L0X) from the Library Manager.
 
 Sizes on 2.0 (the `randomNumbers` example unless noted): ESP32 1,107 KB flash on the default
-partition and 42 KB static RAM (1.x: 1,148 KB on the huge partition, 58 KB); Nano 33 BLE 345 KB
-and 70 KB (1.x: 531 KB and 78 KB, `CreateExperiment`); Nano 33 IoT 79 KB and 6.2 KB.
+partition and 42 KB static RAM (1.x: 1,148 KB on the huge partition, 58 KB), 1,123 KB and 43 KB
+with the 4.0 board package (release candidate); Nano 33 BLE 345 KB and 70 KB (1.x: 531 KB and
+78 KB, `CreateExperiment`); Nano 33 IoT 79 KB and 6.2 KB.
 
 ## Next
 

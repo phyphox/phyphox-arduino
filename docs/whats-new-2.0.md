@@ -65,7 +65,8 @@ anything you have always wanted the library to do.
 - **One portable core, thin transports.** The XML generation, the transfer and the channel
   handling are one Arduino-independent implementation, tested on a PC. Per Bluetooth library
   there is one small transport: ArduinoBLE (also STM32duinoBLE), the ESP32 core library
-  (Bluedroid and NimBLE variants), and the NINA-B31 serial protocol. 1.x had five parallel
+  (Bluedroid and NimBLE variants; one transport for the 3.x board package and one for the
+  rewritten Bluetooth library of 4.x), and the NINA-B31 serial protocol. 1.x had five parallel
   backends that had drifted apart.
 - **Streaming serializer.** The document is never assembled; any packet is regenerated from
   the description on demand.

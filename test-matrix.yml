@@ -24,7 +24,8 @@ rows:
     status: active
     summary: >-
       arduino/compile-sketches over examples/* × every Tier-1/2 FQBN, with flash/RAM size
-      report per PR. ESP32 rows use the default partition on purpose.
+      report per PR. ESP32 rows use the default partition on purpose, and run once on
+      arduino-esp32 3.x (pinned) and once on 4.x (its own transport).
   - id: api-doc-parity
     tier: T0
     status: active

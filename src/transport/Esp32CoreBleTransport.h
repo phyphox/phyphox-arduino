@@ -1,9 +1,10 @@
-// Transport for the ESP32 core's BLE library (BLEDevice / BLEServer / BLECharacteristic),
-// which sits on Bluedroid on the classic ESP32 and on NimBLE on the S3/C3/C6/H2/P4 variants
-// of core 3.x. One transport, two `#if defined(CONFIG_BT_NIMBLE_ROLE_PERIPHERAL)` branches at
-// the callback layer, because the two stacks deliver subscriptions differently (Bluedroid: a
-// write to the CCCD descriptor; NimBLE: BLECharacteristicCallbacks::onSubscribe) — the
-// 1.x fix in commit 42bad88. Never pins a task to a core (1.x commit ca630b9, single-core C3).
+// Transport for the BLE library of arduino-esp32 3.x (BLEDevice / BLEServer /
+// BLECharacteristic; 4.x replaced it, see Esp32Ble4Transport.h), which sits on Bluedroid on
+// the classic ESP32 and on NimBLE on the S3/C3/C6/H2/P4 variants. One transport, two
+// `#if defined(CONFIG_BT_NIMBLE_ROLE_PERIPHERAL)` branches at the callback layer, because the
+// two stacks deliver subscriptions differently (Bluedroid: a write to the CCCD descriptor;
+// NimBLE: BLECharacteristicCallbacks::onSubscribe) — the 1.x fix in commit 42bad88. Never
+// pins a task to a core (1.x commit ca630b9, single-core C3).
 //
 // notify() returns void in this library on both stacks; a send refused up front arrives as
 // BLECharacteristicCallbacks::onStatus(ERROR_GATT, rc) from inside notify(), which this
