@@ -142,7 +142,10 @@ def main():
             sys.exit(f"another device advertises {foreign}: silence it (--silence PORT=FQBN, or unplug it)")
         for example in names:
             name, expect = EXAMPLES[example]
-            extra = "-DLED_BUILTIN=2" if (args.fqbn.startswith("esp32:esp32:esp32") and example == "getDataFromSmartphone") else ""
+            # getDataFromSmartphone falls back to GPIO 2 itself where LED_BUILTIN is undefined; a
+            # forced -DLED_BUILTIN=2 broke the variants that declare it (the C3: `static const
+            # uint8_t LED_BUILTIN`)
+            extra = ""
             print(f"== {example} ({name})")
             ok, out = flash_example(args.fqbn, args.port, example, extra)
             rep.check(f"{example}: compiles and flashes", ok, "" if ok else out[-300:])

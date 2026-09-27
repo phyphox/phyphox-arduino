@@ -26,6 +26,10 @@ def load_spec(docs):
     # resolve full paths by walking parents; a name may repeat under different parents
     def path_of(el, seen=0):
         parent = el.get("parent")
+        # since the view groups of format 1.21 a view element lists every container it may sit
+        # in ([view, vertical, …]); this library emits them directly under <view>, the first
+        if isinstance(parent, list):
+            parent = parent[0] if parent else None
         if not parent or seen > 10:
             return el["name"]
         # pick the parent that lists this element as a child, else the first
