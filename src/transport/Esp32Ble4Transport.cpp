@@ -133,10 +133,22 @@ BLECharacteristic make(BLEService& svc, uint8_t group, uint8_t index, CharId id,
     return c;
 }
 
+/// Set by restartAdvertising(), acted on by pumpTask. The core asks for advertising from its
+/// disconnect handler, i.e. inside the stack's callback, and BLE.startAdvertising() must never
+/// run there: on Bluedroid it waits for GAP events that are delivered on that same task. With
+/// the 4.0 BLE rework (PR #12993) the wait times out before advertising starts, and the board
+/// never advertised again after the first disconnect (bench, 2026-10-28; 4.0.0-RC1 got away
+/// with it). The library defers its own advertiseOnDisconnect restart for the same reason.
+volatile bool advertiseRequested = false;
+
 /// The transfer runs here, never inside a stack callback and independent of how often the
 /// sketch's loop() runs. Not pinned to a core (single-core chips exist).
 void pumpTask(void*) {
     for (;;) {
+        if (advertiseRequested) {
+            advertiseRequested = false;
+            BLE.startAdvertising();
+        }
         if (listener) listener->pump();
         vTaskDelay(pdMS_TO_TICKS(2));
     }
@@ -300,7 +312,7 @@ void Esp32Ble4Transport::requestMtu(uint16_t payload) { requestedMtu = payload; 
 void Esp32Ble4Transport::requestConnectionParameters(uint16_t mn, uint16_t mx, uint16_t lat, uint16_t to) {
     connMin = mn; connMax = mx; connLatency = lat; connTimeout = to;   // applied in onConnect
 }
-void Esp32Ble4Transport::restartAdvertising() { BLE.startAdvertising(); }
+void Esp32Ble4Transport::restartAdvertising() { advertiseRequested = true; }   // pumpTask starts it
 
 } // namespace phyphox
 
