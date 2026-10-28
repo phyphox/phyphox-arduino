@@ -214,8 +214,10 @@ void Server::pumpTransfer() {
         if (ok) { transfer_.accepted(); transfer_.noteProgress(now()); }
         else { stats_.packetsRefused++; transfer_.refused(now()); }
     }
-    // bookkeeping once per finished transfer (the session then goes idle)
-    if (transfer_.state() == TransferSession::DONE) { stats_.transfersCompleted++; transport_.restartAdvertising(); transfer_.reset(); }
+    // bookkeeping once per finished transfer (the session then goes idle). The session is reset
+    // before advertising restarts: ArduinoBLE polls HCI inside advertise(), which can deliver a
+    // control write that starts the next transfer, and a reset after it would discard that one.
+    if (transfer_.state() == TransferSession::DONE) { stats_.transfersCompleted++; transfer_.reset(); transport_.restartAdvertising(); }
     else if (transfer_.state() == TransferSession::ABORTED) { stats_.transfersAborted++; stats_.transfersStalled++; transfer_.reset(); }
 }
 

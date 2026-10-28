@@ -58,6 +58,26 @@ TEST_CASE("A sketch that only writes still serves the transfer (write services t
     CHECK(t.received() == full.out);
 }
 
+TEST_CASE("A trigger that arrives while the finished transfer restarts advertising is not lost") {
+    // ArduinoBLE's advertise() polls HCI while it waits for each command, which dispatches a
+    // pending control write: found on the UNO R4 WiFi 2026-10-28, the host writing 1 the moment
+    // the last packet arrived got no second transfer
+    FakeTransport t; Server s(t); s.setDeviceName("d"); s.setClock(clockFn); s.start(); s.poll();
+    t.subscribeExperiment();
+    t.controlWriteOnRestart = 1;
+    fakeNow += PHYPHOX_BLE_TRANSFER_START_DELAY_MS + 1;
+    for (int i = 0; i < 100 && s.stats().transfersCompleted == 0; ++i) { fakeNow += 1; s.poll(); }
+    CHECK(s.stats().transfersCompleted == 1);
+    CHECK(s.stats().transfers == 2);
+    CHECK(s.transfer().active());
+    t.experimentPackets.clear();
+    fakeNow += PHYPHOX_BLE_TRANSFER_START_DELAY_MS + 1;
+    for (int i = 0; i < 100 && s.transfer().active(); ++i) { fakeNow += 1; s.poll(); }
+    CHECK(s.stats().transfersCompleted == 2);
+    StringSink full; s.printXml(full);
+    CHECK(t.received() == full.out);
+}
+
 TEST_CASE("A stalled transfer is abandoned and the next trigger starts fresh") {
     FakeTransport t; Server s(t); s.setDeviceName("d"); s.setClock(clockFn); s.start(); s.poll();
     t.refuseNext = 1000000;                              // the stack refuses everything

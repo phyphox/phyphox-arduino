@@ -44,7 +44,11 @@ struct FakeTransport : phyphox::Transport {
     uint16_t mtuPayload() const override { return mtu; }
     void requestConnectionParameters(uint16_t a, uint16_t b, uint16_t c, uint16_t d) override { reqMin = a; reqMax = b; reqLatency = c; reqTimeout = d; }
     void poll() override {}
-    void restartAdvertising() override { advertisingRestarts++; }
+    int controlWriteOnRestart = -1;   ///< deliver this control write from inside restartAdvertising(), as ArduinoBLE's HCI polling does
+    void restartAdvertising() override {
+        advertisingRestarts++;
+        if (controlWriteOnRestart >= 0) { uint8_t v = (uint8_t)controlWriteOnRestart; controlWriteOnRestart = -1; writeControl(v); }
+    }
     const char* name() const override { return "fake"; }
 
     // the phone's side
