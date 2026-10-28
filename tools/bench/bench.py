@@ -150,6 +150,16 @@ async def find_device(name, timeout=15):
                 if (adv.local_name or d.name or "") == name: return d
     return None
 
+async def find_fresh_device(name, timeout=15):
+    """find_device after dropping BlueZ's record of the board. BlueZ keeps the GATT table of a
+    device it has seen and serves it again after a re-flash with a different layout, unless the
+    board's stack lets it notice the change — the senseBox's NINA-B31 evidently does not (found
+    2026-10-28: the bench after the user-XML run saw no input or sensor characteristics)."""
+    dev = await find_device(name, timeout)
+    if dev is None: return None
+    subprocess.run(["bluetoothctl", "remove", dev.address], capture_output=True, text=True)
+    return await find_device(name, timeout)
+
 class TransferSink:
     """Collects the packets of one transfer on an existing subscription."""
     def __init__(self): self.reset()
@@ -187,7 +197,7 @@ async def receive_transfer(client, rep, label, expected, sink=None, subscribe=Tr
     return body
 
 async def run(args, rep, log):
-    dev = await find_device(args.name, 20)
+    dev = await find_fresh_device(args.name, 20)
     rep.check("advertising as '%s' with the phyphox service" % args.name, dev is not None)
     if dev is None: return
     xml = get_xml(log, rep)
@@ -283,7 +293,7 @@ LEGACY_CONFIG_CHAR = "cddf1003" + SUFFIX
 
 async def run_custom_xml(args, rep, log):
     """User-XML mode: the document is served verbatim and the 1.x characteristics exist."""
-    dev = await find_device(args.name, 20)
+    dev = await find_fresh_device(args.name, 20)
     rep.check("advertising as '%s'" % args.name, dev is not None)
     if dev is None: return
     xml = get_xml(log, rep)
