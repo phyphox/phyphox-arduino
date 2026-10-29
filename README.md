@@ -31,16 +31,23 @@ Open phyphox, tap **+** → *Bluetooth device*, pick your board: the graph appea
 
 ## Supported boards
 
-| board | Bluetooth library | notes |
-|---|---|---|
-| ESP32 (all variants with a radio) | ESP32 core (board package 3.x or 4.x) | nothing to install |
-| Arduino Nano 33 BLE / Sense / Sense Rev2 | ArduinoBLE | installed automatically; call `PhyphoxBLE::poll()` in `loop()` |
-| Arduino Nano 33 IoT, MKR WiFi 1010, Nano RP2040 Connect | ArduinoBLE | NINA firmware ≥ 3.0 (Firmware Updater); `poll()` in `loop()` |
-| Arduino UNO R4 WiFi | ArduinoBLE | `poll()` in `loop()` |
-| STM32WB and other STM32duinoBLE boards | STM32duinoBLE | install it; `poll()` in `loop()` |
-| senseBox MCU / MCU-S2 with Bluetooth-Bee | NINA-B31 (serial) | `poll()` in `loop()` |
-| Arduino Nicla Sense ME | ArduinoBLE | `poll()` in `loop()` |
-| Portenta H7, GIGA R1 WiFi | ArduinoBLE | compile-tested |
+| board | Bluetooth library | status | notes |
+|---|---|---|---|
+| ESP32, ESP32-C3 | ESP32 core (board package 3.x or 4.x) | tested | nothing to install |
+| other ESP32 variants with a radio (S3, C6, …) | ESP32 core (board package 3.x or 4.x) | compiled (S3) | nothing to install |
+| Arduino Nano 33 BLE / Sense / Sense Rev2 | ArduinoBLE | tested (Nano 33 BLE) | installed automatically; call `PhyphoxBLE::poll()` in `loop()` |
+| Arduino Nano 33 IoT | ArduinoBLE | tested | NINA firmware ≥ 3.0 (Firmware Updater); `poll()` in `loop()` |
+| Arduino MKR WiFi 1010, Nano RP2040 Connect | ArduinoBLE | compiled | NINA firmware ≥ 3.0 (Firmware Updater); `poll()` in `loop()` |
+| Arduino UNO R4 WiFi | ArduinoBLE | tested | `poll()` in `loop()` |
+| Arduino Nicla Sense ME | ArduinoBLE | tested | `poll()` in `loop()` |
+| senseBox MCU with Bluetooth-Bee | NINA-B31 (serial) | tested | `poll()` in `loop()` |
+| senseBox MCU-S2 with Bluetooth-Bee, MKR1000 with NINA-B31 | NINA-B31 (serial) | compiled | `poll()` in `loop()` |
+| Portenta H7, GIGA R1 WiFi, UNO WiFi Rev2 | ArduinoBLE | untested | `poll()` in `loop()` |
+| STM32WB and other STM32duinoBLE boards | STM32duinoBLE | untested | install it; `poll()` in `loop()` |
+
+*tested*: on the bench with the Android and the iOS app before the release, every example;
+*compiled*: every example compiles in the continuous integration, never run on the board;
+*untested*: neither, expected to work through the same Bluetooth library — reports welcome.
 
 Details per board: [Getting started](docs/getting-started.md).
 
