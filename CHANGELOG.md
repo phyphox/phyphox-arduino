@@ -52,7 +52,8 @@ details.
   makes sure the module answers. `PhyphoxBLE::begin(&Serial)` prints the conversation with the
   module, for bug reports.
 - Separator colour, line width and the factor of a value now take effect; 1.x misspelled them
-  and the app ignored them. Labels containing `&`, `<` or `"` no longer break the experiment.
+  and the app ignored them. Labels containing `&`, `<` or quotation marks no longer break the
+  experiment.
 - Much less memory: no fixed 16 KB buffer, and no fixed maximum number of views, elements,
   sensors or export sets. A typical experiment needs one to two kilobytes of RAM, and every
   example fits the ESP32's default *Partition Scheme*.
