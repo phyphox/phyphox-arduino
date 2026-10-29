@@ -22,9 +22,9 @@ void setup() {
 
   // Set type of sensor:
   // SENSOR_ACCELEROMETER
-  // SENSOR_ACCELEROMETER_WITHOUT_G
+  // SENSOR_LINEAR_ACCELERATION
   // SENSOR_GYROSCOPE
-  // SENSOR_MAGNETOMETER   
+  // SENSOR_MAGNETIC_FIELD
   // SENSOR_PRESSURE
   smartphoneAcc.setType(SENSOR_ACCELEROMETER);
   smartphoneAcc.setAverage(true);

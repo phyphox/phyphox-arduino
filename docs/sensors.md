@@ -25,7 +25,7 @@ Every sensor the phyphox file format knows, under the format's own name:
 | constant | reading | unit |
 |---|---|---|
 | `SENSOR_ACCELEROMETER` | acceleration including gravity | m/s² |
-| `SENSOR_LINEAR_ACCELERATION` (`SENSOR_ACCELEROMETER_WITHOUT_G`) | acceleration without gravity | m/s² |
+| `SENSOR_LINEAR_ACCELERATION` | acceleration without gravity | m/s² |
 | `SENSOR_GRAVITY` | gravity in the device frame | m/s² |
 | `SENSOR_GYROSCOPE` | angular velocity | rad/s |
 | `SENSOR_MAGNETIC_FIELD` | magnetic field | µT |
@@ -53,7 +53,12 @@ says how the phone reconciles it with what the sensor offers, and `setStride(n)`
 every n-th reading. `setAverage(true)` averages readings between deliveries instead of
 dropping them.
 
-## 1.x note
+## 1.x names
 
-`SENSOR_MAGNETOMETER` is a deprecated alias of `SENSOR_MAGNETIC_FIELD` — in 1.x it emitted a
-name the format does not know, so it never worked.
+Two constants from 1.x are aliases of the names above:
+
+- `SENSOR_ACCELEROMETER_WITHOUT_G` is the same sensor as `SENSOR_LINEAR_ACCELERATION` and
+  emits the same name. It always worked and stays.
+- `SENSOR_MAGNETOMETER` is a deprecated alias of `SENSOR_MAGNETIC_FIELD` — in 1.x it emitted a
+  name the format does not know, so it never worked. It now emits the correct name and will be
+  removed in 2.1.
