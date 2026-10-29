@@ -13,6 +13,14 @@
     #define PHYPHOX_BLE_HAS_ATT 1
   #endif
 #endif
+// The Nano 33 BLE and the Nicla Sense ME run the Cordio link layer of Mbed on the nRF52 itself
+// (the other Mbed boards have a separate radio chip)
+#if defined(ARDUINO_ARCH_MBED) && defined(TARGET_NRF52) && defined(PHYPHOX_BLE_HAS_ATT) && defined(__has_include)
+  #if __has_include(<utility/HCI.h>)
+    #include <utility/HCI.h>
+    #define PHYPHOX_BLE_CORDIO_LL 1
+  #endif
+#endif
 #include "ArduinoBleTransport.h"
 #include <string.h>
 #include <stdlib.h>
@@ -57,7 +65,16 @@ void onWritten(BLEDevice, BLECharacteristic c) {
 }
 void onSubscribed(BLEDevice, BLECharacteristic c) { Entry* e = find(c.uuid()); if (e && listener) listener->onSubscribe(e->id, true); }
 void onUnsubscribed(BLEDevice, BLECharacteristic c) { Entry* e = find(c.uuid()); if (e && listener) listener->onSubscribe(e->id, false); }
-void onConnected(BLEDevice) { isConnected = true; if (listener) listener->onConnect(); }
+#if defined(PHYPHOX_BLE_CORDIO_LL)
+bool linkSetupPending = false;
+#endif
+void onConnected(BLEDevice) {
+    isConnected = true;
+#if defined(PHYPHOX_BLE_CORDIO_LL)
+    linkSetupPending = true;    // HCI commands cannot be sent from inside the event handler, see poll()
+#endif
+    if (listener) listener->onConnect();
+}
 void onDisconnected(BLEDevice) { isConnected = false; if (listener) listener->onDisconnect(); }
 
 Entry& add(BLEService& svc, uint8_t group, uint8_t index, CharId id, uint16_t props, int size) {
@@ -135,7 +152,30 @@ void ArduinoBleTransport::requestConnectionParameters(uint16_t minInterval, uint
     BLE.setSupervisionTimeout(timeout);
 }
 
-void ArduinoBleTransport::poll() { BLE.poll(); }
+void ArduinoBleTransport::poll() {
+    BLE.poll();
+#if defined(PHYPHOX_BLE_CORDIO_LL)
+    // Right after connecting: start the version exchange, then ask for 1M PHY on this connection.
+    // The Cordio link layer stalls on two control procedures (Nicla Sense ME, 2026-10-29):
+    // - iOS switches a new connection to 2M, and Cordio holds back outgoing data around that switch
+    //   (packets unacknowledged for 8-10 s, discovery given up, transfers twice as long);
+    // - after a PHY procedure, Cordio no longer answers the version exchange that Android 15 starts
+    //   ~1 s in, and Android holds the connection back from the app until it has the version.
+    // Starting the version exchange from here first lets the phone's controller answer from its
+    // cache. Measured: both phones sequence 49/49, loops 6/6 (iOS 10.8 s); 1M as the controller's
+    // default instead broke Android (1/6), 1M after 1.5 s left iOS broken.
+    if (linkSetupPending) {
+        linkSetupPending = false;
+        for (uint16_t h = 0; h < ATT_MAX_PEERS; ++h) {
+            if (!ATT.connected(h)) continue;
+            uint8_t ver[2] = { (uint8_t)(h & 0xff), (uint8_t)(h >> 8) };
+            HCI.sendCommand(0x041D, sizeof(ver), ver);          // HCI Read Remote Version Information
+            uint8_t phy[7] = { ver[0], ver[1], 0x00, 0x01, 0x01, 0x00, 0x00 };  // tx 1M, rx 1M, no coding preference
+            HCI.sendCommand(0x2032, sizeof(phy), phy);          // HCI LE Set PHY
+        }
+    }
+#endif
+}
 void ArduinoBleTransport::restartAdvertising() { BLE.advertise(); }
 
 } // namespace phyphox

@@ -43,7 +43,8 @@ and ▶ starts plotting.
 | UNO R4 WiFi | `poll()` required |
 | STM32WB and other STM32duinoBLE boards | install **STM32duinoBLE** and the STM32 board package. `poll()` required |
 | senseBox MCU / MCU-S2 with the Bluetooth-Bee (NINA-B31) | `poll()` required. The module's UART is `Serial3` on the senseBox MCU core and `Serial1` on the MCU-S2; another port: `-DPHYPHOX_BLE_NINA_SERIAL=SerialX`. On the senseBox MCU the library power-cycles the Bee when it starts (about 2 s), because the module's UART only comes up reliably when it boots with the UART lines released; `-DPHYPHOX_BLE_NINA_NO_POWER_CYCLE` skips that. If the board never appears in the app, call `PhyphoxBLE::printErrors(&Serial)` after the first `poll()` (the module is configured then): it says when the module did not answer. `PhyphoxBLE::begin(&Serial)` before `start()` (or `-DPHYPHOX_BLE_NINA_TRACE`) prints the whole AT dialogue with the module on `Serial` — the thing to send when reporting a problem. Supported with the senseBox colleagues' testing |
-| Portenta H7, GIGA R1 WiFi, Nicla Sense ME, UNO WiFi Rev2 | compile-tested only; ArduinoBLE boards. Define `PHYPHOX_BLE_TRANSPORT_ARDUINOBLE` for other ArduinoBLE boards |
+| Nicla Sense ME | uses ArduinoBLE (installed with this library). `poll()` required |
+| Portenta H7, GIGA R1 WiFi, UNO WiFi Rev2 | compile-tested only; ArduinoBLE boards. Define `PHYPHOX_BLE_TRANSPORT_ARDUINOBLE` for other ArduinoBLE boards |
 
 Raspberry Pi Pico W is not supported (its Arduino core has no ArduinoBLE); see the plan for the
 future.

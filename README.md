@@ -39,7 +39,8 @@ Open phyphox, tap **+** → *Bluetooth device*, pick your board: the graph appea
 | Arduino UNO R4 WiFi | ArduinoBLE | `poll()` in `loop()` |
 | STM32WB and other STM32duinoBLE boards | STM32duinoBLE | install it; `poll()` in `loop()` |
 | senseBox MCU / MCU-S2 with Bluetooth-Bee | NINA-B31 (serial) | `poll()` in `loop()` |
-| Portenta H7, GIGA R1 WiFi, Nicla Sense ME | ArduinoBLE | compile-tested |
+| Arduino Nicla Sense ME | ArduinoBLE | `poll()` in `loop()` |
+| Portenta H7, GIGA R1 WiFi | ArduinoBLE | compile-tested |
 
 Details per board: [Getting started](docs/getting-started.md).
 

@@ -52,6 +52,10 @@ with reasons is in [docs/whats-new-2.0.md](docs/whats-new-2.0.md), the migration
 - Separator colour, line width and value factor take effect (1.x emitted them under
   misspelled attribute names); labels containing an ampersand, a less-than sign or a quotation mark load.
 - Connection-parameter requests use values iOS accepts.
+- Nicla Sense ME (and the same code path on the Nano 33 BLE): iPhones load the experiment
+  reliably and twice as fast, and Android connections are no longer held back. Right after a
+  connection the library starts the Bluetooth version exchange itself and asks for the 1M PHY,
+  working around two link-layer procedures that stall in the Mbed core's Bluetooth controller.
 - No 16 KB XML buffer, no per-string heap allocation, no fixed limits on views, elements,
   sensors or export sets: the description is copied once into a block of exactly its size and
   the XML is streamed packet by packet. Every example fits the default ESP32 partition.
