@@ -43,14 +43,14 @@ notification; 1…5 are the values of `PhyphoxBLE::write(...)`.
 | `setLabelX`, `setLabelY`, `setUnitX`, `setUnitY`, `setUnitYperX` | axis labels and units |
 | `setXPrecision(n)`, `setYPrecision(n)` | digits on the axes |
 | `setStyle(STYLE_LINES \| STYLE_DOTS \| STYLE_VBARS \| STYLE_HBARS \| STYLE_MAP)` | how the first curve is drawn |
-| `setColor("ff7e22")`, `setLineWidth(w)` (1.x spelling `setLinewidth`) | colour (six hex digits; `COLOR_*` constants exist) and width of the first curve |
+| `setColor("ff7e22")`, `setLineWidth(w)` | colour (six hex digits; `COLOR_*` constants exist) and width of the first curve |
 | `setMinX(v, layout)`, `setMaxX`, `setMinY`, `setMaxY` | axis range; layout is `LAYOUT_AUTO`, `LAYOUT_EXTEND` (grows past v) or `LAYOUT_FIXED` |
 | `setLogX(b)`, `setLogY(b)` | logarithmic axes |
 | `setFollowX(b)` | the visible x range follows the newest data |
 | `setTimeOnX(b)`, `setTimeOnY(b)`, `setSystemTime(b)`, `setLinearTime(b)` | show the axis as a time axis, wall-clock time, or a linear time base |
 | `setAspectRatio(r)` | width over height of the plot area |
 | `setPartialUpdate(b)`, `setHideTimeMarkers(b)`, `setSuppressScientificNotation(b)`, `setShowColorScale(b)` | further attributes of the phyphox `graph` element |
-| `addSubgraph(sub)` | a further curve (below); `addChannel(x, y, color)` is the 1.x one-call form for the first curve |
+| `addSubgraph(sub)` | a further curve (below) |
 | `setVisibility(channel)`, `setXMLAttribute(text)` | as for every element |
 
 ### Several curves

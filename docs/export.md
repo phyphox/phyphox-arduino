@@ -14,4 +14,4 @@ exp.addExportSet(set);
 
 Several sets become several sheets or files. `ExportData(label, channel)` takes the same
 channels as a graph: 0 is the phone's arrival time, 1…5 the values of `PhyphoxBLE::write`.
-The 1.x spelling `setDatachannel(n)`, its alias `setDataChannel(n)`, and `setLabel` remain.
+`setLabel` and `setDataChannel(n)` set them separately.

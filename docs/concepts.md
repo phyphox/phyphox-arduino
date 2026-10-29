@@ -15,34 +15,21 @@ curious or something does not load.
   1, 2, 3 in one Bluetooth notification. **Channel 0** is the time at which the phone received
   the notification. A graph plots one channel against another: `graph.setChannel(0, 1)` is
   channel 1 over time.
-- **Input channels 1…8** are what the phone sends: every `Edit`, `Slider`, `Dropdown`, `Toggle`
+- **Input channels 1…16** are what the phone sends: every `Edit`, `Slider`, `Dropdown`, `Toggle`
   or `Button` writes into the input channel you give it with `setChannel(k)`. The board reads
   them with `PhyphoxBLE::read(...)`, `PhyphoxBLE::readChannel(k)`, or through a callback
-  (`element.onChange(...)`, `button.onPress(...)`). Two elements may share a channel (an edit
-  field and a slider for the same value, say); a button owns its channel.
+  (`element.onChange(...)`, `button.onPress(...)`). The phone sends a value when it changes,
+  while the experiment is running — see [User input](inputs.md).
 - **Phone sensors** land in input channels too: `sensor.mapChannel("x", 1)`.
 
-## When the radio comes up
+## Starting
 
-`PhyphoxBLE::start()` records the name and the request; the Bluetooth stack is brought up as
-soon as the experiment is known as well — at `addExperiment()` in the 1.x order (`start()`
-first), at `start()` in the other. So the 1.x order keeps working: the experiment is known
-before the characteristics are created, and the board advertises from `setup()` on, even if
-`loop()` then blocks on a sensor. Only a sketch that calls `start()` and never
-`addExperiment()` (the default experiment) starts the stack at its first `poll()` or
-`write()`, which happens right after `setup()` anyway. An experiment added
-later, from `loop()`, is served, but input channels or phone sensors it adds beyond the first
-one have no characteristic; `printErrors()` says so.
-
-## Only changes are sent
-
-The phone sends an input channel's value when it changes, not continuously. That is a change
-from 1.x, where every value was written on every analysis cycle — see
-[Migrating](migrating-from-1x.md). `experiment.setResendUnchanged(true)` restores the old
-behaviour if a sketch wants a periodic heartbeat from the phone. The board's `read()` returns
-each element's default before the first change, and callbacks fire once per delivered value.
-
-Values flow only while the experiment is running (▶) in the app, exactly as in 1.x.
+Call `PhyphoxBLE::start(name, experiment)`, or `PhyphoxBLE::start(name)` followed by
+`PhyphoxBLE::addExperiment(experiment)`, in `setup()`. The board advertises from then on. A
+sketch that adds no experiment serves a default one (a graph and the current value of channel
+1). Add the experiment in `setup()`: one added later, from `loop()`, is served, but input
+channels or phone sensors it adds beyond the first one cannot be created any more —
+`printErrors()` says so.
 
 ## Bandwidth
 
@@ -55,21 +42,17 @@ the request.
 ## Polling
 
 `PhyphoxBLE::poll()` gives the Bluetooth stack CPU time on the boards that need it (every
-ArduinoBLE and NINA-B31 board) and drives the transfer there; on the ESP32 the stack runs in
-its own tasks and `poll()` is a no-op. `PhyphoxBLE::write()` services the stack as well, so a
-sketch that writes regularly and never polls still answers the phone — the 1.x ESP32 examples
-were written that way — but the callbacks of input elements and buttons then run from inside
-`write()`. Call `poll()` once per `loop()` and none of this matters.
+ArduinoBLE and NINA-B31 board); on the ESP32 the stack runs in its own tasks and `poll()` is a
+no-op. Call it once per `loop()` on every board, and keep `loop()` from blocking for long. On
+the boards that need it, the callbacks of input elements and buttons run from inside `poll()`
+(or `write()`, which services the stack as well); on the ESP32 they run in the Bluetooth
+stack's own task.
 
 ## The transfer
 
-The experiment document is sent in packets on the phyphox experiment characteristic as soon as
-the phone subscribes to it (or asks for it on the control characteristic). The board sends as
-fast as its Bluetooth stack accepts and retries a packet the stack refuses — no fixed pacing.
-On a slow or noisy link the transfer takes longer but arrives complete; only a disconnect
-aborts it, and then the app offers to retry. The first packet waits 150 ms after the trigger
-so the app's own control write is answered before the notifications start, and packets go out
-in short bursts so the phone's writes are never starved. Details in [Protocol](protocol.md).
+When the phone connects, the board sends it the experiment in a series of Bluetooth packets.
+On a slow or noisy link this takes longer but arrives complete; if the connection drops, the
+app offers to retry. Details in [Protocol](protocol.md).
 
 ## Events
 
@@ -95,7 +78,7 @@ characteristic), six components per phone sensor, strings up to 250 characters.
 Labels, units, titles and option texts are **stored by pointer, not copied**. Pass string
 literals (`"Voltage"`) or static/global buffers. A temporary — `String(...).c_str()`, a local
 `char buffer[]` in `setup()` — is gone by the time the phone connects and the phone would see
-garbage. (1.x copied strings onto the heap; 2.0 does not, so the same sketch uses less RAM.)
+garbage.
 
 ## Errors
 

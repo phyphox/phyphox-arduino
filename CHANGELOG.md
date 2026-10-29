@@ -2,8 +2,7 @@
 
 ## 2.0.0
 
-A rewrite of the library. Existing sketches keep working; the full list of visible changes
-with reasons is in [docs/whats-new-2.0.md](docs/whats-new-2.0.md), the migration steps in
+A rewrite of the library. Existing sketches keep working; the migration steps are in
 [docs/migrating-from-1x.md](docs/migrating-from-1x.md).
 
 ### Breaking

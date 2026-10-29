@@ -1,7 +1,5 @@
 # Phone sensors
 
-*Skeleton — the example is ported in phase 3.*
-
 The board can ask the phone for its own sensors:
 
 ```cpp
@@ -43,8 +41,7 @@ Not every phone has every sensor; the app tells the user which are missing.
 
 `mapChannel(component, channel)` takes `x`, `y`, `z`, `abs` (the magnitude, or `w` for the
 attitude), `t` (the phone's timestamp of the reading, in seconds) and `accuracy` (the sensor's
-own accuracy flag). The sensor's type is given to the constructor or `setType(SENSOR_...)`;
-the 1.x `setComponent(component)` maps a component to the next free channel.
+own accuracy flag). The sensor's type is given to the constructor or `setType(SENSOR_...)`.
 
 ## Rate
 

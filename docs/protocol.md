@@ -23,43 +23,30 @@ of them):
 | `cddf1002` | data characteristic (notify): five `float32` little-endian, channels 1…5 at offsets 0, 4, 8, 12, 16; with `setRepeating(n)`, n samples per notification |
 | `cddf20kk` | input channel k (write): one `float32` little-endian, written by the phone when the channel changes |
 | `cddf30ss` | phone sensor s (write): its mapped components as consecutive `float32` little-endian |
-| `cddf1003` | **user-XML mode only**: the 1.x config characteristic, five `float32` at offsets 0…16, so hand-written documents keep working |
+| `cddf1003` | **hand-written documents only** (`start(name, xml, len)`): the config characteristic, five `float32` little-endian at offsets 0…16, read with `PhyphoxBLE::read(...)` |
 
 ## The transfer
 
-1. The app subscribes to `cddf0002`, or writes 1 to `cddf0003` — whichever comes first starts
-   the transfer; a second trigger during a transfer is ignored.
-2. The board sends one header packet: `phyphox` (7 ASCII bytes), the document size as a
+1. The app subscribes to `cddf0002` or writes 1 to `cddf0003`; whichever comes first starts
+   the transfer, and a second trigger during a transfer is ignored.
+2. The board sends a header packet: `phyphox` (7 ASCII bytes), the document size as a
    big-endian `uint32`, its CRC-32 as a big-endian `uint32`.
-3. Then, 150 ms after the trigger (so the app's control write that follows its subscription is
-   answered first), the document in notifications of MTU − 3 bytes (20 by default; on the
-   ArduinoBLE boards always 20, because that library does not expose the negotiated MTU; on the
-   ESP32 at most 512), in bursts of 8 as fast as the local Bluetooth stack accepts them, with a
-   breather between bursts so the phone's own writes get their responses. A packet the stack
-   refuses is re-sent after a few milliseconds, the pause doubling up to 50 ms while the
-   refusals continue. Only 3 s without progress abandons the transfer; the next trigger then
-   starts afresh.
+3. After 150 ms, the board sends the document in notifications of MTU − 3 bytes (20 by default;
+   always 20 on the ArduinoBLE boards; at most 512 on the ESP32), as fast as the local
+   Bluetooth stack accepts them (on the Nano 33 BLE and Nicla Sense ME one packet every
+   30 ms). A packet the stack refuses is sent again a little later.
+   After 3 s without progress the board gives up; the next trigger starts afresh.
 4. A disconnect aborts the transfer; the app then offers to retry.
 
-Why no chunk re-requests: the BLE link layer acknowledges and retransmits every packet, so a
-weak link makes the transfer slow, not lossy. The 1.x losses were the board discarding packets
-its own stack had refused. Version 2.0 fixes that; see the rewrite plan for the measurements
-and the decision.
-
-One stack needs more than the return value: on the classic ESP32 (Bluedroid) a notification
-can still be dropped *after* the stack accepted it, inside the stack's own task, and that is
-reported only through a confirmation event the Arduino core ignores for notifications. The
-ESP32 transport listens for that event itself and re-sends such packets. Those silent drops
-were the Android timeouts at 80–90 % seen during the 2.0 test sweep. The same stack also
-keeps a subscription's state across connections; the transport clears it on every disconnect,
-because a phone notified during its service discovery — iOS in particular — fails to discover
-the services at all.
+The BLE link layer acknowledges and retransmits every packet, so a weak link makes the transfer
+slower, not incomplete.
 
 ## Connection parameters
 
 The board asks for a connection interval of 15–30 ms with no latency and a 5 s supervision
-timeout — values iOS accepts (Apple's accessory guidelines require a minimum of at least
-15 ms). `PhyphoxBLE::minConInterval` etc. change them, in BLE units.
+timeout, values both Android and iOS accept. `PhyphoxBLE::minConInterval`, `maxConInterval`,
+`slaveLatency` and `timeout` change them before `start()`, in BLE units (1.25 ms for the
+intervals, 10 ms for the timeout); iOS ignores a request below 15 ms.
 
 ## Events
 

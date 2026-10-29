@@ -1,8 +1,8 @@
 # API reference
 
-*Skeleton — kept in step with the headers by a test from phase 2 on; the generated Doxygen
-reference will be linked here.* Until then the headers are the reference: `src/phyphoxBle.h`
-(the simple API), `src/phyphoxBleExperiment.h` (the description API).
+An overview of the public API. The headers carry the full description of every method:
+`src/phyphoxBle.h` (the simple API) and `src/phyphoxBleExperiment.h` (describing the
+experiment).
 
 ## PhyphoxBLE (static)
 
@@ -13,7 +13,7 @@ reference will be linked here.* Until then the headers are the reference: `src/p
 | `poll()` | every `loop()`; gives the stack CPU time, drives the transfer |
 | `write(v1 … v5)`, `write(float*, n)`, `write(uint8_t*, n)` | send data channels |
 | `read(v1 … v5)`, `readChannel(k)`, `changed(k)`, `onChange(k, cb)`, `onPress(k, cb)` | receive input channels |
-| `configHandler`, `experimentEventHandler`, `eventType`, `experimentTime`, `systemTime` | 1.x hooks and event fields |
+| `configHandler`, `experimentEventHandler`, `eventType`, `experimentTime`, `systemTime` | callbacks for any value from the phone and for the app's start/pause/clear/sync events; the last event's fields |
 | `setMTU(payload)`, `minConInterval`, `maxConInterval`, `slaveLatency`, `timeout` | radio parameters, before `start()` |
 | `printXML(&Serial)`, `printErrors(&Serial)`, `stats()`, `currentConnections`, `isSubscribed`, `version()`, `transportName()` | introspection |
 
@@ -24,6 +24,18 @@ Experiment: `setTitle`, `setCategory`, `setDescription`, `setColor`, `setRepeati
 
 Elements: see [Views and graphs](views.md), [User input](inputs.md), [Phone sensors](sensors.md),
 [Export](export.md).
+
+## 1.x names
+
+Names kept so that 1.x sketches compile; new sketches can ignore them.
+
+| 1.x | use |
+|---|---|
+| `setLinewidth(w)` (graph, subgraph) | `setLineWidth(w)` |
+| `graph.addChannel(x, y, color)` | `graph.setChannel(x, y)` and `graph.setColor(color)` |
+| `setDatachannel(n)` (export) | `setDataChannel(n)` |
+| `sensor.setComponent(c)` | `mapChannel(c, channel)`; `setComponent` maps to the next free channel |
+| `SENSOR_ACCELEROMETER_WITHOUT_G`, `SENSOR_MAGNETOMETER` | see [Phone sensors](sensors.md#1x-names) |
 
 ## Errors
 

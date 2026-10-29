@@ -34,9 +34,8 @@ The phone sends a channel when its value changes, not continuously. Before the f
 `read()` returns the element's default. A button press always arrives, even if the value is
 the same as last time. Values flow only while the experiment is running (▶ in the app) — an
 edit made while paused reaches the board when the user starts again.
-`experiment.setResendUnchanged(true)` restores the 1.x behaviour, where the phone writes every
-channel on every analysis cycle (about a hundred times per second); useful as a heartbeat from
-the phone, and for a sketch written against 1.x that relied on it.
+`experiment.setResendUnchanged(true)` makes the phone write every channel on every analysis
+cycle instead (about a hundred times per second), which is useful as a heartbeat from the phone.
 
 ## Elements
 
