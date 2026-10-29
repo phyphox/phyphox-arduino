@@ -67,6 +67,7 @@ void onSubscribed(BLEDevice, BLECharacteristic c) { Entry* e = find(c.uuid()); i
 void onUnsubscribed(BLEDevice, BLECharacteristic c) { Entry* e = find(c.uuid()); if (e && listener) listener->onSubscribe(e->id, false); }
 #if defined(PHYPHOX_BLE_CORDIO_LL)
 bool linkSetupPending = false;
+unsigned long lastExperimentPacket = 0;
 #endif
 void onConnected(BLEDevice) {
     isConnected = true;
@@ -127,6 +128,21 @@ bool ArduinoBleTransport::begin(const GattLayout& layout, TransportListener& li)
 bool ArduinoBleTransport::notify(CharId id, const uint8_t* data, uint16_t len) {
     Entry* e = find(id);
     if (!e) return false;
+#if defined(PHYPHOX_BLE_CORDIO_LL)
+    // Pace the experiment transfer, see PHYPHOX_BLE_CORDIO_PACKET_GAP_MS. ArduinoBLE allows four
+    // packets in flight, and the Cordio link layer then loses some: it occasionally takes a
+    // queued packet off its queue unsent and reports it complete (measured 2026-10-29: the
+    // completions outnumber the packets; Nano 33 BLE 26 % loss, Nicla Sense ME once in ~60
+    // transfers). Waiting here rather than refusing keeps the transfer independent of how often
+    // the sketch calls poll(); a burst blocks for at most PHYPHOX_BLE_TRANSFER_BURST gaps.
+    if (id.kind == CH_EXPERIMENT) {
+        while (isConnected && millis() - lastExperimentPacket < PHYPHOX_BLE_CORDIO_PACKET_GAP_MS) {
+            BLE.poll();
+            delay(1);                   // lets the Cordio thread run
+        }
+        lastExperimentPacket = millis();
+    }
+#endif
     // writeValue() blocks until the controller has a free buffer, so it is never refused
     return e->ch->writeValue(data, len) != 0;
 }

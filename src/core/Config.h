@@ -69,6 +69,11 @@
 /// Packets sent back to back per pump before the stack gets a breather (the ESP32 task pumps
 /// every 2 ms). Far faster than any link, but leaves room for the phone's writes and reads.
 #define PHYPHOX_BLE_TRANSFER_BURST 8
+/// Nano 33 BLE and Nicla Sense ME (Mbed's Cordio link layer): the minimum time between two
+/// experiment packets, so the link layer holds at most one at a time. With several queued it
+/// drops one now and then while reporting it sent (every 4th packet on a Nano 33 BLE). 1.x
+/// paced its transfer at the same 30 ms and never showed the loss.
+#define PHYPHOX_BLE_CORDIO_PACKET_GAP_MS 30
 
 /// NINA-B31 transport: unsolicited module events (connect, write, read request) queued while a
 /// command waits for its response, dispatched from poll(). Each slot holds one line (128 bytes).

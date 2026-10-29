@@ -56,6 +56,10 @@ with reasons is in [docs/whats-new-2.0.md](docs/whats-new-2.0.md), the migration
   reliably and twice as fast, and Android connections are no longer held back. Right after a
   connection the library starts the Bluetooth version exchange itself and asks for the 1M PHY,
   working around two link-layer procedures that stall in the Mbed core's Bluetooth controller.
+- Nano 33 BLE and Nicla Sense ME: the experiment transfer no longer loses packets. The Mbed
+  core's Bluetooth controller occasionally drops a queued packet while reporting it sent (every
+  fourth on a Nano 33 BLE); the transfer now sends one packet every 30 ms on these boards, as
+  1.x did, so only one is ever queued.
 - No 16 KB XML buffer, no per-string heap allocation, no fixed limits on views, elements,
   sensors or export sets: the description is copied once into a block of exactly its size and
   the XML is streamed packet by packet. Every example fits the default ESP32 partition.
