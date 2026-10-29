@@ -76,6 +76,8 @@ The documentation is in [`docs/`](docs/README.md).
 ## Contributing, licence, contact
 
 Issues and pull requests are welcome here. The library is released under the GNU Lesser General
-Public Licence v3.0 or later (`COPYING.LESSER`). Contact: contact@phyphox.org. Developed by the
-phyphox team at RWTH Aachen University; the original library was created by Alexander Krampe
-(master thesis), maintained by Dominik Dorsel, and extended by Marcel Hagedorn and Edward Leier.
+Public Licence v3.0 or later (`COPYING.LESSER`). Contact: contact@phyphox.org.
+
+Developed by the phyphox team at RWTH Aachen University; the original library was created by
+Alexander Krampe (master thesis), maintained by Dominik Dorsel, and extended by Marcel Hagedorn
+and Edward Leier. Version 2.0 is an AI-assisted full rewrite.
