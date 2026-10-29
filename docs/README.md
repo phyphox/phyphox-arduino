@@ -17,5 +17,5 @@ Start with the repository [README](../README.md) if you have never used phyphox.
 | [What's new in 2.0](whats-new-2.0.md), [Changelog](../CHANGELOG.md) | the changes and the reasons |
 
 The phyphox file format itself — what the generated experiment *means* — is documented in the
-phyphox documentation (the "file format" section), which is the canonical reference; this
-library only generates a small subset of it. Version 2.0 declares format `1.20`.
+[phyphox documentation](https://phyphox.org/docs) (the "file format" section), which is the canonical
+reference; this library only generates a small subset of it. Version 2.0 declares format `1.20`.
