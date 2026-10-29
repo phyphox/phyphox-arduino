@@ -5,8 +5,24 @@ PROJECT_NAME           = "phyphox BLE"
 PROJECT_BRIEF          = "Plot your Arduino's data in the phyphox app and control the board from the phone"
 OUTPUT_DIRECTORY       = build/doxygen
 # The prose pages are included too, so the links between them resolve and the published
-# reference carries the whole documentation, not only the headers.
-INPUT                  = src/phyphoxBle.h src/phyphoxBleExperiment.h src/core src/transport docs README.md CHANGELOG.md
+# reference carries the whole documentation, not only the headers. The pages are listed one
+# by one because the sidebar keeps this order: the reading order of the table in
+# docs/README.md. A new page has to be added here; one that is linked but missing makes
+# Doxygen warn, which fails CI.
+INPUT                  = docs/README.md \
+                         README.md \
+                         docs/getting-started.md \
+                         docs/concepts.md \
+                         docs/views.md \
+                         docs/inputs.md \
+                         docs/sensors.md \
+                         docs/export.md \
+                         docs/api.md \
+                         docs/protocol.md \
+                         docs/migrating-from-1x.md \
+                         CHANGELOG.md \
+                         docs/testing.md \
+                         src/phyphoxBle.h src/phyphoxBleExperiment.h src/core src/transport
 FILE_PATTERNS          = *.h *.md
 USE_MDFILE_AS_MAINPAGE = docs/README.md
 RECURSIVE              = YES
@@ -19,7 +35,19 @@ GENERATE_HTML          = YES
 HTML_OUTPUT            = html
 SOURCE_BROWSER         = NO
 SHOW_INCLUDE_FILES     = NO
+# The collaboration graph of a class draws the internal phyphox::*Data structs, which tells a
+# sketch author nothing and pushes the members off the first screen.
+COLLABORATION_GRAPH    = NO
 QUIET                  = YES
 WARN_IF_UNDOCUMENTED   = NO
 # no third-party requests from the published pages
 SEARCHENGINE           = YES
+# Theme: doxygen-awesome-css v2.5.0 (MIT), sidebar-only variant, vendored in
+# tools/doxygen-awesome-css so the pages load nothing from elsewhere. Light and dark follow
+# the reader's system setting. Its required settings are the five below.
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_EXTRA_STYLESHEET  = tools/doxygen-awesome-css/doxygen-awesome.css \
+                         tools/doxygen-awesome-css/doxygen-awesome-sidebar-only.css
+HTML_COLORSTYLE        = LIGHT

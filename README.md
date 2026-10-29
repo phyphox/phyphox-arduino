@@ -71,7 +71,8 @@ PhyphoxBLE::start("Voltmeter", exp);
 ```
 
 The `examples/` folder (File → Examples → phyphox BLE in the IDE) has a sketch for every feature.
-The documentation is in [`docs/`](docs/README.md).
+The documentation is in [`docs/`](docs/README.md), and published together with the reference of
+every class and method at **<https://phyphox.github.io/phyphox-arduino/>**.
 
 ## Contributing, licence, contact
 

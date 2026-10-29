@@ -16,6 +16,9 @@ Start with the repository [README](../README.md) if you have never used phyphox.
 For existing projects: [Migrating from 1.x](migrating-from-1x.md) and the
 [Changelog](../CHANGELOG.md). For contributors: [Testing](testing.md).
 
+These pages are also published as a website, together with the reference of every class and
+method generated from the headers: <https://phyphox.github.io/phyphox-arduino/>.
+
 The phyphox file format itself — what the generated experiment *means* — is documented in the
 [phyphox documentation](https://phyphox.org/docs) (the "file format" section), which is the canonical
 reference; this library only generates a small subset of it. Version 2.0 declares format `1.20`.

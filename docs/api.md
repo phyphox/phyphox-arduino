@@ -2,7 +2,7 @@
 
 An overview of the public API. The headers carry the full description of every method:
 `src/phyphoxBle.h` (the simple API) and `src/phyphoxBleExperiment.h` (describing the
-experiment).
+experiment), browsable at <https://phyphox.github.io/phyphox-arduino/> under *Classes*.
 
 ## PhyphoxBLE (static)
 
