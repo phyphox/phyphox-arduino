@@ -4,7 +4,7 @@
 //   void setup() { PhyphoxBLE::start(); }
 //   void loop()  { PhyphoxBLE::write(analogRead(A0) * 3.3f / 4096); delay(50); PhyphoxBLE::poll(); }
 //
-// Three lines add phyphox to a project: this is the simple API and the library's main feature.
+// A few lines add phyphox to a project: this is the simple API and the library's main feature.
 // Everything else — describing views, graphs, user inputs and buttons, requesting phone
 // sensors — is in phyphoxBleExperiment.h and optional.
 //

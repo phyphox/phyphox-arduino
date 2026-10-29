@@ -1,7 +1,7 @@
 # phyphox BLE
 
 Plot your Arduino's sensor data on a phone, and control the Arduino from the phone — with the
-free app [phyphox](https://phyphox.org) and three lines of code.
+free app [phyphox](https://phyphox.org) and a few lines of code.
 
 phyphox is a physics app from RWTH Aachen University that turns a phone's own sensors into
 measuring instruments, with live graphs, data analysis and export. This library lets any
@@ -44,7 +44,7 @@ Open phyphox, tap **+** → *Bluetooth device*, pick your board: the graph appea
 
 Details per board: [Getting started](docs/getting-started.md).
 
-## Beyond three lines
+## Beyond the simple API
 
 Describe what the phone should show — tabs, graphs with labelled axes, values, sliders,
 buttons — and get it back:
