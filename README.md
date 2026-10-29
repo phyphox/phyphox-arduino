@@ -26,8 +26,8 @@ void loop() {
 Open phyphox, tap **+** → *Bluetooth device*, pick your board: the graph appears.
 
 > **Version 2.0** is a rewrite of the library. Existing sketches keep working; see
-> [Migrating from 1.x](docs/migrating-from-1x.md) for the few things that changed. This branch
-> is the 2.0 pre-release for testers — install it as a ZIP; the Library Manager still offers 1.x.
+> [Migrating from 1.x](docs/migrating-from-1x.md) for the few things that changed and
+> [What's new in 2.0](docs/whats-new-2.0.md) for the rest.
 
 ## Supported boards
 

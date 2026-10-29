@@ -77,8 +77,8 @@ anything you have always wanted the library to do.
   knows, and every construct the library emits is checked against the format specification
   automatically.
 
-## How to try it and where to send input
+## Where to send input
 
-The 2.0 branch (`v2`) can be installed as a ZIP library while it is in development; the
-Library Manager keeps offering 1.x until the release. Please tell us which boards you use with
-the library, which sketches you would want checked against 2.0, and what you are missing.
+Please tell us which boards you use with the library, where a sketch behaves differently from
+1.x, and what you are missing: as an issue in the library's GitHub repository or by mail to
+contact@phyphox.org.

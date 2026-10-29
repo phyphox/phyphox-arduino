@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 — unreleased (branch `v2`)
+## 2.0.0
 
 A rewrite of the library. Existing sketches keep working; the full list of visible changes
 with reasons is in [docs/whats-new-2.0.md](docs/whats-new-2.0.md), the migration steps in
@@ -26,8 +26,8 @@ with reasons is in [docs/whats-new-2.0.md](docs/whats-new-2.0.md), the migration
 - Value maps, element visibility, logarithmic and time axes, follow-x, per-curve colours and
   line widths, info text size and alignment.
 - Constructors for every element (`Graph graph("Voltage")`), every 1.x setter kept.
-- Boards: all ESP32 variants (Bluedroid and NimBLE), UNO R4 WiFi, Nano RP2040 Connect,
-  Portenta, GIGA, STM32duinoBLE boards, senseBox with the Bluetooth-Bee (NINA-B31).
+- Boards: all ESP32 variants (Bluedroid and NimBLE), UNO R4 WiFi, Nicla Sense ME, Nano RP2040
+  Connect, Portenta, GIGA, STM32duinoBLE boards, senseBox with the Bluetooth-Bee (NINA-B31).
 - The ESP32 board package 4.x (arduino-esp32 4.0 replaced its Bluetooth library) as well as
   3.x; the library picks the matching code when the sketch is compiled.
 - NINA-B31 (senseBox Bluetooth-Bee): the serial line is read by one line reader that queues the
