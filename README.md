@@ -74,6 +74,18 @@ The `examples/` folder (File → Examples → phyphox BLE in the IDE) has a sket
 The documentation is in [`docs/`](docs/README.md), and published together with the reference of
 every class and method at **<https://phyphox.github.io/phyphox-arduino/>**.
 
+## Beyond the Arduino library
+
+Note, that this library is just a wrapper to easily integrate phyphox into Arduino projects without
+learning the phyphox file format. Even the example above is just a fraction of what the full phyphox
+file format can do.
+
+Please refer to the [phyphox docs](http://phyphox.org/docs) and in particular the
+[documentation of the BLE interface](https://phyphox.org/docs/file-format/bluetooth-low-energy/) to
+learn what it can do. This is especially relevant if you want to transfer data in a more efficient
+format than 32bit floats or if you are implementing your own BLE communication without even using
+this library directly.
+
 ## Contributing, licence, contact
 
 Issues and pull requests are welcome here. The library is released under the GNU Lesser General
